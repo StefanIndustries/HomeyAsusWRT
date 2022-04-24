@@ -1,0 +1,50 @@
+{
+  "title": {
+    "en": "Device went offline"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=asus-router"
+    }
+  ],
+  "tokens": [
+    {
+      "type": "string",
+      "name": "name",
+      "title": {
+        "en": "name"
+      },
+      "example": {
+        "en": "Samsung Phone"
+      }
+    },
+    {
+      "type": "string",
+      "name": "nickname",
+      "title": {
+        "en": "nickname"
+      },
+      "example": {
+        "en": "Stefan's Phone"
+      }
+    },
+    {
+      "type": "string",
+      "name": "ip",
+      "title": {
+        "en": "ip"
+      },
+      "example": "192.168.1.1"
+    },
+    {
+      "type": "string",
+      "name": "mac",
+      "title": {
+        "en": "mac"
+      },
+      "example": "AA:BB:CC:DD:EE:FF"
+    }
+  ]
+}

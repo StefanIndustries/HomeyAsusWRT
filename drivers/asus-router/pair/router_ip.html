@@ -1,0 +1,18 @@
+<div class="hy-tmpl-login_credentials-logo" style="background-image: url(&quot;/drivers/asus-router/assets/images/logoColor.png&quot;);"></div>
+<div class="hy-tmpl-login_credentials-row row">
+    <label class="hy-label hy-tmpl-login_credentials-label" for="routerIP">Router IP</label>
+    <input class="hy-input-text" name="routerIP" id="routerIP" type="text" value="192.168.1.1" placeholder="192.168.1.1" autocomplete="off" data-np-checked="1">
+    <input onclick="confirmIP()" class="hy-button hy-button-primary hy-button-fill hy-tmpl-login_credentials-submit button" type="submit" value="Submit" data-np-checked="1">
+</div>
+<script type="application/javascript">
+    Homey.setTitle("pair.title_router_ip_config");
+    function confirmIP() {
+        Homey.emit("router_ip_confirmed", document.getElementById("routerIP").value).then(function (result) {
+            if (result) {
+                Homey.nextView();
+            } else {
+                Homey.alert("pair.alert_router_ip_incorrect", 'error');
+            }
+        });
+    }
+</script>

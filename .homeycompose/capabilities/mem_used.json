@@ -1,0 +1,13 @@
+{
+    "type": "number",
+    "title": {
+      "en": "Memory Used"
+    },
+    "getable": true,
+    "setable": false,
+    "units": {
+      "en": "%"
+    },
+    "decimals": 0,
+    "insights": true
+  }

@@ -1,0 +1,63 @@
+{
+  "name": {
+    "en": "Asus Router"
+  },
+  "class": "other",
+  "capabilities": [
+    "mem_used",
+    "cpu_usage",
+    "online_devices"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "router_ip"
+    },
+    {
+      "id": "login_credentials",
+      "template": "login_credentials",
+      "options": {
+        "logo": "{{driverAssetsPath}}/images/logoColor.png",
+        "usernameLabel": {
+          "en": "Username"
+        },
+        "usernamePlaceholder": {
+          "en": "admin"
+        },
+        "passwordLabel": {
+          "en": "Password"
+        },
+        "passwordPlaceholder": {
+          "en": "Password"
+        }
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "repair": [
+    {
+      "id": "login_credentials",
+      "template": "login_credentials"
+    }
+  ]
+}

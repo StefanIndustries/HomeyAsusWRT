@@ -1,0 +1,9 @@
+{
+    "type": "number",
+    "title": {
+      "en": "Online Devices"
+    },
+    "getable": true,
+    "setable": false,
+    "insights": true
+  }

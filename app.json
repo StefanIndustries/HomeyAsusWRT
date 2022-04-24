@@ -1,3 +1,238 @@
 {
-  "_comment": "This file is generated. Please edit .homeycompose/app.json instead."
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.asus.wrt",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Asus WRT"
+  },
+  "description": {
+    "en": "View your AsusWRT network status and connected devices"
+  },
+  "category": [
+    "internet"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Stefan Simon",
+    "email": "sjsimon1996@gmail.com"
+  },
+  "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "Device came online"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=asus-router"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "name",
+            "title": {
+              "en": "name"
+            },
+            "example": {
+              "en": "Samsung Phone"
+            }
+          },
+          {
+            "type": "string",
+            "name": "nickname",
+            "title": {
+              "en": "nickname"
+            },
+            "example": {
+              "en": "Stefan's Phone"
+            }
+          },
+          {
+            "type": "string",
+            "name": "ip",
+            "title": {
+              "en": "ip"
+            },
+            "example": "192.168.1.1"
+          },
+          {
+            "type": "string",
+            "name": "mac",
+            "title": {
+              "en": "mac"
+            },
+            "example": "AA:BB:CC:DD:EE:FF"
+          }
+        ],
+        "id": "device-came-online"
+      },
+      {
+        "title": {
+          "en": "Device went offline"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=asus-router"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "name",
+            "title": {
+              "en": "name"
+            },
+            "example": {
+              "en": "Samsung Phone"
+            }
+          },
+          {
+            "type": "string",
+            "name": "nickname",
+            "title": {
+              "en": "nickname"
+            },
+            "example": {
+              "en": "Stefan's Phone"
+            }
+          },
+          {
+            "type": "string",
+            "name": "ip",
+            "title": {
+              "en": "ip"
+            },
+            "example": "192.168.1.1"
+          },
+          {
+            "type": "string",
+            "name": "mac",
+            "title": {
+              "en": "mac"
+            },
+            "example": "AA:BB:CC:DD:EE:FF"
+          }
+        ],
+        "id": "device-went-offline"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Asus Router"
+      },
+      "class": "other",
+      "capabilities": [
+        "mem_used",
+        "cpu_usage",
+        "online_devices"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/asus-router/assets/images/small.png",
+        "large": "/drivers/asus-router/assets/images/large.png",
+        "xlarge": "/drivers/asus-router/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "router_ip"
+        },
+        {
+          "id": "login_credentials",
+          "template": "login_credentials",
+          "options": {
+            "logo": "/drivers/asus-router/assets/images/logoColor.png",
+            "usernameLabel": {
+              "en": "Username"
+            },
+            "usernamePlaceholder": {
+              "en": "admin"
+            },
+            "passwordLabel": {
+              "en": "Password"
+            },
+            "passwordPlaceholder": {
+              "en": "Password"
+            }
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "login_credentials",
+          "template": "login_credentials"
+        }
+      ],
+      "id": "asus-router"
+    }
+  ],
+  "capabilities": {
+    "cpu_usage": {
+      "type": "number",
+      "title": {
+        "en": "CPU Usage"
+      },
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "decimals": 0,
+      "insights": true
+    },
+    "mem_used": {
+      "type": "number",
+      "title": {
+        "en": "Memory Used"
+      },
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "decimals": 0,
+      "insights": true
+    },
+    "online_devices": {
+      "type": "number",
+      "title": {
+        "en": "Online Devices"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true
+    }
+  }
 }
