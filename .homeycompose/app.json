@@ -15,6 +15,12 @@
   "category": [
     "internet"
   ],
+  "brandColor": "#0090c9",
+  "homepage": "https://www.asus.com",
+  "source": "https://github.com/StefanIndustries/HomeyAsusWRT",
+  "bugs": {
+    "url": "https://github.com/StefanIndustries/HomeyAsusWRT/issues"
+  },
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
@@ -24,5 +30,13 @@
   "author": {
     "name": "Stefan Simon",
     "email": "sjsimon1996@gmail.com"
+  },
+  "support": "mailto:sjsimon1996@gmail.com",
+  "contributing": {
+    "donate": {
+      "bunq": {
+        "username": "StefanJSimon"
+      }
+    }
   }
 }
