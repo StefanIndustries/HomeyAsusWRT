@@ -1,6 +1,7 @@
 import Homey from 'homey';
 import PairSession from 'homey/lib/PairSession';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
+import { CryptoClient } from '../../lib/CryptoClient';
 
 class AsusRouterDriver extends Homey.Driver {
 
@@ -38,18 +39,36 @@ class AsusRouterDriver extends Homey.Driver {
 
     session.setHandler('list_devices', async () => {
       const routerData = await client.appGet('nvram_get(productid);nvram_get(firmver);nvram_get(buildno);nvram_get(extendno);');
+      const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
       return [
         {
           name: routerData.productid,
           data: {
             id: routerData.productid + '-' + routerIP,
-            username: username,
-            password: password,
+            username: cryptoClient.encrypt(username),
+            password: cryptoClient.encrypt(password),
             ip: routerIP
-          }
+          },
+          icon: this.getIcon(routerData.productid)
         }
       ];
     });
+  }
+
+  private getIcon(productId: string): string {
+    console.log(productId);
+    console.log(`${productId}.svg`);
+    const supportedIcons = [
+      'RT-AX89U',
+      'RT-AX89X',
+      'RT-AC68U',
+      'RT-AC86U'
+    ];
+    if (supportedIcons.indexOf(productId) === -1) {
+      return `default.svg`;
+    } else {
+      return `${productId}.svg`;
+    }
   }
 }
 

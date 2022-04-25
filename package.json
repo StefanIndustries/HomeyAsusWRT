@@ -9,7 +9,8 @@
   "dependencies": {
     "@spacepumpkin/asus-router-api": "1.200602.1",
     "axios": "0.26.1",
-    "qs": "6.10.3"
+    "qs": "6.10.3",
+    "crypto": "1.0.1"
   },
   "devDependencies": {
     "@tsconfig/node12": "^1.0.9",

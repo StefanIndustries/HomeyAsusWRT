@@ -1,6 +1,7 @@
 import Homey from 'homey';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
 import { AsusWRTApp } from '../../app';
+import { CryptoClient } from '../../lib/CryptoClient';
 
 class AsusRouterDevice extends Homey.Device {
 
@@ -119,7 +120,8 @@ class AsusRouterDevice extends Homey.Device {
    */
   async onInit() {
     this.app = <AsusWRTApp>this.homey.app;
-    this.client = new AsusWRTClient(this.getData().ip, this.getData().username, this.getData().password);
+    const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
+    this.client = new AsusWRTClient(this.getData().ip, cryptoClient.decrypt(this.getData().username), cryptoClient.decrypt(this.getData().password));
     await this.updateLowPrioCapabilities();
     await this.updateHighPrioCapabilities();
     this.startPolling();
