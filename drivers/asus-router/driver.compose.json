@@ -6,7 +6,10 @@
   "capabilities": [
     "mem_used",
     "cpu_usage",
-    "online_devices"
+    "online_devices",
+    "traffic_total_received",
+    "traffic_total_sent",
+    "uptime_seconds"
   ],
   "platforms": [
     "local"

@@ -155,7 +155,10 @@
       "capabilities": [
         "mem_used",
         "cpu_usage",
-        "online_devices"
+        "online_devices",
+        "traffic_total_received",
+        "traffic_total_sent",
+        "uptime_seconds"
       ],
       "platforms": [
         "local"
@@ -229,7 +232,7 @@
     "mem_used": {
       "type": "number",
       "title": {
-        "en": "Memory Used"
+        "en": "Memory Usage"
       },
       "getable": true,
       "setable": false,
@@ -243,6 +246,42 @@
       "type": "number",
       "title": {
         "en": "Online Devices"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true
+    },
+    "traffic_total_received": {
+      "type": "number",
+      "title": {
+        "en": "Traffic received (since boot)"
+      },
+      "units": {
+        "en": "MB"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true
+    },
+    "traffic_total_sent": {
+      "type": "number",
+      "title": {
+        "en": "Traffic sent (since boot)"
+      },
+      "units": {
+        "en": "MB"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true
+    },
+    "uptime_seconds": {
+      "type": "number",
+      "title": {
+        "en": "Uptime"
+      },
+      "units": {
+        "en": "seconds"
       },
       "getable": true,
       "setable": false,

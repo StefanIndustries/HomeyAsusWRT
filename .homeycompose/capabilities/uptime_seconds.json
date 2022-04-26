@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Uptime"
+  },
+  "units": {
+    "en": "seconds"
+  },
+  "getable": true,
+  "setable": false,
+  "insights": true
+}

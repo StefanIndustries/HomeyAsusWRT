@@ -1,7 +1,7 @@
 {
     "type": "number",
     "title": {
-      "en": "Memory Used"
+      "en": "Memory Usage"
     },
     "getable": true,
     "setable": false,

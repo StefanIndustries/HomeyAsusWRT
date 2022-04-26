@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Traffic sent (since boot)"
+  },
+  "units": {
+    "en": "MB"
+  },
+  "getable": true,
+  "setable": false,
+  "insights": true
+}

@@ -14,6 +14,8 @@ class AsusRouterDevice extends Homey.Device {
   private async updateLowPrioCapabilities() {
     await this.updateMemoryUsage();
     await this.updateCPUUsage();
+    await this.updateUptime();
+    await this.updateTrafficTotal();
   }
 
   private async updateHighPrioCapabilities() {
@@ -86,6 +88,22 @@ class AsusRouterDevice extends Homey.Device {
     }
     const percentageUsed = (100 / totalAvailable) * totalUsed;
     this.setCapabilityValue('cpu_usage', percentageUsed);
+  }
+
+  private async updateUptime() {
+    const uptimeData = await this.client.appGet('uptime()');
+    let uptimeSeconds = uptimeData.substring(uptimeData.indexOf(':'));
+    uptimeSeconds = uptimeSeconds.substring(uptimeSeconds.indexOf("(") + 1);
+    uptimeSeconds = uptimeSeconds.substring(0, uptimeSeconds.indexOf(" "));
+    this.setCapabilityValue('uptime_seconds', parseInt(uptimeSeconds));
+  }
+
+  private async updateTrafficTotal() {
+    const trafficData = await this.client.appGet('netdev(appobj)');
+    const trafficReceived = Math.round((parseInt(trafficData['netdev']['INTERNET_rx'], 16) * 8 / 1024 / 1024) * 0.125);
+    const trafficSent = Math.round((parseInt(trafficData['netdev']['INTERNET_tx'], 16) * 8 / 1024 / 1024) * 0.125);
+    this.setCapabilityValue('traffic_total_received', trafficReceived);
+    this.setCapabilityValue('traffic_total_sent', trafficSent);
   }
 
   private addNumberValueIfExists(object: any, property: string): number {
