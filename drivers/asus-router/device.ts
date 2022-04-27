@@ -12,20 +12,27 @@ class AsusRouterDevice extends Homey.Device {
   private app!: AsusWRTApp;
 
   private async updateLowPrioCapabilities() {
+    await this.updateWANStatus();
     await this.updateMemoryUsage();
     await this.updateCPUUsage();
     await this.updateUptime();
-    await this.updateTrafficTotal();
   }
 
   private async updateHighPrioCapabilities() {
     await this.updateOnlineDevices();
-    await this.updateWANStatus();
+    await this.updateTrafficData();
   }
 
   private async updateWANStatus() {
     const wanData = await this.client.getWANStatus();
-    this.setCapabilityValue('wan_connected', wanData.status && wanData.status === 1 ? true : false);
+    const routerConnected = wanData.status && wanData.status === 1 ? true : false;
+    if (this.getCapabilityValue('wan_connected') !== routerConnected) {
+      this.app.triggerWANConnectionStatusChanged(this, {wan_connected: routerConnected}, {});
+    }
+    if (this.getCapabilityValue('external_ip') !== wanData.ipaddr) {
+      this.app.triggerExternalIPChanged(this, {external_ip: wanData.ipaddr}, {});
+    }
+    this.setCapabilityValue('wan_connected', routerConnected);
     this.setCapabilityValue('external_ip', wanData.ipaddr);
   }
 
@@ -81,10 +88,18 @@ class AsusRouterDevice extends Homey.Device {
     this.setCapabilityValue('uptime_seconds', uptimeData);
   }
 
-  private async updateTrafficTotal() {
-    const trafficData = await this.client.getTotalTrafficData();
-    this.setCapabilityValue('traffic_total_received', trafficData.trafficReceived);
-    this.setCapabilityValue('traffic_total_sent', trafficData.trafficSent);
+  private async updateTrafficData() {
+    const trafficDataFirst = await this.client.getTotalTrafficData();
+    await this.wait(2000);
+    const trafficDataSecond = await this.client.getTotalTrafficData();
+    this.setCapabilityValue('traffic_total_received', trafficDataSecond.trafficReceived);
+    this.setCapabilityValue('traffic_total_sent', trafficDataSecond.trafficSent);
+    this.setCapabilityValue('realtime_download', trafficDataSecond.trafficReceived - trafficDataFirst.trafficReceived);
+    this.setCapabilityValue('realtime_upload', trafficDataSecond.trafficSent - trafficDataFirst.trafficSent);
+  }
+
+  private async wait(milliseconds: number) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
   private startPolling() {
@@ -95,7 +110,7 @@ class AsusRouterDevice extends Homey.Device {
 
     this.highPrioPollingIntervalID = this.homey.setInterval(async () => {
       await this.updateHighPrioCapabilities();
-    }, 60000) // 1 minute
+    }, 60000); // 1 minute
   }
 
   private stopPolling() {

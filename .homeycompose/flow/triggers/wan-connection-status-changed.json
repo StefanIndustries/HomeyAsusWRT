@@ -1,0 +1,21 @@
+{
+  "title": {
+    "en": "WAN Status Changed"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=asus-router"
+    }
+  ],
+  "tokens": [
+    {
+      "type": "boolean",
+      "name": "wan_connected",
+      "title": {
+        "en": "WAN Connected"
+      }
+    }
+  ]
+}

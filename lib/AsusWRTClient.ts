@@ -91,8 +91,8 @@ export class AsusWRTClient {
 
     public async getTotalTrafficData(): Promise<AsusWRTTrafficData> {
         const trafficData = await this.appGet('netdev(appobj)');
-        const trafficReceived = Math.round((parseInt(trafficData['netdev']['INTERNET_rx'], 16) * 8 / 1024 / 1024) * 0.125);
-        const trafficSent = Math.round((parseInt(trafficData['netdev']['INTERNET_tx'], 16) * 8 / 1024 / 1024) * 0.125);
+        const trafficReceived = (parseInt(trafficData['netdev']['INTERNET_rx'], 16) * 8 / 1024 / 1024) * 0.125;
+        const trafficSent = (parseInt(trafficData['netdev']['INTERNET_tx'], 16) * 8 / 1024 / 1024) * 0.125;
         return {
             trafficReceived: trafficReceived,
             trafficSent: trafficSent

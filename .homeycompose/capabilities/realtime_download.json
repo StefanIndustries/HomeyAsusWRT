@@ -1,12 +1,12 @@
 {
   "type": "number",
   "title": {
-    "en": "Traffic sent (since boot)"
+    "en": "Realtime Download"
   },
   "units": {
     "en": "MB"
   },
-  "decimals": 0,
+  "decimals": 2,
   "getable": true,
   "setable": false,
   "insights": true

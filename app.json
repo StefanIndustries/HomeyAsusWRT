@@ -143,6 +143,50 @@
           }
         ],
         "id": "device-went-offline"
+      },
+      {
+        "title": {
+          "en": "External IP Changed"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=asus-router"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "external_ip",
+            "title": {
+              "en": "External IP"
+            }
+          }
+        ],
+        "id": "external-ip-changed"
+      },
+      {
+        "title": {
+          "en": "WAN Status Changed"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=asus-router"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "boolean",
+            "name": "wan_connected",
+            "title": {
+              "en": "WAN Connected"
+            }
+          }
+        ],
+        "id": "wan-connection-status-changed"
       }
     ]
   },
@@ -153,12 +197,16 @@
       },
       "class": "other",
       "capabilities": [
-        "mem_used",
         "cpu_usage",
+        "external_ip",
+        "mem_used",
         "online_devices",
+        "realtime_download",
+        "realtime_upload",
         "traffic_total_received",
         "traffic_total_sent",
-        "uptime_seconds"
+        "uptime_seconds",
+        "wan_connected"
       ],
       "platforms": [
         "local"
@@ -259,6 +307,32 @@
       "setable": false,
       "insights": true
     },
+    "realtime_download": {
+      "type": "number",
+      "title": {
+        "en": "Realtime Download"
+      },
+      "units": {
+        "en": "MB"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "insights": true
+    },
+    "realtime_upload": {
+      "type": "number",
+      "title": {
+        "en": "Realtime Upload"
+      },
+      "units": {
+        "en": "MB"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "insights": true
+    },
     "traffic_total_received": {
       "type": "number",
       "title": {
@@ -267,6 +341,7 @@
       "units": {
         "en": "MB"
       },
+      "decimals": 0,
       "getable": true,
       "setable": false,
       "insights": true
@@ -279,6 +354,7 @@
       "units": {
         "en": "MB"
       },
+      "decimals": 0,
       "getable": true,
       "setable": false,
       "insights": true
