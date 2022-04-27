@@ -38,18 +38,18 @@ class AsusRouterDriver extends Homey.Driver {
     });
 
     session.setHandler('list_devices', async () => {
-      const routerData = await client.appGet('nvram_get(productid);nvram_get(firmver);nvram_get(buildno);nvram_get(extendno);');
+      const routerProductId = await client.getRouterProductId();
       const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
       return [
         {
-          name: routerData.productid,
+          name: routerProductId,
           data: {
-            id: routerData.productid + '-' + routerIP,
+            id: routerProductId + '-' + routerIP,
             username: cryptoClient.encrypt(username),
             password: cryptoClient.encrypt(password),
             ip: routerIP
           },
-          icon: this.getIcon(routerData.productid)
+          icon: this.getIcon(routerProductId)
         }
       ];
     });

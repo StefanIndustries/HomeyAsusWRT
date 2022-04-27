@@ -1,5 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import qs from 'qs';
+import { AsusWRTConnectedClient } from './models/AsusWRTConnectedClient';
+import { AsusWRTTrafficData } from './models/AsusWRTTrafficData';
+import { AsusWRTWANStatus } from './models/AsusWRTWANStatus';
 
 export class AsusWRTClient {
     private loginSessionStart: number | null = null;
@@ -62,7 +65,7 @@ export class AsusWRTClient {
         return asusToken;
     }
 
-    public async appGet(payload: string, stripText?: string): Promise<any> {
+    private async appGet(payload: string, stripText?: string): Promise<any> {
         const path = '/appGet.cgi';
         const result = await axios({
             method: 'POST',
@@ -79,5 +82,91 @@ export class AsusWRTClient {
         } else {
             return result.data;
         }
+    }
+
+    public async getRouterProductId(): Promise<string> {
+        const routerData = await this.appGet('nvram_get(productid);nvram_get(firmver);nvram_get(buildno);nvram_get(extendno);');
+        return routerData.productid;
+    }
+
+    public async getTotalTrafficData(): Promise<AsusWRTTrafficData> {
+        const trafficData = await this.appGet('netdev(appobj)');
+        const trafficReceived = Math.round((parseInt(trafficData['netdev']['INTERNET_rx'], 16) * 8 / 1024 / 1024) * 0.125);
+        const trafficSent = Math.round((parseInt(trafficData['netdev']['INTERNET_tx'], 16) * 8 / 1024 / 1024) * 0.125);
+        return {
+            trafficReceived: trafficReceived,
+            trafficSent: trafficSent
+        };
+    }
+
+    public async getUptime(): Promise<number> {
+        const uptimeData = await this.appGet('uptime()');
+        let uptimeSeconds = uptimeData.substring(uptimeData.indexOf(':'));
+        uptimeSeconds = uptimeSeconds.substring(uptimeSeconds.indexOf("(") + 1);
+        uptimeSeconds = uptimeSeconds.substring(0, uptimeSeconds.indexOf(" "));
+        return parseInt(uptimeSeconds);
+    }
+
+    public async getCPUUsagePercentage(): Promise<number> {
+        const cpuData = await this.appGet('cpu_usage()', 'cpu_usage');
+        let totalAvailable = 0;
+        let totalUsed = 0;
+        for (let i = 1; i < 16; i++) {
+          totalAvailable += this.addNumberValueIfExists(cpuData, `cpu${i}_total`);
+        }
+        for (let i = 1; i < 16; i++) {
+          totalUsed += this.addNumberValueIfExists(cpuData, `cpu${i}_usage`);
+        }
+        const percentageUsed = (100 / totalAvailable) * totalUsed;
+        return percentageUsed;
+    }
+
+    private addNumberValueIfExists(object: any, property: string): number {
+        if (object[property]) {
+          return parseInt(object[property]);
+        }
+        return 0;
+    }
+
+    public async getMemoryUsagePercentage(): Promise<number> {
+        const memData = await this.appGet('memory_usage()', 'memory_usage');
+        const totalMemory = parseInt(memData.mem_total);
+        const memUsed = parseInt(memData.mem_used);
+        const percentageUsed = (100 / totalMemory) * memUsed;
+        return percentageUsed;
+    }
+
+    public async getOnlineClients(): Promise<AsusWRTConnectedClient[]> {
+        let onlineDevices: AsusWRTConnectedClient[] = [];
+        const clientListData = await this.appGet('get_clientlist()');
+        for (const c in clientListData['get_clientlist']) {
+          if (c.length === 17 && "isOnline" in clientListData['get_clientlist'][c] && clientListData['get_clientlist'][c]['isOnline'] == '1') {
+            const client = clientListData['get_clientlist'][c];
+            onlineDevices.push({
+              ip: client.ip,
+              mac: client.mac,
+              name: client.name,
+              nickName: client.nickName
+            });
+          }
+        }
+        return onlineDevices;
+    }
+
+    public async getWANStatus(): Promise<AsusWRTWANStatus> {
+        let status: any = {};
+        const wanData = <string> await this.appGet('wanlink()');
+        wanData.split('\n').forEach(line => {
+            if (line.includes('return') && line.includes('wanlink_')) {
+                const key = line.substring(line.indexOf('_') + 1, line.indexOf('('));
+                let value = line.substring(line.indexOf('return ') + 7, line.indexOf(';}'));
+                if (value.includes(`'`)) {
+                    status[key] = value.substring(1, value.length - 1);
+                } else {
+                    status[key] = parseInt(value);
+                }
+            }
+        });
+        return <AsusWRTWANStatus> status;
     }
 }

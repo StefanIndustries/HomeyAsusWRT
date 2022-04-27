@@ -229,6 +229,14 @@
       "decimals": 0,
       "insights": true
     },
+    "external_ip": {
+      "type": "string",
+      "title": {
+        "en": "External IP address"
+      },
+      "getable": true,
+      "setable": false
+    },
     "mem_used": {
       "type": "number",
       "title": {
@@ -286,6 +294,15 @@
       "getable": true,
       "setable": false,
       "insights": true
+    },
+    "wan_connected": {
+      "type": "boolean",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "title": {
+        "en": "WAN Connected"
+      }
     }
   }
 }

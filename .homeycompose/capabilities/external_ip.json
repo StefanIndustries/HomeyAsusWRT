@@ -1,0 +1,8 @@
+{
+    "type": "string",
+    "title": {
+      "en": "External IP address"
+    },
+    "getable": true,
+    "setable": false
+}

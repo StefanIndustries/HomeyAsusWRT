@@ -20,36 +20,34 @@ class AsusRouterDevice extends Homey.Device {
 
   private async updateHighPrioCapabilities() {
     await this.updateOnlineDevices();
+    await this.updateWANStatus();
+  }
+
+  private async updateWANStatus() {
+    const wanData = await this.client.getWANStatus();
+    this.setCapabilityValue('wan_connected', wanData.status && wanData.status === 1 ? true : false);
+    this.setCapabilityValue('external_ip', wanData.ipaddr);
   }
 
   private async updateOnlineDevices() {
     const oldList = this.onlineDevices;
-    this.onlineDevices = [];
-    const clientListData = await this.client.appGet('get_clientlist()');
-    for (const c in clientListData['get_clientlist']) {
-      if (c.length === 17 && "isOnline" in clientListData['get_clientlist'][c] && clientListData['get_clientlist'][c]['isOnline'] == '1') {
-        const client = clientListData['get_clientlist'][c];
-        this.onlineDevices.push({
-          ip: client.ip,
-          mac: client.mac,
-          name: client.name,
-          nickName: client.nickName
-        });
-        if (oldList.length > 0) {
-          if (!oldList.find(obj => {
-            return obj.ip === client.ip && obj.mac === obj.mac;
-          })) {
-            const tokens = {
-              name: client.name,
-              ip: client.ip,
-              mac: client.mac,
-              nickname: client.nickName
-            };
-            this.app.triggerDeviceCameOnline(this, tokens, {});
-          }
+    this.onlineDevices = await this.client.getOnlineClients();
+    this.onlineDevices.forEach(client => {
+      if (oldList.length > 0) {
+        if (!oldList.find(obj => {
+          return obj.ip === client.ip && obj.mac === obj.mac;
+        })) {
+          const tokens = {
+            name: client.name,
+            ip: client.ip,
+            mac: client.mac,
+            nickname: client.nickName
+          };
+          this.app.triggerDeviceCameOnline(this, tokens, {});
         }
       }
-    }
+    });
+
     if (oldList.length > 0) {
       oldList.forEach(oldClient => {
         if (!this.onlineDevices.find(obj => {
@@ -69,48 +67,24 @@ class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateMemoryUsage() {
-    const memData = await this.client.appGet('memory_usage()', 'memory_usage');
-    const totalMemory = parseInt(memData.mem_total);
-    const memUsed = parseInt(memData.mem_used);
-    const percentageUsed = (100 / totalMemory) * memUsed;
-    this.setCapabilityValue('mem_used', percentageUsed);
+    const memData = await this.client.getMemoryUsagePercentage();
+    this.setCapabilityValue('mem_used', memData);
   }
 
   private async updateCPUUsage() {
-    const cpuData = await this.client.appGet('cpu_usage()', 'cpu_usage');
-    let totalAvailable = 0;
-    let totalUsed = 0;
-    for (let i = 1; i < 16; i++) {
-      totalAvailable += this.addNumberValueIfExists(cpuData, `cpu${i}_total`);
-    }
-    for (let i = 1; i < 16; i++) {
-      totalUsed += this.addNumberValueIfExists(cpuData, `cpu${i}_usage`);
-    }
-    const percentageUsed = (100 / totalAvailable) * totalUsed;
-    this.setCapabilityValue('cpu_usage', percentageUsed);
+    const cpuData = await this.client.getCPUUsagePercentage();
+    this.setCapabilityValue('cpu_usage', cpuData);
   }
 
   private async updateUptime() {
-    const uptimeData = await this.client.appGet('uptime()');
-    let uptimeSeconds = uptimeData.substring(uptimeData.indexOf(':'));
-    uptimeSeconds = uptimeSeconds.substring(uptimeSeconds.indexOf("(") + 1);
-    uptimeSeconds = uptimeSeconds.substring(0, uptimeSeconds.indexOf(" "));
-    this.setCapabilityValue('uptime_seconds', parseInt(uptimeSeconds));
+    const uptimeData = await this.client.getUptime();
+    this.setCapabilityValue('uptime_seconds', uptimeData);
   }
 
   private async updateTrafficTotal() {
-    const trafficData = await this.client.appGet('netdev(appobj)');
-    const trafficReceived = Math.round((parseInt(trafficData['netdev']['INTERNET_rx'], 16) * 8 / 1024 / 1024) * 0.125);
-    const trafficSent = Math.round((parseInt(trafficData['netdev']['INTERNET_tx'], 16) * 8 / 1024 / 1024) * 0.125);
-    this.setCapabilityValue('traffic_total_received', trafficReceived);
-    this.setCapabilityValue('traffic_total_sent', trafficSent);
-  }
-
-  private addNumberValueIfExists(object: any, property: string): number {
-    if (object[property]) {
-      return parseInt(object[property]);
-    }
-    return 0;
+    const trafficData = await this.client.getTotalTrafficData();
+    this.setCapabilityValue('traffic_total_received', trafficData.trafficReceived);
+    this.setCapabilityValue('traffic_total_sent', trafficData.trafficSent);
   }
 
   private startPolling() {
@@ -181,7 +155,6 @@ class AsusRouterDevice extends Homey.Device {
     this.stopPolling();
     this.log('AsusRouterDevice has been deleted');
   }
-
 }
 
 module.exports = AsusRouterDevice;
