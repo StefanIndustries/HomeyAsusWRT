@@ -11,11 +11,11 @@ export class AsusWRTClient {
         return this.loginSessionStart !== null;
     }
 
-    private isLoggedMoreThan60MinutesAgo(): boolean {
+    private isLoggedMoreThan10MinutesAgo(): boolean {
         if (!this.loginSessionStart) {
             return true;
         }
-        return (Date.now() - this.loginSessionStart) > 59 * 60 * 1000;
+        return (Date.now() - this.loginSessionStart) > 10 * 60 * 1000;
     }
 
     constructor(private baseUrl: string, private username: string, private password: string) {
@@ -23,7 +23,7 @@ export class AsusWRTClient {
         axios.defaults.headers.common['User-Agent'] = 'asusrouter-Android-DUTUtil-1.0.0.3.58-163';
         
         axios.interceptors.request.use(async (request) => {
-            if (request.url !== '/login.cgi' && (!this.isLoggedIn() || this.isLoggedMoreThan60MinutesAgo())) {
+            if (request.url !== '/login.cgi' && (!this.isLoggedIn() || this.isLoggedMoreThan10MinutesAgo())) {
                 const newToken = await this.login().catch(error => Promise.reject(error));
                 const originalRequestConfig = request;
                 delete originalRequestConfig.headers!['Cookie'];
