@@ -1,0 +1,22 @@
+{
+  "title": {
+    "en": "Device is connected"
+  },
+  "hint": {
+    "en": "check if device with IP is online"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asus-router"
+    },
+    {
+      "type": "autocomplete",
+      "name": "client",
+      "placeholder": {
+        "en": "192.168.1.4"
+      }
+    }
+  ]
+}

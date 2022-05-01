@@ -1,15 +1,23 @@
-import Homey from 'homey';
+import Homey, { FlowCardCondition } from 'homey';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
 import { AsusWRTApp } from '../../app';
 import { CryptoClient } from '../../lib/CryptoClient';
+import { AsusWRTConnectedClient } from '../../lib/models/AsusWRTConnectedClient';
+import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 
 class AsusRouterDevice extends Homey.Device {
 
   private client!: AsusWRTClient;
   private lowPrioPollingIntervalID: any;
   private highPrioPollingIntervalID: any;
-  private onlineDevices: any[] = [];
-  private app!: AsusWRTApp;
+  private onlineDevices: AsusWRTConnectedClient[] = [];
+
+  private triggerDeviceCameOnline!: (device: any, tokens: any, state: any) => void;
+  private triggerDeviceWentOffline!: (device: any, tokens: any, state: any) => void;
+  private triggerWANConnectionStatusChanged!: (device: any, tokens: any, state: any) => void;
+  private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
+
+  private conditionDeviceIsConnected!: FlowCardCondition;
 
   private async updateLowPrioCapabilities() {
     await this.updateWANStatus();
@@ -27,10 +35,10 @@ class AsusRouterDevice extends Homey.Device {
     const wanData = await this.client.getWANStatus();
     const routerConnected = wanData.status && wanData.status === 1 ? true : false;
     if (this.getCapabilityValue('wan_connected') !== routerConnected) {
-      this.app.triggerWANConnectionStatusChanged(this, {wan_connected: routerConnected}, {});
+      this.triggerWANConnectionStatusChanged(this, {wan_connected: routerConnected}, {});
     }
     if (this.getCapabilityValue('external_ip') !== wanData.ipaddr) {
-      this.app.triggerExternalIPChanged(this, {external_ip: wanData.ipaddr}, {});
+      this.triggerExternalIPChanged(this, {external_ip: wanData.ipaddr}, {});
     }
     this.setCapabilityValue('wan_connected', routerConnected);
     this.setCapabilityValue('external_ip', wanData.ipaddr);
@@ -50,7 +58,7 @@ class AsusRouterDevice extends Homey.Device {
             mac: client.mac,
             nickname: client.nickName
           };
-          this.app.triggerDeviceCameOnline(this, tokens, {});
+          this.triggerDeviceCameOnline(this, tokens, {});
         }
       }
     });
@@ -66,7 +74,7 @@ class AsusRouterDevice extends Homey.Device {
             mac: oldClient.mac,
             nickname: oldClient.nickName
           };
-          this.app.triggerDeviceWentOffline(this, tokens, {});
+          this.triggerDeviceWentOffline(this, tokens, {});
         }
       });
     }
@@ -126,7 +134,8 @@ class AsusRouterDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
-    this.app = <AsusWRTApp>this.homey.app;
+    this.registerTriggers();
+    this.registerConditions();
     const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
     this.client = new AsusWRTClient(this.getData().ip, cryptoClient.decrypt(this.getData().username), cryptoClient.decrypt(this.getData().password));
     await this.updateLowPrioCapabilities();
@@ -169,6 +178,59 @@ class AsusRouterDevice extends Homey.Device {
   async onDeleted() {
     this.stopPolling();
     this.log('AsusRouterDevice has been deleted');
+  }
+
+  private registerTriggers() {
+    const deviceCameOnline = this.homey.flow.getDeviceTriggerCard('device-came-online');
+		this.triggerDeviceCameOnline = (device, tokens, state) => {
+			deviceCameOnline
+				.trigger(device, tokens, state)
+				.catch(this.error);
+		};
+
+    const deviceWentOffline = this.homey.flow.getDeviceTriggerCard('device-went-offline');
+    this.triggerDeviceWentOffline = (device, tokens, state) => {
+      deviceWentOffline
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    }
+
+    const wanConnectionStatusChanged = this.homey.flow.getDeviceTriggerCard('wan-connection-status-changed');
+    this.triggerWANConnectionStatusChanged = (device, tokens, state) => {
+      wanConnectionStatusChanged
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    }
+
+    const externalIPChanged = this.homey.flow.getDeviceTriggerCard('external-ip-changed');
+    this.triggerExternalIPChanged = (device, tokens, state) => {
+      externalIPChanged
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    }
+  }
+
+  private registerConditions() {
+    this.conditionDeviceIsConnected = this.homey.flow.getConditionCard('device-is-connected');
+    this.conditionDeviceIsConnected
+      .registerRunListener(async (args: any, state: any) => {
+        await this.updateOnlineDevices();
+        if (this.onlineDevices.find(device => device.ip === args.client.ip)) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .registerArgumentAutocompleteListener('client', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
+        const searchFor = query.toUpperCase();
+        const devicesInQuery = this.onlineDevices.filter(device => {
+          return device.ip.toUpperCase().includes(searchFor) || device.name.toUpperCase().includes(searchFor) || device.nickName.toUpperCase().includes(searchFor);
+        });
+        const results: ArgumentAutocompleteResults = [
+          ...devicesInQuery.map(device => ({name: device.name, ip: device.ip, description: device.ip}))
+        ]
+        return results;
+      });
   }
 }
 
