@@ -32,16 +32,6 @@ export class AsusWRTClient {
             }
             return request;
           });
-
-        axios.interceptors.request.use(request => {
-            console.log('Request', request.url);
-            return request;
-        })
-        
-        axios.interceptors.response.use(response => {
-            console.log('Response:', response.status);
-            return response
-        })
     }
 
     public async login(): Promise<any> {
