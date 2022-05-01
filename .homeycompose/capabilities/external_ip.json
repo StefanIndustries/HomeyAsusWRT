@@ -4,5 +4,6 @@
       "en": "External IP address"
     },
     "getable": true,
-    "setable": false
+    "setable": false,
+    "icon": "./assets/cap_external_ip.svg"
 }

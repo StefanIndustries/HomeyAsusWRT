@@ -9,5 +9,6 @@
       "en": "%"
     },
     "decimals": 0,
-    "insights": true
+    "insights": true,
+    "icon": "./assets/cap_cpu_usage.svg"
   }

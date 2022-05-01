@@ -275,7 +275,8 @@
         "en": "%"
       },
       "decimals": 0,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_cpu_usage.svg"
     },
     "external_ip": {
       "type": "string",
@@ -283,7 +284,8 @@
         "en": "External IP address"
       },
       "getable": true,
-      "setable": false
+      "setable": false,
+      "icon": "./assets/cap_external_ip.svg"
     },
     "mem_used": {
       "type": "number",
@@ -296,7 +298,8 @@
         "en": "%"
       },
       "decimals": 0,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_mem_used.svg"
     },
     "online_devices": {
       "type": "number",
@@ -305,7 +308,8 @@
       },
       "getable": true,
       "setable": false,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_online_devices.svg"
     },
     "realtime_download": {
       "type": "number",
@@ -318,7 +322,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_realtime_download.svg"
     },
     "realtime_upload": {
       "type": "number",
@@ -331,7 +336,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_realtime_upload.svg"
     },
     "traffic_total_received": {
       "type": "number",
@@ -344,7 +350,8 @@
       "decimals": 0,
       "getable": true,
       "setable": false,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_traffic_total_received.svg"
     },
     "traffic_total_sent": {
       "type": "number",
@@ -357,7 +364,8 @@
       "decimals": 0,
       "getable": true,
       "setable": false,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_traffic_total_sent.svg"
     },
     "uptime_seconds": {
       "type": "number",
@@ -369,7 +377,8 @@
       },
       "getable": true,
       "setable": false,
-      "insights": true
+      "insights": true,
+      "icon": "./assets/cap_uptime_seconds.svg"
     },
     "wan_connected": {
       "type": "boolean",
@@ -378,7 +387,8 @@
       "insights": true,
       "title": {
         "en": "WAN Connected"
-      }
+      },
+      "icon": "./assets/cap_wan_connected.svg"
     }
   }
 }
