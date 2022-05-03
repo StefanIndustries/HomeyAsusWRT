@@ -1,6 +1,6 @@
 {
   "title": {
-    "en": "Device is connected"
+    "en": "Device !{{is|isn't}} connected"
   },
   "hint": {
     "en": "check if device with IP is online"
