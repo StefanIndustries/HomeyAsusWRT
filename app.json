@@ -44,7 +44,10 @@
     "triggers": [
       {
         "title": {
-          "en": "Device came online"
+          "en": "Came online"
+        },
+        "hint": {
+          "en": "Checks every minute if a device connected to your network"
         },
         "args": [
           {
@@ -95,7 +98,10 @@
       },
       {
         "title": {
-          "en": "Device went offline"
+          "en": "Went offline"
+        },
+        "hint": {
+          "en": "Checks every minute if a device disconnected from your network"
         },
         "args": [
           {
@@ -146,7 +152,10 @@
       },
       {
         "title": {
-          "en": "External IP Changed"
+          "en": "External IP changed"
+        },
+        "hint": {
+          "en": "Checks every 5 minutes if the external IP has changed"
         },
         "args": [
           {
@@ -168,7 +177,10 @@
       },
       {
         "title": {
-          "en": "WAN Status Changed"
+          "en": "WAN status changed"
+        },
+        "hint": {
+          "en": "Checks every 5 minutes if your WAN is still online"
         },
         "args": [
           {
@@ -192,7 +204,10 @@
     "conditions": [
       {
         "title": {
-          "en": "Device is connected"
+          "en": "Device !{{is|isn't}} connected"
+        },
+        "titleFormatted": {
+          "en": "Device [[client]] !{{is|isn't}} connected"
         },
         "hint": {
           "en": "check if device with IP is online"
