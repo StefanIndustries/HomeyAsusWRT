@@ -1,6 +1,9 @@
 {
   "title": {
-    "en": "WAN Status Changed"
+    "en": "WAN status changed"
+  },
+  "hint": {
+    "en": "Checks every 5 minutes if your WAN is still online"
   },
   "args": [
     {

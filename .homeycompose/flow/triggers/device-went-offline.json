@@ -1,6 +1,9 @@
 {
   "title": {
-    "en": "Device went offline"
+    "en": "Went offline"
+  },
+  "hint": {
+    "en": "Checks every minute if a device disconnected from your network"
   },
   "args": [
     {

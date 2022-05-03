@@ -1,6 +1,9 @@
 {
   "title": {
-    "en": "External IP Changed"
+    "en": "External IP changed"
+  },
+  "hint": {
+    "en": "Checks every 5 minutes if the external IP has changed"
   },
   "args": [
     {

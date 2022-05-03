@@ -1,6 +1,9 @@
 {
   "title": {
-    "en": "Device came online"
+    "en": "Came online"
+  },
+  "hint": {
+    "en": "Checks every minute if a device connected to your network"
   },
   "args": [
     {
