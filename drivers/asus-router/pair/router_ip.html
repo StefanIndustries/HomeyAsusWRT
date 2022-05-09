@@ -5,13 +5,13 @@
     <input onclick="confirmIP()" class="hy-button hy-button-primary hy-button-fill hy-tmpl-login_credentials-submit button" type="submit" value="Submit" data-np-checked="1">
 </div>
 <script type="application/javascript">
-    Homey.setTitle("pair.title_router_ip_config");
+    Homey.setTitle(Homey.__("pair.title_router_ip_config"));
     function confirmIP() {
         Homey.emit("router_ip_confirmed", document.getElementById("routerIP").value).then(function (result) {
             if (result) {
                 Homey.nextView();
             } else {
-                Homey.alert("pair.alert_router_ip_incorrect", 'error');
+                Homey.alert(Homey.__("pair.alert_router_ip_incorrect"), 'error');
             }
         });
     }

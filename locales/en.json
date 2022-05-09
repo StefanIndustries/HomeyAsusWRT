@@ -1,1 +1,6 @@
-{}
+{
+    "pair": {
+        "title_router_ip_config": "Please fill in the IP address",
+        "alert_router_ip_incorrect": "No router found on the IP provided"
+    }
+}
