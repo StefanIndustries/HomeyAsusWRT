@@ -10,5 +10,8 @@
   },
   "1.0.3": {
     "en": "Translations"
+  },
+  "1.0.4": {
+    "en": "Fixed case sensitive login"
   }
 }
