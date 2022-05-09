@@ -30,7 +30,7 @@ class AsusRouterDriver extends Homey.Driver {
     });
 
     session.setHandler('login', async (data: any) => {
-      username = data.username.toLowerCase().trim();
+      username = data.username.trim();
       password = data.password;
       client = new AsusWRTClient(routerIP, username, password);
       const tokenReceived = await client.login().catch(error => {
