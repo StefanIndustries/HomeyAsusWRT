@@ -40,7 +40,7 @@ class AsusRouterDriver extends Homey.Driver {
     });
 
     session.setHandler('list_devices', async () => {
-      const routerProductId = await client.getRouterProductId();
+      const routerProductId = await client.getRouterProductId().catch(error => Promise.reject(error));
       const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
       return [
         {

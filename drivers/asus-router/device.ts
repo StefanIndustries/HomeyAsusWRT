@@ -32,7 +32,7 @@ class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateWANStatus() {
-    const wanData = await this.client.getWANStatus();
+    const wanData = await this.client.getWANStatus().catch(error => Promise.reject(error));
     const routerConnected = wanData.status && wanData.status === 1 ? true : false;
     if (this.getCapabilityValue('wan_connected') !== routerConnected) {
       this.triggerWANConnectionStatusChanged(this, {wan_connected: routerConnected}, {});
@@ -46,7 +46,7 @@ class AsusRouterDevice extends Homey.Device {
 
   private async updateOnlineDevices() {
     const oldList = this.onlineDevices;
-    this.onlineDevices = await this.client.getOnlineClients();
+    this.onlineDevices = await this.client.getOnlineClients().catch(error => Promise.reject(error));
     this.onlineDevices.forEach(client => {
       if (oldList.length > 0) {
         if (!oldList.find(obj => {
@@ -82,24 +82,24 @@ class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateMemoryUsage() {
-    const memData = await this.client.getMemoryUsagePercentage();
+    const memData = await this.client.getMemoryUsagePercentage().catch(error => Promise.reject(error));
     this.setCapabilityValue('mem_used', memData);
   }
 
   private async updateCPUUsage() {
-    const cpuData = await this.client.getCPUUsagePercentage();
+    const cpuData = await this.client.getCPUUsagePercentage().catch(error => Promise.reject(error));
     this.setCapabilityValue('cpu_usage', cpuData);
   }
 
   private async updateUptime() {
-    const uptimeData = await this.client.getUptime();
+    const uptimeData = await this.client.getUptime().catch(error => Promise.reject(error));
     this.setCapabilityValue('uptime_seconds', uptimeData);
   }
 
   private async updateTrafficData() {
-    const trafficDataFirst = await this.client.getTotalTrafficData();
+    const trafficDataFirst = await this.client.getTotalTrafficData().catch(error => Promise.reject(error));
     await this.wait(2000);
-    const trafficDataSecond = await this.client.getTotalTrafficData();
+    const trafficDataSecond = await this.client.getTotalTrafficData().catch(error => Promise.reject(error));
     this.setCapabilityValue('traffic_total_received', trafficDataSecond.trafficReceived);
     this.setCapabilityValue('traffic_total_sent', trafficDataSecond.trafficSent);
     this.setCapabilityValue('realtime_download', trafficDataSecond.trafficReceived - trafficDataFirst.trafficReceived);
