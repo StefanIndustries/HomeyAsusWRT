@@ -13,5 +13,8 @@
   },
   "1.0.4": {
     "en": "Fixed case sensitive login"
+  },
+  "1.0.5": {
+    "en": "Added unexpected error handling"
   }
 }
