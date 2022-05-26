@@ -13,36 +13,47 @@ class AsusRouterDriver extends Homey.Driver {
   }
 
   async onPair(session: PairSession) {
+    this.log('starting a new pair session');
     let username = '';
     let password = '';
     let routerIP = '';
     let client: AsusWRTClient;
 
     session.setHandler('router_ip_confirmed', async (routerIPFromView) => {
+      this.log('pair: router_ip_confirmed');
       routerIP = routerIPFromView;
+      this.log(routerIP);
       const ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
       if (ipRegex.test(routerIP)) {
         routerIP = 'http://' + routerIP;
+        this.log(routerIP);
         return true;
       } else {
+        this.log('invalid ip provided');
         return false;
       }
     });
 
-    session.setHandler('login', async (data: any) => {
+    session.setHandler('login', async (data: {username: string, password: string}) => {
+      this.log('pair: login');
       username = data.username.trim();
       password = data.password;
+      this.log('creating client');
       client = new AsusWRTClient(routerIP, username, password);
       const tokenReceived = await client.login().catch(error => {
-        return false;
+        this.log('failed to login');
+        this.log(error);
+        client.dispose();
+        return error;
       });
       return tokenReceived && tokenReceived.includes('asus_token') ? true : false;
     });
 
     session.setHandler('list_devices', async () => {
+      this.log('pair: list_devices');
       const routerProductId = await client.getRouterProductId().catch(error => Promise.reject(error));
       const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
-      return [
+      const devices = [
         {
           name: routerProductId,
           data: {
@@ -54,6 +65,9 @@ class AsusRouterDriver extends Homey.Driver {
           icon: this.getIcon(routerProductId)
         }
       ];
+      this.log(devices);
+      client.dispose;
+      return devices;
     });
   }
 

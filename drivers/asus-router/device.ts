@@ -27,6 +27,7 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateLowPrioCapabilities() {
+    this.log('updateLowPrioCapabilities');
     await this.updateWANStatus();
     await this.updateMemoryUsage();
     await this.updateCPUUsage();
@@ -34,6 +35,7 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateHighPrioCapabilities() {
+    this.log('updateHighPrioCapabilities');
     await this.updateOnlineDevices();
     await this.updateTrafficData();
   }
@@ -188,6 +190,7 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private registerTriggers() {
+    this.log('registerTriggers');
     const deviceCameOnline = this.homey.flow.getDeviceTriggerCard('device-came-online');
 		this.triggerDeviceCameOnline = (device, tokens, state) => {
 			deviceCameOnline
@@ -218,6 +221,7 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private registerConditions() {
+    this.log('registerConditions');
     this.conditionDeviceIsConnected = this.homey.flow.getConditionCard('device-is-connected');
     this.conditionDeviceIsConnected
       .registerRunListener(async (args: any, state: any) => {
