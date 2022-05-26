@@ -5,7 +5,7 @@ import { CryptoClient } from '../../lib/CryptoClient';
 import { AsusWRTConnectedClient } from '../../lib/models/AsusWRTConnectedClient';
 import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 
-class AsusRouterDevice extends Homey.Device {
+export class AsusRouterDevice extends Homey.Device {
 
   private client!: AsusWRTClient;
   private lowPrioPollingIntervalID: any;
@@ -18,6 +18,13 @@ class AsusRouterDevice extends Homey.Device {
   private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
 
   private conditionDeviceIsConnected!: FlowCardCondition;
+
+  public async reboot() {
+    const rebootStatus = await this.client.reboot();
+    if (rebootStatus.run_service !== "reboot") {
+      return Promise.reject("Reboot failed");
+    }
+  }
 
   private async updateLowPrioCapabilities() {
     await this.updateWANStatus();

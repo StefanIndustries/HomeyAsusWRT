@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import qs from 'qs';
+import { AsusWRTApplyResponse } from './models/AsusWRTApplyResponse';
 import { AsusWRTConnectedClient } from './models/AsusWRTConnectedClient';
 import { AsusWRTTrafficData } from './models/AsusWRTTrafficData';
 import { AsusWRTWANStatus } from './models/AsusWRTWANStatus';
@@ -72,6 +73,19 @@ export class AsusWRTClient {
         } else {
             return result.data;
         }
+    }
+
+    private async applyapp(payload: any, stripText?: string): Promise<any> {
+        const path = '/applyapp.cgi';
+        const result = await axios({
+            method: 'POST',
+            url: path,
+            data: payload,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        return result.data;
     }
 
     public async getRouterProductId(): Promise<string> {
@@ -158,5 +172,10 @@ export class AsusWRTClient {
             }
         });
         return <AsusWRTWANStatus> status;
+    }
+
+    public async reboot(): Promise<AsusWRTApplyResponse> {
+        const rebootStatus = <AsusWRTApplyResponse> await this.applyapp({"action_mode": "apply", "rc_service": "reboot"});
+        return rebootStatus;
     }
 }

@@ -1,0 +1,15 @@
+{
+  "title": {
+    "en": "Reboot"
+  },
+  "hint": {
+    "en": "Reboots your router"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asus-router"
+    }
+  ]
+}
