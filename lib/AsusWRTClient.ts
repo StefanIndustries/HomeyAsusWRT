@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import qs from 'qs';
 import { AsusWRTApplyResponse } from './models/AsusWRTApplyResponse';
 import { AsusWRTConnectedClient } from './models/AsusWRTConnectedClient';
@@ -7,6 +7,8 @@ import { AsusWRTWANStatus } from './models/AsusWRTWANStatus';
 
 export class AsusWRTClient {
     private loginSessionStart: number | null = null;
+    private instance: AxiosInstance;
+    private controller = new AbortController();
 
     private isLoggedIn(): boolean {
         return this.loginSessionStart !== null;
@@ -20,10 +22,13 @@ export class AsusWRTClient {
     }
 
     constructor(private baseUrl: string, private username: string, private password: string) {
-        axios.defaults.baseURL = baseUrl;
-        axios.defaults.headers.common['User-Agent'] = 'asusrouter-Android-DUTUtil-1.0.0.3.58-163';
+        this.instance = axios.create({
+            baseURL: baseUrl,
+            timeout: 1000,
+            headers: {'User-Agent': 'asusrouter-Android-DUTUtil-1.0.0.3.58-163'}
+        });
         
-        axios.interceptors.request.use(async (request) => {
+        this.instance.interceptors.request.use(async (request) => {
             if (request.url !== '/login.cgi' && (!this.isLoggedIn() || this.isLoggedMoreThan10MinutesAgo())) {
                 const newToken = await this.login().catch(error => Promise.reject(error));
                 const originalRequestConfig = request;
@@ -35,9 +40,13 @@ export class AsusWRTClient {
           });
     }
 
+    public dispose() {
+        this.controller.abort();
+    }
+
     public async login(): Promise<any> {
         const path = '/login.cgi';
-        const result = await axios({
+        const result = await this.instance({
             method: 'POST',
             url: path,
             data: qs.stringify({
@@ -45,20 +54,21 @@ export class AsusWRTClient {
             }),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-            }
+            },
+            signal: this.controller.signal
         });
         if (!result.data.asus_token) {
-            return Promise.reject('no asus token found');
+            return Promise.reject(result.data);
         }
         const asusToken = `asus_token=${result.data.asus_token}`;
-        axios.defaults.headers.common['Cookie'] = asusToken;
+        this.instance.defaults.headers.common['Cookie'] = asusToken;
         this.loginSessionStart = Date.now();
         return asusToken;
     }
 
     private async appGet(payload: string, stripText?: string): Promise<any> {
         const path = '/appGet.cgi';
-        const result = await axios({
+        const result = await this.instance({
             method: 'POST',
             url: path,
             data: qs.stringify({
@@ -66,7 +76,8 @@ export class AsusWRTClient {
             }),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            },
+            signal: this.controller.signal
         });
         if (stripText) {
             return JSON.parse('{' + result.data.substring(stripText.length + 5));
@@ -77,13 +88,14 @@ export class AsusWRTClient {
 
     private async applyapp(payload: any, stripText?: string): Promise<any> {
         const path = '/applyapp.cgi';
-        const result = await axios({
+        const result = await this.instance({
             method: 'POST',
             url: path,
             data: payload,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            },
+            signal: this.controller.signal
         });
         return result.data;
     }
