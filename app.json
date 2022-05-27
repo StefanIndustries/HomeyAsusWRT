@@ -245,6 +245,38 @@
           }
         ],
         "id": "reboot"
+      },
+      {
+        "title": {
+          "en": "Turn off LEDs"
+        },
+        "hint": {
+          "en": "Turns off the leds of your router"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asus-router"
+          }
+        ],
+        "id": "turn-off-leds"
+      },
+      {
+        "title": {
+          "en": "Turn on LEDs"
+        },
+        "hint": {
+          "en": "Turns on the leds of your router"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asus-router"
+          }
+        ],
+        "id": "turn-on-leds"
       }
     ]
   },

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import qs from 'qs';
+import { AsusWRTApp } from '../app';
 import { AsusWRTApplyResponse } from './models/AsusWRTApplyResponse';
 import { AsusWRTConnectedClient } from './models/AsusWRTConnectedClient';
 import { AsusWRTTrafficData } from './models/AsusWRTTrafficData';
@@ -24,7 +25,7 @@ export class AsusWRTClient {
     constructor(private baseUrl: string, private username: string, private password: string) {
         this.instance = axios.create({
             baseURL: baseUrl,
-            timeout: 1000,
+            timeout: 10000,
             headers: {'User-Agent': 'asusrouter-Android-DUTUtil-1.0.0.3.58-163'}
         });
         
@@ -189,5 +190,10 @@ export class AsusWRTClient {
     public async reboot(): Promise<AsusWRTApplyResponse> {
         const rebootStatus = <AsusWRTApplyResponse> await this.applyapp({"action_mode": "apply", "rc_service": "reboot"});
         return rebootStatus;
+    }
+
+    public async setLEDs(ledValue: number): Promise<AsusWRTApplyResponse> {
+        const setLEDsStatus = <AsusWRTApplyResponse> await this.applyapp({"led_val": ledValue, "action_mode": "apply", "rc_service": "start_ctrl_led"});
+        return setLEDsStatus;
     }
 }

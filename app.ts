@@ -14,6 +14,18 @@ export class AsusWRTApp extends Homey.App {
       const device = <AsusRouterDevice> args.device;
       await device.reboot();
     });
+
+    const turnOnLeds = this.homey.flow.getActionCard('turn-on-leds');
+    turnOnLeds.registerRunListener(async (args) => {
+      const device = <AsusRouterDevice> args.device;
+      await device.setLEDs(1);
+    });
+
+    const turnOffLeds = this.homey.flow.getActionCard('turn-off-leds');
+    turnOffLeds.registerRunListener(async (args) => {
+      const device = <AsusRouterDevice> args.device;
+      await device.setLEDs(0);
+    });
   }
 }
 

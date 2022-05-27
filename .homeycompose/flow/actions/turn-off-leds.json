@@ -1,0 +1,15 @@
+{
+  "title": {
+    "en": "Turn off LEDs"
+  },
+  "hint": {
+    "en": "Turns off the leds of your router"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asus-router"
+    }
+  ]
+}

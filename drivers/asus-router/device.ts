@@ -26,6 +26,13 @@ export class AsusRouterDevice extends Homey.Device {
     }
   }
 
+  public async setLEDs(ledValue: number) {
+    const ledStatus = await this.client.setLEDs(ledValue);
+    if (ledStatus.run_service !== "start_ctrl_led") {
+      return Promise.reject("Setting leds failed");
+    }
+  }
+
   private async updateLowPrioCapabilities() {
     this.log('updateLowPrioCapabilities');
     await this.updateWANStatus();
