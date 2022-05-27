@@ -19,5 +19,8 @@
   },
   "1.0.6": {
     "en": "Added reboot action"
+  },
+  "1.0.7": {
+    "en": "Added LED actions"
   }
 }
