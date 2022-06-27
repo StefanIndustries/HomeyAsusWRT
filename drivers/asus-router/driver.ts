@@ -44,7 +44,7 @@ class AsusRouterDriver extends Homey.Driver {
         this.log('failed to login');
         this.log(error);
         client.dispose();
-        return error;
+        return Promise.reject(Error('Failed to login'));
       });
       return tokenReceived && tokenReceived.includes('asus_token') ? true : false;
     });
