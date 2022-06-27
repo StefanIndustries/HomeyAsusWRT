@@ -350,7 +350,183 @@
           "template": "login_credentials"
         }
       ],
-      "id": "asus-router"
+      "id": "asus-router",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Polling intervals"
+          },
+          "children": [
+            {
+              "id": "online_devices_polling_interval",
+              "type": "number",
+              "label": {
+                "en": "Online Devices"
+              },
+              "value": 60,
+              "min": 60,
+              "max": 300,
+              "units": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "traffic_data_polling_interval",
+              "type": "number",
+              "label": {
+                "en": "Traffic Data"
+              },
+              "value": 60,
+              "min": 60,
+              "max": 300,
+              "units": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "wan_status_polling_interval",
+              "type": "number",
+              "label": {
+                "en": "WAN Status"
+              },
+              "value": 300,
+              "min": 300,
+              "max": 900,
+              "units": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "memory_usage_polling_interval",
+              "type": "number",
+              "label": {
+                "en": "Memory Usage"
+              },
+              "value": 300,
+              "min": 300,
+              "max": 900,
+              "units": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "cpu_usage_polling_interval",
+              "type": "number",
+              "label": {
+                "en": "CPU Usage"
+              },
+              "value": 300,
+              "min": 300,
+              "max": 900,
+              "units": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "uptime_polling_interval",
+              "type": "number",
+              "label": {
+                "en": "Uptime"
+              },
+              "value": 300,
+              "min": 300,
+              "max": 900,
+              "units": {
+                "en": "seconds"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Shown capabilities in device overview"
+          },
+          "children": [
+            {
+              "id": "show_cpu_usage",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show CPU usage"
+              }
+            },
+            {
+              "id": "show_external_ip",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show external ip"
+              }
+            },
+            {
+              "id": "show_memory_usage",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show memory usage"
+              }
+            },
+            {
+              "id": "show_online_devices",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show online devices"
+              }
+            },
+            {
+              "id": "show_realtime_download",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show realtime download"
+              }
+            },
+            {
+              "id": "show_realtime_upload",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show realtime upload"
+              }
+            },
+            {
+              "id": "show_total_traffic_received",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show total traffic received"
+              }
+            },
+            {
+              "id": "show_total_traffic_sent",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show total traffic sent"
+              }
+            },
+            {
+              "id": "show_uptime",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show uptime"
+              }
+            },
+            {
+              "id": "show_wan_connected",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show WAN connected"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "capabilities": {
