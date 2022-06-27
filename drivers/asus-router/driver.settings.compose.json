@@ -1,0 +1,88 @@
+[
+    {
+        "type": "group",
+        "label": {
+            "en": "Polling intervals"
+        },
+        "children": [
+            {
+                "id": "online_devices_polling_interval",
+                "type": "number",
+                "label": {
+                    "en": "Online Devices"
+                },
+                "value": 60,
+                "min": 60,
+                "max": 300,
+                "units": {
+                    "en": "seconds"
+                }
+            },
+            {
+                "id": "traffic_data_polling_interval",
+                "type": "number",
+                "label": {
+                    "en": "Traffic Data"
+                },
+                "value": 60,
+                "min": 60,
+                "max": 300,
+                "units": {
+                    "en": "seconds"
+                }
+            },
+            {
+                "id": "wan_status_polling_interval",
+                "type": "number",
+                "label": {
+                    "en": "WAN Status"
+                },
+                "value": 300,
+                "min": 300,
+                "max": 900,
+                "units": {
+                    "en": "seconds"
+                }
+            },
+            {
+                "id": "memory_usage_polling_interval",
+                "type": "number",
+                "label": {
+                    "en": "Memory Usage"
+                },
+                "value": 300,
+                "min": 300,
+                "max": 900,
+                "units": {
+                    "en": "seconds"
+                }
+            },
+            {
+                "id": "cpu_usage_polling_interval",
+                "type": "number",
+                "label": {
+                    "en": "CPU Usage"
+                },
+                "value": 300,
+                "min": 300,
+                "max": 900,
+                "units": {
+                    "en": "seconds"
+                }
+            },
+            {
+                "id": "uptime_polling_interval",
+                "type": "number",
+                "label": {
+                    "en": "Uptime"
+                },
+                "value": 300,
+                "min": 300,
+                "max": 900,
+                "units": {
+                    "en": "seconds"
+                }
+            }
+        ]
+    }
+]

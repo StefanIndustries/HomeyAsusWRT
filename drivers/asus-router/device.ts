@@ -8,8 +8,12 @@ import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 export class AsusRouterDevice extends Homey.Device {
 
   private client!: AsusWRTClient;
-  private lowPrioPollingIntervalID: any;
-  private highPrioPollingIntervalID: any;
+  private onlineDevicesPollingInterval: any;
+  private updateTrafficDataPollingInterval: any;
+  private wanStatusPollingInterval: any;
+  private memoryUsagePollingInterval: any;
+  private cpuUsagePollingInterval: any;
+  private uptimePollingInterval: any;
   private onlineDevices: AsusWRTConnectedClient[] = [];
 
   private triggerDeviceCameOnline!: (device: any, tokens: any, state: any) => void;
@@ -33,21 +37,18 @@ export class AsusRouterDevice extends Homey.Device {
     }
   }
 
-  private async updateLowPrioCapabilities() {
-    this.log('updateLowPrioCapabilities');
+  private async updateAllCapabilities() {
+    this.log('Force updating all capabilities');
     await this.updateWANStatus();
     await this.updateMemoryUsage();
     await this.updateCPUUsage();
     await this.updateUptime();
-  }
-
-  private async updateHighPrioCapabilities() {
-    this.log('updateHighPrioCapabilities');
     await this.updateOnlineDevices();
     await this.updateTrafficData();
   }
 
   private async updateWANStatus() {
+    this.log('updatingWanStatus');
     const wanData = await this.client.getWANStatus().catch(error => Promise.reject(error));
     const routerConnected = wanData.status && wanData.status === 1 ? true : false;
     if (this.getCapabilityValue('wan_connected') !== routerConnected) {
@@ -63,6 +64,7 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateOnlineDevices() {
+    this.log('updatingOnlineDevices');
     const oldList = this.onlineDevices;
     this.onlineDevices = await this.client.getOnlineClients().catch(error => Promise.reject(error));
     this.onlineDevices.forEach(client => {
@@ -100,21 +102,25 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private async updateMemoryUsage() {
+    this.log('updatingMemoryUsage');
     const memData = await this.client.getMemoryUsagePercentage().catch(error => Promise.reject(error));
     this.setCapabilityValue('mem_used', memData);
   }
 
   private async updateCPUUsage() {
+    this.log('updatingCPUUsage');
     const cpuData = await this.client.getCPUUsagePercentage().catch(error => Promise.reject(error));
     this.setCapabilityValue('cpu_usage', cpuData);
   }
 
   private async updateUptime() {
+    this.log('updatingUptime');
     const uptimeData = await this.client.getUptime().catch(error => Promise.reject(error));
     this.setCapabilityValue('uptime_seconds', uptimeData);
   }
 
   private async updateTrafficData() {
+    this.log('updatingTrafficData');
     const trafficDataFirst = await this.client.getTotalTrafficData().catch(error => Promise.reject(error));
     await this.wait(2000);
     const trafficDataSecond = await this.client.getTotalTrafficData().catch(error => Promise.reject(error));
@@ -129,22 +135,52 @@ export class AsusRouterDevice extends Homey.Device {
   }
 
   private startPolling() {
-    this.stopPolling();
-    this.lowPrioPollingIntervalID = this.homey.setInterval(async () => {
-      await this.updateLowPrioCapabilities();
-    }, 300000); // 5 minutes
+    this.log('Starting Polling Intervals');
+    const settings = this.getSettings();
+    this.onlineDevicesPollingInterval = this.homey.setInterval(async () => {
+      await this.updateOnlineDevices();
+    }, settings.online_devices_polling_interval * 1000);
 
-    this.highPrioPollingIntervalID = this.homey.setInterval(async () => {
-      await this.updateHighPrioCapabilities();
-    }, 60000); // 1 minute
+    this.updateTrafficDataPollingInterval = this.homey.setInterval(async () => {
+      await this.updateTrafficData();
+    }, settings.traffic_data_polling_interval * 1000);
+
+    this.wanStatusPollingInterval = this.homey.setInterval(async () => {
+      await this.updateWANStatus();
+    }, settings.wan_status_polling_interval * 1000);
+
+    this.memoryUsagePollingInterval = this.homey.setInterval(async () => {
+      await this.updateMemoryUsage();
+    }, settings.memory_usage_polling_interval * 1000);
+
+    this.cpuUsagePollingInterval = this.homey.setInterval(async () => {
+      await this.updateCPUUsage();
+    }, settings.cpu_usage_polling_interval * 1000);
+
+    this.uptimePollingInterval = this.homey.setInterval(async () => {
+      await this.updateUptime();
+    }, settings.uptime_polling_interval * 1000);
   }
 
   private stopPolling() {
-    if (this.lowPrioPollingIntervalID) {
-      this.homey.clearInterval(this.lowPrioPollingIntervalID);
+    this.log('Stopping Polling Intervals');
+    if (this.onlineDevicesPollingInterval) {
+      this.homey.clearInterval(this.onlineDevicesPollingInterval);
     }
-    if (this.highPrioPollingIntervalID) {
-      this.homey.clearInterval(this.highPrioPollingIntervalID);
+    if (this.updateTrafficDataPollingInterval) {
+      this.homey.clearInterval(this.updateTrafficDataPollingInterval);
+    }
+    if (this.wanStatusPollingInterval) {
+      this.homey.clearInterval(this.wanStatusPollingInterval);
+    }
+    if (this.memoryUsagePollingInterval) {
+      this.homey.clearInterval(this.memoryUsagePollingInterval);
+    }
+    if (this.cpuUsagePollingInterval) {
+      this.homey.clearInterval(this.cpuUsagePollingInterval);
+    }
+    if (this.uptimePollingInterval) {
+      this.homey.clearInterval(this.uptimePollingInterval);
     }
   }
 
@@ -156,8 +192,7 @@ export class AsusRouterDevice extends Homey.Device {
     this.registerConditions();
     const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
     this.client = new AsusWRTClient(this.getData().ip, cryptoClient.decrypt(this.getData().username), cryptoClient.decrypt(this.getData().password));
-    await this.updateLowPrioCapabilities();
-    await this.updateHighPrioCapabilities();
+    await this.updateAllCapabilities();
     this.startPolling();
     this.log('AsusRouterDevice has been initialized');
   }
@@ -177,8 +212,10 @@ export class AsusRouterDevice extends Homey.Device {
    * @param {string[]} event.changedKeys An array of keys changed since the previous version
    * @returns {Promise<string|void>} return a custom message that will be displayed
    */
-  async onSettings({ oldSettings: { }, newSettings: { }, changedKeys: { } }): Promise<string | void> {
+  async onSettings(event: { oldSettings: { }, newSettings: any, changedKeys: { } }): Promise<string | void> {
     this.log('AsusRouterDevice settings where changed');
+    this.stopPolling();
+    this.startPolling();
   }
 
   /**
