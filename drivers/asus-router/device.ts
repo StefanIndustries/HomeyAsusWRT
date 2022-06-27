@@ -53,11 +53,13 @@ export class AsusRouterDevice extends Homey.Device {
     if (this.getCapabilityValue('wan_connected') !== routerConnected) {
       this.triggerWANConnectionStatusChanged(this, {wan_connected: routerConnected}, {});
     }
-    if (this.getCapabilityValue('external_ip') !== wanData.ipaddr) {
-      this.triggerExternalIPChanged(this, {external_ip: wanData.ipaddr}, {});
+    if (wanData.ipaddr && wanData.ipaddr !== '') {
+      if (this.getCapabilityValue('external_ip') !== wanData.ipaddr) {
+        this.triggerExternalIPChanged(this, {external_ip: wanData.ipaddr}, {});
+      }
+      this.setCapabilityValue('external_ip', wanData.ipaddr);
     }
     this.setCapabilityValue('wan_connected', routerConnected);
-    this.setCapabilityValue('external_ip', wanData.ipaddr);
   }
 
   private async updateOnlineDevices() {
