@@ -215,28 +215,7 @@ export class AsusRouterDevice extends Homey.Device {
   async onSettings(event: { oldSettings: { }, newSettings: any, changedKeys: { } }): Promise<string | void> {
     this.log('AsusRouterDevice settings where changed');
     this.stopPolling();
-   
-    this.log('Adding capabilities to device overview');
-    this.setCapabilityVisibility('cpu_usage', event.newSettings.show_cpu_usage);
-    this.setCapabilityVisibility('external_ip', event.newSettings.show_external_ip);
-    this.setCapabilityVisibility('mem_used', event.newSettings.show_memory_usage);
-    this.setCapabilityVisibility('online_devices', event.newSettings.show_online_devices);
-    this.setCapabilityVisibility('realtime_download', event.newSettings.show_realtime_download);
-    this.setCapabilityVisibility('realtime_upload', event.newSettings.show_realtime_upload);
-    this.setCapabilityVisibility('traffic_total_received', event.newSettings.show_total_traffic_received);
-    this.setCapabilityVisibility('traffic_total_sent', event.newSettings.show_total_traffic_sent);
-    this.setCapabilityVisibility('uptime_seconds', event.newSettings.show_uptime);
-    this.setCapabilityVisibility('wan_connected', event.newSettings.show_wan_connected);
-
     this.startPolling();
-  }
-
-  private setCapabilityVisibility(capability: string, visible: boolean) {
-    let options = this.getCapabilityOptions(capability);
-    options.uiComponent = visible ? 'sensor' : null;
-    console.log(capability);
-    console.log(options);
-    this.setCapabilityOptions(capability, options);
   }
 
   /**
