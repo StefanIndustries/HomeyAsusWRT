@@ -22,5 +22,8 @@
   },
   "1.0.7": {
     "en": "Added LED actions"
+  },
+  "1.0.8": {
+    "en": "WAN address change better detected. Polling interval now settable in device settings."
   }
 }
