@@ -28,7 +28,7 @@ export class AsusWRTClient {
             timeout: 10000,
             headers: {'User-Agent': 'asusrouter-Android-DUTUtil-1.0.0.3.58-163'}
         });
-        
+
         this.instance.interceptors.request.use(async (request) => {
             if (request.url !== '/login.cgi' && (!this.isLoggedIn() || this.isLoggedMoreThan10MinutesAgo())) {
                 const newToken = await this.login().catch(error => Promise.reject(error));

@@ -1,9 +1,10 @@
 import Homey, { FlowCardCondition } from 'homey';
+import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
 import { AsusWRTApp } from '../../app';
 import { CryptoClient } from '../../lib/CryptoClient';
 import { AsusWRTConnectedClient } from '../../lib/models/AsusWRTConnectedClient';
-import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
+import { AsusWRTOperationMode } from '../../lib/models/AsusWRTOperationMode';
 
 export class AsusRouterDevice extends Homey.Device {
 
@@ -25,20 +26,20 @@ export class AsusRouterDevice extends Homey.Device {
 
   public async reboot() {
     const rebootStatus = await this.client.reboot();
-    if (rebootStatus.run_service !== "reboot") {
-      return Promise.reject("Reboot failed");
+    if (rebootStatus.run_service !== 'reboot') {
+      return Promise.reject('Reboot failed');
     }
   }
 
   public async setLEDs(ledValue: number) {
     const ledStatus = await this.client.setLEDs(ledValue);
-    if (ledStatus.run_service !== "start_ctrl_led") {
-      return Promise.reject("Setting leds failed");
+    if (ledStatus.run_service !== 'start_ctrl_led') {
+      return Promise.reject('Setting leds failed');
     }
   }
 
-  private async updateAllCapabilities() {
-    this.log('Force updating all capabilities');
+  private async updateRouterCapabilities() {
+    this.log('Force updating router capabilities');
     await this.updateWANStatus();
     await this.updateMemoryUsage();
     await this.updateCPUUsage();
@@ -47,16 +48,24 @@ export class AsusRouterDevice extends Homey.Device {
     await this.updateTrafficData();
   }
 
+  private async updateAccessPointCapabilities() {
+    this.log('Force updating router capabilities');
+    await this.updateMemoryUsage();
+    await this.updateCPUUsage();
+    await this.updateUptime();
+    await this.updateOnlineDevices();
+  }
+
   private async updateWANStatus() {
     this.log('updatingWanStatus');
     const wanData = await this.client.getWANStatus().catch(error => Promise.reject(error));
-    const routerConnected = wanData.status && wanData.status === 1 ? true : false;
+    const routerConnected = !!(wanData.status && wanData.status === 1);
     if (this.getCapabilityValue('wan_connected') !== routerConnected) {
-      this.triggerWANConnectionStatusChanged(this, {wan_connected: routerConnected}, {});
+      this.triggerWANConnectionStatusChanged(this, { wan_connected: routerConnected }, {});
     }
     if (wanData.ipaddr && wanData.ipaddr !== '') {
       if (this.getCapabilityValue('external_ip') !== wanData.ipaddr) {
-        this.triggerExternalIPChanged(this, {external_ip: wanData.ipaddr}, {});
+        this.triggerExternalIPChanged(this, { external_ip: wanData.ipaddr }, {});
       }
       this.setCapabilityValue('external_ip', wanData.ipaddr);
     }
@@ -76,7 +85,7 @@ export class AsusRouterDevice extends Homey.Device {
             name: client.name,
             ip: client.ip,
             mac: client.mac,
-            nickname: client.nickName
+            nickname: client.nickName,
           };
           this.triggerDeviceCameOnline(this, tokens, {});
         }
@@ -92,7 +101,7 @@ export class AsusRouterDevice extends Homey.Device {
             name: oldClient.name,
             ip: oldClient.ip,
             mac: oldClient.mac,
-            nickname: oldClient.nickName
+            nickname: oldClient.nickName,
           };
           this.triggerDeviceWentOffline(this, tokens, {});
         }
@@ -141,13 +150,15 @@ export class AsusRouterDevice extends Homey.Device {
       await this.updateOnlineDevices();
     }, settings.online_devices_polling_interval * 1000);
 
-    this.updateTrafficDataPollingInterval = this.homey.setInterval(async () => {
-      await this.updateTrafficData();
-    }, settings.traffic_data_polling_interval * 1000);
+    if (this.getStore().operationMode !== AsusWRTOperationMode.AccessPoint) {
+      this.updateTrafficDataPollingInterval = this.homey.setInterval(async () => {
+        await this.updateTrafficData();
+      }, settings.traffic_data_polling_interval * 1000);
 
-    this.wanStatusPollingInterval = this.homey.setInterval(async () => {
-      await this.updateWANStatus();
-    }, settings.wan_status_polling_interval * 1000);
+      this.wanStatusPollingInterval = this.homey.setInterval(async () => {
+        await this.updateWANStatus();
+      }, settings.wan_status_polling_interval * 1000);
+    }
 
     this.memoryUsagePollingInterval = this.homey.setInterval(async () => {
       await this.updateMemoryUsage();
@@ -192,7 +203,39 @@ export class AsusRouterDevice extends Homey.Device {
     this.registerConditions();
     const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
     this.client = new AsusWRTClient(this.getData().ip, cryptoClient.decrypt(this.getData().username), cryptoClient.decrypt(this.getData().password));
-    await this.updateAllCapabilities();
+
+    let operationMode = this.getStore().operationMode;
+    if (!operationMode) {
+      const wanData = await this.client.getWANStatus();
+      operationMode = wanData.status && wanData.status === 1 ? AsusWRTOperationMode.Router : AsusWRTOperationMode.AccessPoint;
+      switch (operationMode) {
+        case AsusWRTOperationMode.Router:
+          break;
+        case AsusWRTOperationMode.AccessPoint:
+          break;
+        default:
+          break;
+      }
+      this.setStoreValue('operationMode', operationMode);
+    }
+
+    switch (operationMode) {
+      case AsusWRTOperationMode.Router:
+        await this.updateRouterCapabilities();
+        break;
+      case AsusWRTOperationMode.AccessPoint:
+        await this.updateAccessPointCapabilities();
+        await this.removeCapability('realtime_download');
+        await this.removeCapability('realtime_upload');
+        await this.removeCapability('external_ip');
+        await this.removeCapability('wan_connected');
+        await this.removeCapability('traffic_total_received');
+        await this.removeCapability('traffic_total_sent');
+        break;
+      default:
+        await this.updateRouterCapabilities();
+        break;
+    }
     this.startPolling();
     this.log('AsusRouterDevice has been initialized');
   }
@@ -238,32 +281,32 @@ export class AsusRouterDevice extends Homey.Device {
   private registerTriggers() {
     this.log('registerTriggers');
     const deviceCameOnline = this.homey.flow.getDeviceTriggerCard('device-came-online');
-		this.triggerDeviceCameOnline = (device, tokens, state) => {
-			deviceCameOnline
-				.trigger(device, tokens, state)
-				.catch(this.error);
-		};
+    this.triggerDeviceCameOnline = (device, tokens, state) => {
+      deviceCameOnline
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    };
 
     const deviceWentOffline = this.homey.flow.getDeviceTriggerCard('device-went-offline');
     this.triggerDeviceWentOffline = (device, tokens, state) => {
       deviceWentOffline
         .trigger(device, tokens, state)
         .catch(this.error);
-    }
+    };
 
     const wanConnectionStatusChanged = this.homey.flow.getDeviceTriggerCard('wan-connection-status-changed');
     this.triggerWANConnectionStatusChanged = (device, tokens, state) => {
       wanConnectionStatusChanged
         .trigger(device, tokens, state)
         .catch(this.error);
-    }
+    };
 
     const externalIPChanged = this.homey.flow.getDeviceTriggerCard('external-ip-changed');
     this.triggerExternalIPChanged = (device, tokens, state) => {
       externalIPChanged
         .trigger(device, tokens, state)
         .catch(this.error);
-    }
+    };
   }
 
   private registerConditions() {
@@ -274,9 +317,8 @@ export class AsusRouterDevice extends Homey.Device {
         await this.updateOnlineDevices();
         if (this.onlineDevices.find(device => device.ip === args.client.ip)) {
           return true;
-        } else {
-          return false;
         }
+        return false;
       })
       .registerArgumentAutocompleteListener('client', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
         const searchFor = query.toUpperCase();
@@ -284,11 +326,12 @@ export class AsusRouterDevice extends Homey.Device {
           return device.ip.toUpperCase().includes(searchFor) || device.name.toUpperCase().includes(searchFor) || device.nickName.toUpperCase().includes(searchFor);
         });
         const results: ArgumentAutocompleteResults = [
-          ...devicesInQuery.map(device => ({name: device.name, ip: device.ip, description: device.ip}))
-        ]
+          ...devicesInQuery.map(device => ({ name: device.name, ip: device.ip, description: device.ip })),
+        ];
         return results;
       });
   }
+
 }
 
 module.exports = AsusRouterDevice;

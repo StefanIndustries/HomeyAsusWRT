@@ -2,6 +2,7 @@ import Homey from 'homey';
 import PairSession from 'homey/lib/PairSession';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
 import { CryptoClient } from '../../lib/CryptoClient';
+import { AsusWRTOperationMode } from "../../lib/models/AsusWRTOperationMode";
 
 class AsusRouterDriver extends Homey.Driver {
 
@@ -60,7 +61,7 @@ class AsusRouterDriver extends Homey.Driver {
             id: routerProductId + '-' + routerIP,
             username: cryptoClient.encrypt(username),
             password: cryptoClient.encrypt(password),
-            ip: routerIP
+            ip: routerIP,
           },
           icon: this.getIcon(routerProductId)
         }
@@ -72,8 +73,6 @@ class AsusRouterDriver extends Homey.Driver {
   }
 
   private getIcon(productId: string): string {
-    console.log(productId);
-    console.log(`${productId}.svg`);
     const supportedIcons = [
       'RT-AX89U',
       'RT-AX89X',
