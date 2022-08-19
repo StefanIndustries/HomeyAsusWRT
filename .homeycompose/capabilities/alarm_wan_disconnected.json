@@ -1,0 +1,10 @@
+{
+    "type": "boolean",
+    "getable": true,
+    "setable": false,
+    "insights": true,
+    "title": {
+      "en": "WAN Disconnected"
+    },
+    "icon": "./assets/cap_wan_connected.svg"
+}

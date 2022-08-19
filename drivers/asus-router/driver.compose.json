@@ -4,16 +4,17 @@
   },
   "class": "other",
   "capabilities": [
-    "cpu_usage",
+    "onoff",
+    "meter_cpu_usage",
     "external_ip",
-    "mem_used",
-    "online_devices",
+    "meter_mem_used",
+    "meter_online_devices",
     "realtime_download",
     "realtime_upload",
     "traffic_total_received",
     "traffic_total_sent",
     "uptime_seconds",
-    "wan_connected"
+    "alarm_wan_disconnected"
   ],
   "platforms": [
     "local"

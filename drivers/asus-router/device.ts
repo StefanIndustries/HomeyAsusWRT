@@ -60,7 +60,7 @@ export class AsusRouterDevice extends Homey.Device {
     this.log('updatingWanStatus');
     const wanData = await this.client.getWANStatus().catch(error => Promise.reject(error));
     const routerConnected = !!(wanData.status && wanData.status === 1);
-    if (this.getCapabilityValue('wan_connected') !== routerConnected) {
+    if (this.getCapabilityValue('alarm_wan_disconnected') !== !routerConnected) {
       this.triggerWANConnectionStatusChanged(this, { wan_connected: routerConnected }, {});
     }
     if (wanData.ipaddr && wanData.ipaddr !== '') {
@@ -69,7 +69,7 @@ export class AsusRouterDevice extends Homey.Device {
       }
       this.setCapabilityValue('external_ip', wanData.ipaddr);
     }
-    this.setCapabilityValue('wan_connected', routerConnected);
+    this.setCapabilityValue('alarm_wan_disconnected', !routerConnected);
   }
 
   private async updateOnlineDevices() {
@@ -107,19 +107,19 @@ export class AsusRouterDevice extends Homey.Device {
         }
       });
     }
-    this.setCapabilityValue('online_devices', this.onlineDevices.length);
+    this.setCapabilityValue('meter_online_devices', this.onlineDevices.length);
   }
 
   private async updateMemoryUsage() {
     this.log('updatingMemoryUsage');
     const memData = await this.client.getMemoryUsagePercentage().catch(error => Promise.reject(error));
-    this.setCapabilityValue('mem_used', memData);
+    this.setCapabilityValue('meter_mem_used', memData);
   }
 
   private async updateCPUUsage() {
     this.log('updatingCPUUsage');
     const cpuData = await this.client.getCPUUsagePercentage().catch(error => Promise.reject(error));
-    this.setCapabilityValue('cpu_usage', cpuData);
+    this.setCapabilityValue('meter_cpu_usage', cpuData);
   }
 
   private async updateUptime() {
@@ -204,33 +204,37 @@ export class AsusRouterDevice extends Homey.Device {
     const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
     this.client = new AsusWRTClient(this.getData().ip, cryptoClient.decrypt(this.getData().username), cryptoClient.decrypt(this.getData().password));
 
-    let operationMode = this.getStore().operationMode;
+    let { operationMode } = this.getStore();
     if (!operationMode) {
       const wanData = await this.client.getWANStatus();
       operationMode = wanData.status && wanData.status === 1 ? AsusWRTOperationMode.Router : AsusWRTOperationMode.AccessPoint;
-      switch (operationMode) {
-        case AsusWRTOperationMode.Router:
-          break;
-        case AsusWRTOperationMode.AccessPoint:
-          break;
-        default:
-          break;
-      }
+      const capabilities = this.getCapabilities();
+      capabilities.forEach(cap => {
+        if (['cpu_usage', 'mem_used', 'online_devices', 'wan_connected'].indexOf(cap) > 0) {
+          this.removeCapability(cap);
+        }
+      });
+
+      capabilities.forEach(cap => {
+        if (['meter_cpu_usage', 'meter_mem_used', 'meter_online_devices', 'alarm_wan_disconnected'].indexOf(cap) === -1) {
+          this.addCapability(cap);
+        }
+      });
       this.setStoreValue('operationMode', operationMode);
     }
 
+    const capabilities = this.getCapabilities();
     switch (operationMode) {
       case AsusWRTOperationMode.Router:
         await this.updateRouterCapabilities();
         break;
       case AsusWRTOperationMode.AccessPoint:
+        capabilities.forEach(cap => {
+          if (['realtime_download', 'realtime_upload', 'external_ip', 'alarm_wan_disconnected', 'traffic_total_received', 'traffic_total_sent'].indexOf(cap) > 0) {
+            this.removeCapability(cap);
+          }
+        });
         await this.updateAccessPointCapabilities();
-        await this.removeCapability('realtime_download');
-        await this.removeCapability('realtime_upload');
-        await this.removeCapability('external_ip');
-        await this.removeCapability('wan_connected');
-        await this.removeCapability('traffic_total_received');
-        await this.removeCapability('traffic_total_sent');
         break;
       default:
         await this.updateRouterCapabilities();

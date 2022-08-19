@@ -287,16 +287,17 @@
       },
       "class": "other",
       "capabilities": [
-        "cpu_usage",
+        "onoff",
+        "meter_cpu_usage",
         "external_ip",
-        "mem_used",
-        "online_devices",
+        "meter_mem_used",
+        "meter_online_devices",
         "realtime_download",
         "realtime_upload",
         "traffic_total_received",
         "traffic_total_sent",
         "uptime_seconds",
-        "wan_connected"
+        "alarm_wan_disconnected"
       ],
       "platforms": [
         "local"
@@ -442,6 +443,16 @@
     }
   ],
   "capabilities": {
+    "alarm_wan_disconnected": {
+      "type": "boolean",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "title": {
+        "en": "WAN Disconnected"
+      },
+      "icon": "./assets/cap_wan_connected.svg"
+    },
     "cpu_usage": {
       "type": "number",
       "title": {
@@ -478,6 +489,44 @@
       "decimals": 0,
       "insights": true,
       "icon": "./assets/cap_mem_used.svg"
+    },
+    "meter_cpu_usage": {
+      "type": "number",
+      "title": {
+        "en": "CPU Usage"
+      },
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "decimals": 0,
+      "insights": true,
+      "icon": "./assets/cap_cpu_usage.svg"
+    },
+    "meter_mem_used": {
+      "type": "number",
+      "title": {
+        "en": "Memory Usage"
+      },
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "decimals": 0,
+      "insights": true,
+      "icon": "./assets/cap_mem_used.svg"
+    },
+    "meter_online_devices": {
+      "type": "number",
+      "title": {
+        "en": "Online Devices"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "./assets/cap_online_devices.svg"
     },
     "online_devices": {
       "type": "number",
