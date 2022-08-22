@@ -39,6 +39,13 @@ export class AsusWRTClient {
             }
             return request;
           });
+
+        this.instance.interceptors.response.use(
+            config => config,
+            error => {
+                return Promise.reject(error);
+            }
+        );
     }
 
     public dispose() {

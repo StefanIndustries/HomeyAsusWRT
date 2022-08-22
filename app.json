@@ -287,19 +287,7 @@
         "en": "Asus Router"
       },
       "class": "other",
-      "capabilities": [
-        "onoff",
-        "meter_cpu_usage",
-        "external_ip",
-        "meter_mem_used",
-        "meter_online_devices",
-        "realtime_download",
-        "realtime_upload",
-        "traffic_total_received",
-        "traffic_total_sent",
-        "uptime_seconds",
-        "alarm_wan_disconnected"
-      ],
+      "capabilities": [],
       "platforms": [
         "local"
       ],

@@ -1,7 +1,6 @@
 import Homey, { FlowCardCondition } from 'homey';
 import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
-import { AsusWRTApp } from '../../app';
 import { CryptoClient } from '../../lib/CryptoClient';
 import { AsusWRTConnectedClient } from '../../lib/models/AsusWRTConnectedClient';
 import { AsusWRTOperationMode } from '../../lib/models/AsusWRTOperationMode';
@@ -24,6 +23,26 @@ export class AsusRouterDevice extends Homey.Device {
 
   private conditionDeviceIsConnected!: FlowCardCondition;
 
+  static routerCapabilities = [
+    'alarm_wan_disconnected',
+    'external_ip',
+    'meter_cpu_usage',
+    'meter_mem_used',
+    'meter_online_devices',
+    'realtime_download',
+    'realtime_upload',
+    'traffic_total_received',
+    'traffic_total_sent',
+    'uptime_seconds',
+  ];
+
+  static accessPointCapabilities = [
+    'meter_cpu_usage',
+    'meter_mem_used',
+    'meter_online_devices',
+    'uptime_seconds',
+  ];
+
   public async reboot() {
     const rebootStatus = await this.client.reboot();
     if (rebootStatus.run_service !== 'reboot') {
@@ -36,24 +55,6 @@ export class AsusRouterDevice extends Homey.Device {
     if (ledStatus.run_service !== 'start_ctrl_led') {
       return Promise.reject('Setting leds failed');
     }
-  }
-
-  private async updateRouterCapabilities() {
-    this.log('Force updating router capabilities');
-    await this.updateWANStatus();
-    await this.updateMemoryUsage();
-    await this.updateCPUUsage();
-    await this.updateUptime();
-    await this.updateOnlineDevices();
-    await this.updateTrafficData();
-  }
-
-  private async updateAccessPointCapabilities() {
-    this.log('Force updating router capabilities');
-    await this.updateMemoryUsage();
-    await this.updateCPUUsage();
-    await this.updateUptime();
-    await this.updateOnlineDevices();
   }
 
   private async updateWANStatus() {
@@ -143,22 +144,12 @@ export class AsusRouterDevice extends Homey.Device {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
-  private startPolling() {
+  private startPolling(operationMode: AsusWRTOperationMode) {
     this.log('Starting Polling Intervals');
     const settings = this.getSettings();
     this.onlineDevicesPollingInterval = this.homey.setInterval(async () => {
       await this.updateOnlineDevices();
     }, settings.online_devices_polling_interval * 1000);
-
-    if (this.getStore().operationMode !== AsusWRTOperationMode.AccessPoint) {
-      this.updateTrafficDataPollingInterval = this.homey.setInterval(async () => {
-        await this.updateTrafficData();
-      }, settings.traffic_data_polling_interval * 1000);
-
-      this.wanStatusPollingInterval = this.homey.setInterval(async () => {
-        await this.updateWANStatus();
-      }, settings.wan_status_polling_interval * 1000);
-    }
 
     this.memoryUsagePollingInterval = this.homey.setInterval(async () => {
       await this.updateMemoryUsage();
@@ -171,6 +162,16 @@ export class AsusRouterDevice extends Homey.Device {
     this.uptimePollingInterval = this.homey.setInterval(async () => {
       await this.updateUptime();
     }, settings.uptime_polling_interval * 1000);
+
+    if (operationMode === AsusWRTOperationMode.Router) {
+      this.updateTrafficDataPollingInterval = this.homey.setInterval(async () => {
+        await this.updateTrafficData();
+      }, settings.traffic_data_polling_interval * 1000);
+
+      this.wanStatusPollingInterval = this.homey.setInterval(async () => {
+        await this.updateWANStatus();
+      }, settings.wan_status_polling_interval * 1000);
+    }
   }
 
   private stopPolling() {
@@ -204,44 +205,52 @@ export class AsusRouterDevice extends Homey.Device {
     const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
     this.client = new AsusWRTClient(this.getData().ip, cryptoClient.decrypt(this.getData().username), cryptoClient.decrypt(this.getData().password));
 
-    let { operationMode } = this.getStore();
-    if (!operationMode) {
-      const wanData = await this.client.getWANStatus();
-      operationMode = wanData.status && wanData.status === 1 ? AsusWRTOperationMode.Router : AsusWRTOperationMode.AccessPoint;
-      const capabilities = this.getCapabilities();
-      capabilities.forEach(cap => {
-        if (['cpu_usage', 'mem_used', 'online_devices', 'wan_connected'].indexOf(cap) > 0) {
-          this.removeCapability(cap);
-        }
-      });
+    const wanData = await this.client.getWANStatus();
+    const operationMode = wanData.status && wanData.status === 1 ? AsusWRTOperationMode.Router : AsusWRTOperationMode.AccessPoint;
+    await this.setCapabilities(operationMode);
+    this.startPolling(operationMode);
+    this.log('AsusRouterDevice has been initialized');
+  }
 
-      capabilities.forEach(cap => {
-        if (['meter_cpu_usage', 'meter_mem_used', 'meter_online_devices', 'alarm_wan_disconnected'].indexOf(cap) === -1) {
-          this.addCapability(cap);
-        }
-      });
-      this.setStoreValue('operationMode', operationMode);
-    }
-
-    const capabilities = this.getCapabilities();
+  private async setCapabilities(operationMode: AsusWRTOperationMode) {
+    this.log('setting capabilities');
     switch (operationMode) {
       case AsusWRTOperationMode.Router:
-        await this.updateRouterCapabilities();
+        this.log('setting router capabilities');
+        await this.addRouterCapabilities();
         break;
       case AsusWRTOperationMode.AccessPoint:
-        capabilities.forEach(cap => {
-          if (['realtime_download', 'realtime_upload', 'external_ip', 'alarm_wan_disconnected', 'traffic_total_received', 'traffic_total_sent'].indexOf(cap) > 0) {
-            this.removeCapability(cap);
-          }
-        });
-        await this.updateAccessPointCapabilities();
+        this.log('setting access point capabilities');
+        await this.addAccessPointCapabilities();
         break;
       default:
-        await this.updateRouterCapabilities();
+        this.log('Unknown operation mode');
         break;
     }
-    this.startPolling();
-    this.log('AsusRouterDevice has been initialized');
+  }
+
+  private async addRouterCapabilities() {
+    AsusRouterDevice.routerCapabilities.forEach(async cap => {
+      this.log(cap);
+      if (!this.hasCapability(cap)) {
+        await this.addCapability(cap);
+      }
+    });
+  }
+
+  private async addAccessPointCapabilities() {
+    AsusRouterDevice.accessPointCapabilities.forEach(async cap => {
+      this.log(cap);
+      if (!this.hasCapability(cap)) {
+        await this.addCapability(cap);
+      }
+    });
+
+    AsusRouterDevice.routerCapabilities.forEach(async cap => {
+      if (AsusRouterDevice.accessPointCapabilities.indexOf(cap) === -1 && this.hasCapability(cap)) {
+          await this.removeCapability(cap);
+      }
+    });
   }
 
   /**
@@ -262,7 +271,9 @@ export class AsusRouterDevice extends Homey.Device {
   async onSettings(event: { oldSettings: { }, newSettings: any, changedKeys: { } }): Promise<string | void> {
     this.log('AsusRouterDevice settings where changed');
     this.stopPolling();
-    this.startPolling();
+    const wanData = await this.client.getWANStatus();
+    const operationMode = wanData.status && wanData.status === 1 ? AsusWRTOperationMode.Router : AsusWRTOperationMode.AccessPoint;
+    this.startPolling(operationMode);
   }
 
   /**
