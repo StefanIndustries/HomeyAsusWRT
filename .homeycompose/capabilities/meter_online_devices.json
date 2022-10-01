@@ -1,0 +1,10 @@
+{
+    "type": "number",
+    "title": {
+      "en": "Online Devices"
+    },
+    "getable": true,
+    "setable": false,
+    "insights": true,
+    "icon": "./assets/cap_online_devices.svg"
+  }

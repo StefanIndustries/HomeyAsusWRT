@@ -25,5 +25,8 @@
   },
   "1.0.8": {
     "en": "WAN address change better detected. Polling interval now settable in device settings."
+  },
+  "1.1.0": {
+    "en": "Now only shows capabilities per device type. (Router or AiMesh AP)"
   }
 }

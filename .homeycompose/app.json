@@ -1,6 +1,6 @@
 {
   "id": "com.asus.wrt",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -21,6 +21,7 @@
   "bugs": {
     "url": "https://github.com/StefanIndustries/HomeyAsusWRT/issues"
   },
+  "homeyCommunityTopicId": 63581,
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
