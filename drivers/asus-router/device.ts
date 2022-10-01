@@ -231,8 +231,8 @@ export class AsusRouterDevice extends Homey.Device {
 
   private async addRouterCapabilities() {
     AsusRouterDevice.routerCapabilities.forEach(async cap => {
-      this.log(cap);
       if (!this.hasCapability(cap)) {
+        this.log(`add capability: ${cap}`);
         await this.addCapability(cap);
       }
     });
@@ -240,15 +240,18 @@ export class AsusRouterDevice extends Homey.Device {
 
   private async addAccessPointCapabilities() {
     AsusRouterDevice.accessPointCapabilities.forEach(async cap => {
-      this.log(cap);
       if (!this.hasCapability(cap)) {
+        this.log(`add capability: ${cap}`);
         await this.addCapability(cap);
       }
     });
 
     AsusRouterDevice.routerCapabilities.forEach(async cap => {
-      if (AsusRouterDevice.accessPointCapabilities.indexOf(cap) === -1 && this.hasCapability(cap)) {
+      if (AsusRouterDevice.accessPointCapabilities.indexOf(cap) === -1) {
+        if (this.hasCapability(cap)) {
+          this.log(`remove capability: ${cap}`);
           await this.removeCapability(cap);
+        }
       }
     });
   }
