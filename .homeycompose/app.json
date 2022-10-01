@@ -10,7 +10,8 @@
     "en": "Asus WRT"
   },
   "description": {
-    "en": "View your AsusWRT network status and connected devices"
+    "en": "View your AsusWRT network status and connected devices",
+    "nl": "Bekijk uw AsusWRT netwerk status en verbonden apparaten"
   },
   "category": [
     "internet"

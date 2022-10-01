@@ -1,7 +1,8 @@
 {
     "type": "string",
     "title": {
-      "en": "External IP address"
+      "en": "External IP address",
+        "nl": "Extern IP adres"
     },
     "getable": true,
     "setable": false,

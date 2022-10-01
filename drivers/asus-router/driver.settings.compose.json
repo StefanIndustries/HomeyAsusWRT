@@ -2,85 +2,117 @@
     {
         "type": "group",
         "label": {
-            "en": "Polling intervals"
+            "en": "Polling intervals",
+            "nl": "Polling intervallen"
         },
         "children": [
             {
                 "id": "online_devices_polling_interval",
                 "type": "number",
                 "label": {
-                    "en": "Online Devices"
+                    "en": "Online Devices",
+                    "nl": "Online Apparaten"
                 },
                 "value": 60,
-                "min": 60,
+                "min": 5,
                 "max": 300,
                 "units": {
-                    "en": "seconds"
-                }
-            },
+                    "en": "seconds",
+                    "nl": "seconden"
+                },
+                "hint": {
+                    "en": "60 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                    "nl": "60 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
+                }            },
             {
                 "id": "traffic_data_polling_interval",
                 "type": "number",
                 "label": {
-                    "en": "Traffic Data"
+                    "en": "Traffic Data",
+                    "nl": "Verkeersgegevens"
                 },
                 "value": 60,
-                "min": 60,
+                "min": 5,
                 "max": 300,
                 "units": {
-                    "en": "seconds"
-                }
-            },
+                    "en": "seconds",
+                    "nl": "seconden"
+                },
+                "hint": {
+                    "en": "60 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                    "nl": "60 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
+                }            },
             {
                 "id": "wan_status_polling_interval",
                 "type": "number",
                 "label": {
-                    "en": "WAN Status"
+                    "en": "WAN Status",
+                    "nl": "WAN-status"
                 },
                 "value": 300,
-                "min": 300,
+                "min": 5,
                 "max": 900,
                 "units": {
-                    "en": "seconds"
-                }
-            },
+                    "en": "seconds",
+                    "nl": "seconden"
+                },
+                "hint": {
+                    "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                    "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
+                }            },
             {
                 "id": "memory_usage_polling_interval",
                 "type": "number",
                 "label": {
-                    "en": "Memory Usage"
+                    "en": "Memory Usage",
+                    "nl": "Geheugen Gebruik"
                 },
                 "value": 300,
-                "min": 300,
+                "min": 5,
                 "max": 900,
                 "units": {
-                    "en": "seconds"
-                }
-            },
+                    "en": "seconds",
+                    "nl": "seconden"
+                },
+                "hint": {
+                    "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                    "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
+                }            },
             {
                 "id": "cpu_usage_polling_interval",
                 "type": "number",
                 "label": {
-                    "en": "CPU Usage"
+                    "en": "CPU Usage",
+                    "nl": "CPU Gebruik"
                 },
                 "value": 300,
-                "min": 300,
+                "min": 5,
                 "max": 900,
                 "units": {
-                    "en": "seconds"
-                }
-            },
+                    "en": "seconds",
+                    "nl": "seconden"
+                },
+                "hint": {
+                    "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                    "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
+                }            },
             {
                 "id": "uptime_polling_interval",
                 "type": "number",
                 "label": {
-                    "en": "Uptime"
+                    "en": "Uptime",
+                    "nl": "Uptime"
                 },
                 "value": 300,
-                "min": 300,
+                "min": 5,
                 "max": 900,
                 "units": {
-                    "en": "seconds"
+                    "en": "seconds",
+                    "nl": "seconden"
+                },
+                "hint": {
+                    "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                    "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
                 }
             }
         ]

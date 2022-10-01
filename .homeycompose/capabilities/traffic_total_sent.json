@@ -1,10 +1,12 @@
 {
   "type": "number",
   "title": {
-    "en": "Traffic sent (since boot)"
+    "en": "Traffic sent (since boot)",
+    "nl": "Totaal verzonden data (sinds opstarten)"
   },
   "units": {
-    "en": "MB"
+    "en": "MB",
+    "nl": "MB"
   },
   "decimals": 0,
   "getable": true,

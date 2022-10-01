@@ -11,7 +11,8 @@
     "en": "Asus WRT"
   },
   "description": {
-    "en": "View your AsusWRT network status and connected devices"
+    "en": "View your AsusWRT network status and connected devices",
+    "nl": "Bekijk uw AsusWRT netwerk status en verbonden apparaten"
   },
   "category": [
     "internet"
@@ -45,10 +46,12 @@
     "triggers": [
       {
         "title": {
-          "en": "Came online"
+          "en": "Came online",
+          "nl": "Is verbonden"
         },
         "hint": {
-          "en": "Checks every minute if a device connected to your network"
+          "en": "Checks on a interval if a device connected to your network",
+          "nl": "Checkt op basis van een interval of een apparaat is verbonden met uw netwerk"
         },
         "args": [
           {
@@ -62,47 +65,61 @@
             "type": "string",
             "name": "name",
             "title": {
-              "en": "name"
+              "en": "name",
+              "nl": "naam"
             },
             "example": {
-              "en": "Samsung Phone"
+              "en": "Samsung Phone",
+              "nl": "Samsung Telefoon"
             }
           },
           {
             "type": "string",
             "name": "nickname",
             "title": {
-              "en": "nickname"
+              "en": "nickname",
+              "nl": "bijnaam"
             },
             "example": {
-              "en": "Stefan's Phone"
+              "en": "Stefan's Phone",
+              "nl": "Stefan's Telefoon"
             }
           },
           {
             "type": "string",
             "name": "ip",
             "title": {
-              "en": "ip"
+              "en": "ip",
+              "nl": "ip"
             },
-            "example": "192.168.1.1"
+            "example": {
+              "en": "192.168.1.1",
+              "nl": "192.168.1.1"
+            }
           },
           {
             "type": "string",
             "name": "mac",
             "title": {
-              "en": "mac"
+              "en": "mac",
+              "nl": "mac adres"
             },
-            "example": "AA:BB:CC:DD:EE:FF"
+            "example": {
+              "en": "AA:BB:CC:DD:EE:FF",
+              "nl": "AA:BB:CC:DD:EE:FF"
+            }
           }
         ],
         "id": "device-came-online"
       },
       {
         "title": {
-          "en": "Went offline"
+          "en": "Went offline",
+          "nl": "Verbinding verbroken"
         },
         "hint": {
-          "en": "Checks every minute if a device disconnected from your network"
+          "en": "Checks on a interval if a device connected to your network",
+          "nl": "Checkt op basis van een interval of een apparaat de verbinding heeft verbroken met uw netwerk"
         },
         "args": [
           {
@@ -116,47 +133,61 @@
             "type": "string",
             "name": "name",
             "title": {
-              "en": "name"
+              "en": "name",
+              "nl": "naam"
             },
             "example": {
-              "en": "Samsung Phone"
+              "en": "Samsung Phone",
+              "nl": "Samsung Telefoon"
             }
           },
           {
             "type": "string",
             "name": "nickname",
             "title": {
-              "en": "nickname"
+              "en": "nickname",
+              "nl": "bijnaam"
             },
             "example": {
-              "en": "Stefan's Phone"
+              "en": "Stefan's Phone",
+              "nl": "Stefan's Telefoon"
             }
           },
           {
             "type": "string",
             "name": "ip",
             "title": {
-              "en": "ip"
+              "en": "ip",
+              "nl": "ip"
             },
-            "example": "192.168.1.1"
+            "example": {
+              "en": "192.168.1.1",
+              "nl": "192.168.1.1"
+            }
           },
           {
             "type": "string",
             "name": "mac",
             "title": {
-              "en": "mac"
+              "en": "mac",
+              "nl": "mac adres"
             },
-            "example": "AA:BB:CC:DD:EE:FF"
+            "example": {
+              "en": "AA:BB:CC:DD:EE:FF",
+              "nl": "AA:BB:CC:DD:EE:FF"
+            }
           }
         ],
         "id": "device-went-offline"
       },
       {
         "title": {
-          "en": "External IP changed"
+          "en": "External IP changed",
+          "nl": "Extern IP is veranderd"
         },
         "hint": {
-          "en": "Checks every 5 minutes if the external IP has changed"
+          "en": "Checks on a interval if the external IP has changed",
+          "nl": "Checkt op basis van een interval of het externe IP is veranderd"
         },
         "args": [
           {
@@ -170,7 +201,8 @@
             "type": "string",
             "name": "external_ip",
             "title": {
-              "en": "External IP"
+              "en": "External IP",
+              "nl": "Extern IP"
             }
           }
         ],
@@ -178,10 +210,12 @@
       },
       {
         "title": {
-          "en": "WAN status changed"
+          "en": "WAN status changed",
+          "nl": "WAN status is veranderd"
         },
         "hint": {
-          "en": "Checks every 5 minutes if your WAN is still online"
+          "en": "Checks on a interval if your WAN is still online",
+          "nl": "Checkt op basis van een interval of uw WAN nog verbonden is"
         },
         "args": [
           {
@@ -195,7 +229,8 @@
             "type": "boolean",
             "name": "wan_connected",
             "title": {
-              "en": "WAN Connected"
+              "en": "WAN Connected",
+              "nl": "WAN Verbonden"
             }
           }
         ],
@@ -205,13 +240,16 @@
     "conditions": [
       {
         "title": {
-          "en": "Device !{{is|isn't}} connected"
+          "en": "Device !{{is|isn't}} connected",
+          "nl": "Apparaat !{{is|is niet}} verbonden"
         },
         "titleFormatted": {
-          "en": "Device [[client]] !{{is|isn't}} connected"
+          "en": "Device [[client]] !{{is|isn't}} connected",
+          "nl": "Apparaat [[client]] !{{is|is niet}} verbonden"
         },
         "hint": {
-          "en": "check if device with IP is online"
+          "en": "check if device with IP is online",
+          "nl": "Controleer of apparaat met IP verbonden is"
         },
         "args": [
           {
@@ -223,7 +261,8 @@
             "type": "autocomplete",
             "name": "client",
             "placeholder": {
-              "en": "192.168.1.4"
+              "en": "192.168.1.4",
+              "nl": "192.168.1.4"
             }
           }
         ],
@@ -233,10 +272,12 @@
     "actions": [
       {
         "title": {
-          "en": "Reboot"
+          "en": "Reboot",
+          "nl": "Herstart"
         },
         "hint": {
-          "en": "Reboots your router"
+          "en": "Reboots your router",
+          "nl": "Herstart uw router"
         },
         "args": [
           {
@@ -249,10 +290,12 @@
       },
       {
         "title": {
-          "en": "Turn off LEDs"
+          "en": "Turn off LEDs",
+          "nl": "Zet LEDs uit"
         },
         "hint": {
-          "en": "Turns off the leds of your router"
+          "en": "Turns off the leds of your router",
+          "nl": "Zet leds van uw router uit"
         },
         "args": [
           {
@@ -265,10 +308,12 @@
       },
       {
         "title": {
-          "en": "Turn on LEDs"
+          "en": "Turn on LEDs",
+          "nl": "Zet LEDs aan"
         },
         "hint": {
-          "en": "Turns on the leds of your router"
+          "en": "Turns on the leds of your router",
+          "nl": "Zet leds van uw router aan"
         },
         "args": [
           {
@@ -309,16 +354,20 @@
           "options": {
             "logo": "/drivers/asus-router/assets/images/logoColor.png",
             "usernameLabel": {
-              "en": "Username"
+              "en": "Username",
+              "nl": "Gebruikersnaam"
             },
             "usernamePlaceholder": {
-              "en": "admin"
+              "en": "admin",
+              "nl": "administrator"
             },
             "passwordLabel": {
-              "en": "Password"
+              "en": "Password",
+              "nl": "Wachtwoord"
             },
             "passwordPlaceholder": {
-              "en": "Password"
+              "en": "Password",
+              "nl": "Wachtwoord"
             }
           }
         },
@@ -345,85 +394,122 @@
         {
           "type": "group",
           "label": {
-            "en": "Polling intervals"
+            "en": "Polling intervals",
+            "nl": "Polling intervallen"
           },
           "children": [
             {
               "id": "online_devices_polling_interval",
               "type": "number",
               "label": {
-                "en": "Online Devices"
+                "en": "Online Devices",
+                "nl": "Online Apparaten"
               },
               "value": 60,
-              "min": 60,
+              "min": 5,
               "max": 300,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden"
+              },
+              "hint": {
+                "en": "60 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                "nl": "60 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
               }
             },
             {
               "id": "traffic_data_polling_interval",
               "type": "number",
               "label": {
-                "en": "Traffic Data"
+                "en": "Traffic Data",
+                "nl": "Verkeersgegevens"
               },
               "value": 60,
-              "min": 60,
+              "min": 5,
               "max": 300,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden"
+              },
+              "hint": {
+                "en": "60 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                "nl": "60 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
               }
             },
             {
               "id": "wan_status_polling_interval",
               "type": "number",
               "label": {
-                "en": "WAN Status"
+                "en": "WAN Status",
+                "nl": "WAN-status"
               },
               "value": 300,
-              "min": 300,
+              "min": 5,
               "max": 900,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden"
+              },
+              "hint": {
+                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
               }
             },
             {
               "id": "memory_usage_polling_interval",
               "type": "number",
               "label": {
-                "en": "Memory Usage"
+                "en": "Memory Usage",
+                "nl": "Geheugen Gebruik"
               },
               "value": 300,
-              "min": 300,
+              "min": 5,
               "max": 900,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden"
+              },
+              "hint": {
+                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
               }
             },
             {
               "id": "cpu_usage_polling_interval",
               "type": "number",
               "label": {
-                "en": "CPU Usage"
+                "en": "CPU Usage",
+                "nl": "CPU Gebruik"
               },
               "value": 300,
-              "min": 300,
+              "min": 5,
               "max": 900,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden"
+              },
+              "hint": {
+                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
               }
             },
             {
               "id": "uptime_polling_interval",
               "type": "number",
               "label": {
-                "en": "Uptime"
+                "en": "Uptime",
+                "nl": "Uptime"
               },
               "value": 300,
-              "min": 300,
+              "min": 5,
               "max": 900,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden"
+              },
+              "hint": {
+                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
+                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
               }
             }
           ]
@@ -438,19 +524,22 @@
       "setable": false,
       "insights": true,
       "title": {
-        "en": "WAN Disconnected"
+        "en": "WAN Disconnected",
+        "nl": "WAN Verbinding verbroken"
       },
       "icon": "./assets/cap_wan_connected.svg"
     },
     "cpu_usage": {
       "type": "number",
       "title": {
-        "en": "CPU Usage"
+        "en": "CPU Usage",
+        "nl": "CPU Gebruik"
       },
       "getable": true,
       "setable": false,
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%"
       },
       "decimals": 0,
       "insights": true,
@@ -459,7 +548,8 @@
     "external_ip": {
       "type": "string",
       "title": {
-        "en": "External IP address"
+        "en": "External IP address",
+        "nl": "Extern IP adres"
       },
       "getable": true,
       "setable": false,
@@ -468,12 +558,14 @@
     "mem_used": {
       "type": "number",
       "title": {
-        "en": "Memory Usage"
+        "en": "Memory Usage",
+        "nl": "Geheugen Gebruik"
       },
       "getable": true,
       "setable": false,
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%"
       },
       "decimals": 0,
       "insights": true,
@@ -482,12 +574,14 @@
     "meter_cpu_usage": {
       "type": "number",
       "title": {
-        "en": "CPU Usage"
+        "en": "CPU Usage",
+        "nl": "CPU Gebruik"
       },
       "getable": true,
       "setable": false,
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%"
       },
       "decimals": 0,
       "insights": true,
@@ -496,12 +590,14 @@
     "meter_mem_used": {
       "type": "number",
       "title": {
-        "en": "Memory Usage"
+        "en": "Memory Usage",
+        "nl": "Geheugen Gebruik"
       },
       "getable": true,
       "setable": false,
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%"
       },
       "decimals": 0,
       "insights": true,
@@ -510,7 +606,8 @@
     "meter_online_devices": {
       "type": "number",
       "title": {
-        "en": "Online Devices"
+        "en": "Online Devices",
+        "nl": "Online Apparaten"
       },
       "getable": true,
       "setable": false,
@@ -520,7 +617,8 @@
     "online_devices": {
       "type": "number",
       "title": {
-        "en": "Online Devices"
+        "en": "Online Devices",
+        "nl": "Online Apparaten"
       },
       "getable": true,
       "setable": false,
@@ -530,10 +628,12 @@
     "realtime_download": {
       "type": "number",
       "title": {
-        "en": "Realtime Download"
+        "en": "Realtime Download",
+        "nl": "Huidig Downloadgebruik"
       },
       "units": {
-        "en": "MB"
+        "en": "MB",
+        "nl": "MB"
       },
       "decimals": 2,
       "getable": true,
@@ -544,10 +644,12 @@
     "realtime_upload": {
       "type": "number",
       "title": {
-        "en": "Realtime Upload"
+        "en": "Realtime Upload",
+        "nl": "Huidig Uploadgebruik"
       },
       "units": {
-        "en": "MB"
+        "en": "MB",
+        "nl": "MB"
       },
       "decimals": 2,
       "getable": true,
@@ -558,10 +660,12 @@
     "traffic_total_received": {
       "type": "number",
       "title": {
-        "en": "Traffic received (since boot)"
+        "en": "Traffic received (since boot)",
+        "nl": "Totaal ontvangen data (sinds opstarten)"
       },
       "units": {
-        "en": "MB"
+        "en": "MB",
+        "nl": "MB"
       },
       "decimals": 0,
       "getable": true,
@@ -572,10 +676,12 @@
     "traffic_total_sent": {
       "type": "number",
       "title": {
-        "en": "Traffic sent (since boot)"
+        "en": "Traffic sent (since boot)",
+        "nl": "Totaal verzonden data (sinds opstarten)"
       },
       "units": {
-        "en": "MB"
+        "en": "MB",
+        "nl": "MB"
       },
       "decimals": 0,
       "getable": true,
@@ -586,10 +692,12 @@
     "uptime_seconds": {
       "type": "number",
       "title": {
-        "en": "Uptime"
+        "en": "Uptime",
+        "nl": "Aan sinds"
       },
       "units": {
-        "en": "seconds"
+        "en": "seconds",
+        "nl": "seconden"
       },
       "getable": true,
       "setable": false,
@@ -602,7 +710,8 @@
       "setable": false,
       "insights": true,
       "title": {
-        "en": "WAN Connected"
+        "en": "WAN Connected",
+        "nl": "WAN Verbonden"
       },
       "icon": "./assets/cap_wan_connected.svg"
     }

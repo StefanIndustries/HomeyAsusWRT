@@ -4,7 +4,8 @@
     "setable": false,
     "insights": true,
     "title": {
-      "en": "WAN Connected"
+      "en": "WAN Connected",
+        "nl": "WAN Verbonden"
     },
     "icon": "./assets/cap_wan_connected.svg"
 }

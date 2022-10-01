@@ -1,12 +1,14 @@
 {
     "type": "number",
     "title": {
-      "en": "CPU Usage"
+      "en": "CPU Usage",
+      "nl": "CPU Gebruik"
     },
     "getable": true,
     "setable": false,
     "units": {
-      "en": "%"
+      "en": "%",
+      "nl": "%"
     },
     "decimals": 0,
     "insights": true,

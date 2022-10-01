@@ -1,10 +1,12 @@
 {
   "type": "number",
   "title": {
-    "en": "Uptime"
+    "en": "Uptime",
+    "nl": "Aan sinds"
   },
   "units": {
-    "en": "seconds"
+    "en": "seconds",
+    "nl": "seconden"
   },
   "getable": true,
   "setable": false,

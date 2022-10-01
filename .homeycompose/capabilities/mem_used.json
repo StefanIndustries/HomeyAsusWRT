@@ -1,12 +1,14 @@
 {
     "type": "number",
     "title": {
-      "en": "Memory Usage"
+      "en": "Memory Usage",
+      "nl": "Geheugen Gebruik"
     },
     "getable": true,
     "setable": false,
     "units": {
-      "en": "%"
+      "en": "%",
+      "nl": "%"
     },
     "decimals": 0,
     "insights": true,

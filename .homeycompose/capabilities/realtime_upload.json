@@ -1,10 +1,12 @@
 {
   "type": "number",
   "title": {
-    "en": "Realtime Upload"
+    "en": "Realtime Upload",
+    "nl": "Huidig Uploadgebruik"
   },
   "units": {
-    "en": "MB"
+    "en": "MB",
+    "nl": "MB"
   },
   "decimals": 2,
   "getable": true,
