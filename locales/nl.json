@@ -1,0 +1,6 @@
+{
+    "pair": {
+        "title_router_ip_config": "Vul het IP adres van uw apparaat in",
+        "alert_router_ip_incorrect": "Geen apparaat gevonden op het opgegeven IP adres"
+    }
+}

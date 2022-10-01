@@ -4,7 +4,8 @@
     "setable": false,
     "insights": true,
     "title": {
-      "en": "WAN Disconnected"
+      "en": "WAN Disconnected",
+        "nl": "WAN Verbinding verbroken"
     },
     "icon": "./assets/cap_wan_connected.svg"
 }

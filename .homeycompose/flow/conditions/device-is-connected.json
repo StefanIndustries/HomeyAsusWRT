@@ -1,12 +1,15 @@
 {
   "title": {
-    "en": "Device !{{is|isn't}} connected"
+    "en": "Device !{{is|isn't}} connected",
+    "nl": "Apparaat !{{is|is niet}} verbonden"
   },
   "titleFormatted": {
-    "en": "Device [[client]] !{{is|isn't}} connected"
+    "en": "Device [[client]] !{{is|isn't}} connected",
+    "nl": "Apparaat [[client]] !{{is|is niet}} verbonden"
   },
   "hint": {
-    "en": "check if device with IP is online"
+    "en": "check if device with IP is online",
+    "nl": "Controleer of apparaat met IP verbonden is"
   },
   "args": [
     {
@@ -18,7 +21,8 @@
       "type": "autocomplete",
       "name": "client",
       "placeholder": {
-        "en": "192.168.1.4"
+        "en": "192.168.1.4",
+        "nl": "192.168.1.4"
       }
     }
   ]

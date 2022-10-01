@@ -1,9 +1,11 @@
 {
   "title": {
-    "en": "Turn on LEDs"
+    "en": "Turn on LEDs",
+    "nl": "Zet LEDs aan"
   },
   "hint": {
-    "en": "Turns on the leds of your router"
+    "en": "Turns on the leds of your router",
+    "nl": "Zet leds van uw router aan"
   },
   "args": [
     {

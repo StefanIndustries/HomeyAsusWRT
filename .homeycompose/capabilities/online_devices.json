@@ -1,7 +1,8 @@
 {
     "type": "number",
     "title": {
-      "en": "Online Devices"
+      "en": "Online Devices",
+      "nl": "Online Apparaten"
     },
     "getable": true,
     "setable": false,

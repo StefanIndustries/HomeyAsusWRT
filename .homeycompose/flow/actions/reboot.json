@@ -1,9 +1,11 @@
 {
   "title": {
-    "en": "Reboot"
+    "en": "Reboot",
+    "nl": "Herstart"
   },
   "hint": {
-    "en": "Reboots your router"
+    "en": "Reboots your router",
+    "nl": "Herstart uw router"
   },
   "args": [
     {

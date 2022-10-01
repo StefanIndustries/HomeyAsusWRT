@@ -1,9 +1,11 @@
 {
   "title": {
-    "en": "Turn off LEDs"
+    "en": "Turn off LEDs",
+    "nl": "Zet LEDs uit"
   },
   "hint": {
-    "en": "Turns off the leds of your router"
+    "en": "Turns off the leds of your router",
+    "nl": "Zet leds van uw router uit"
   },
   "args": [
     {

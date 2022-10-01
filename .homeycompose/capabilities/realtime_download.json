@@ -1,10 +1,12 @@
 {
   "type": "number",
   "title": {
-    "en": "Realtime Download"
+    "en": "Realtime Download",
+    "nl": "Huidig Downloadgebruik"
   },
   "units": {
-    "en": "MB"
+    "en": "MB",
+    "nl": "MB"
   },
   "decimals": 2,
   "getable": true,

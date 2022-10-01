@@ -25,16 +25,20 @@
       "options": {
         "logo": "{{driverAssetsPath}}/images/logoColor.png",
         "usernameLabel": {
-          "en": "Username"
+          "en": "Username",
+          "nl": "Gebruikersnaam"
         },
         "usernamePlaceholder": {
-          "en": "admin"
+          "en": "admin",
+          "nl": "administrator"
         },
         "passwordLabel": {
-          "en": "Password"
+          "en": "Password",
+          "nl": "Wachtwoord"
         },
         "passwordPlaceholder": {
-          "en": "Password"
+          "en": "Password",
+          "nl": "Wachtwoord"
         }
       }
     },
