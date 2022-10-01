@@ -28,5 +28,8 @@
   },
   "1.1.0": {
     "en": "Now only shows capabilities per device type. (Router or AiMesh AP)"
+  },
+  "1.1.1": {
+    "en": "Dutch translations, improvements in polling interval and allow lower values (with warning)."
   }
 }
