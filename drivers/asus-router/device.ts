@@ -217,11 +217,11 @@ export class AsusRouterDevice extends Homey.Device {
     switch (operationMode) {
       case AsusWRTOperationMode.Router:
         this.log('setting router capabilities');
-        await this.addRouterCapabilities();
+        await this.setRouterCapabilities();
         break;
       case AsusWRTOperationMode.AccessPoint:
         this.log('setting access point capabilities');
-        await this.addAccessPointCapabilities();
+        await this.setAccessPointCapabilities();
         break;
       default:
         this.log('Unknown operation mode');
@@ -229,27 +229,52 @@ export class AsusRouterDevice extends Homey.Device {
     }
   }
 
-  private async addRouterCapabilities() {
-    AsusRouterDevice.routerCapabilities.forEach(async cap => {
-      if (!this.hasCapability(cap)) {
-        this.log(`add capability: ${cap}`);
-        await this.addCapability(cap);
+  private async removeDeprecatedCapabilities() {
+    const deprecatedCapabilities = [
+        'cpu_usage',
+        'mem_used',
+        'online_devices',
+        'wan_connected',
+    ];
+    deprecatedCapabilities.forEach(async cap => {
+      if (this.hasCapability(cap)) {
+        await this.removeCapability(cap);
       }
     });
   }
 
-  private async addAccessPointCapabilities() {
-    AsusRouterDevice.accessPointCapabilities.forEach(async cap => {
+  private async setRouterCapabilities() {
+    await this.removeDeprecatedCapabilities();
+    AsusRouterDevice.routerCapabilities.forEach(async cap => {
+      this.log(`test capability: ${cap} set for router`);
       if (!this.hasCapability(cap)) {
-        this.log(`add capability: ${cap}`);
+        this.log(`capability: ${cap} for router missing, adding now.`);
         await this.addCapability(cap);
+      } else
+      {
+        this.log(`capability: ${cap} already available for router.`)
+      }
+    });
+  }
+
+  private async setAccessPointCapabilities() {
+    await this.removeDeprecatedCapabilities();
+    AsusRouterDevice.accessPointCapabilities.forEach(async cap => {
+      this.log(`test capability: ${cap} set for AP`);
+      if (!this.hasCapability(cap)) {
+        this.log(`capability: ${cap} for AP missing, adding now.`);
+        await this.addCapability(cap);
+      } else {
+        this.log(`capability: ${cap} already available for AP.`)
       }
     });
 
     AsusRouterDevice.routerCapabilities.forEach(async cap => {
+      this.log(`test capability for router: ${cap} must be set for AP too`);
       if (AsusRouterDevice.accessPointCapabilities.indexOf(cap) === -1) {
+        this.log(`router capability ${cap}, not required for AP, removing if available`)
         if (this.hasCapability(cap)) {
-          this.log(`remove capability: ${cap}`);
+          this.log(`capability ${cap} found, removing now`)
           await this.removeCapability(cap);
         }
       }
