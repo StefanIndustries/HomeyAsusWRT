@@ -31,5 +31,8 @@
   },
   "1.1.1": {
     "en": "Dutch translations, improvements in polling interval and allow lower values (with warning)."
+  },
+  "1.1.2": {
+    "en": "Improved capability removal and setting"
   }
 }
