@@ -34,5 +34,8 @@
   },
   "1.1.2": {
     "en": "Improved capability removal and setting"
+  },
+  "1.1.3": {
+    "en": "Fix for uptime parsing bug."
   }
 }
