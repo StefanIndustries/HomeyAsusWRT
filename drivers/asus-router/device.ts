@@ -126,7 +126,9 @@ export class AsusRouterDevice extends Homey.Device {
   private async updateUptime() {
     this.log('updatingUptime');
     const uptimeData = await this.client.getUptime().catch(error => Promise.reject(error));
-    this.setCapabilityValue('uptime_seconds', uptimeData);
+    if (uptimeData !== 0) {
+      this.setCapabilityValue('uptime_seconds', uptimeData);
+    }
   }
 
   private async updateTrafficData() {

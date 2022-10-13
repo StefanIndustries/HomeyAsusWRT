@@ -125,10 +125,14 @@ export class AsusWRTClient {
 
     public async getUptime(): Promise<number> {
         const uptimeData = await this.appGet('uptime()');
-        let uptimeSeconds = uptimeData.substring(uptimeData.indexOf(':'));
-        uptimeSeconds = uptimeSeconds.substring(uptimeSeconds.indexOf("(") + 1);
-        uptimeSeconds = uptimeSeconds.substring(0, uptimeSeconds.indexOf(" "));
-        return parseInt(uptimeSeconds);
+        if (uptimeData && typeof uptimeData === 'string') {
+            let uptimeSeconds = uptimeData.substring(uptimeData.indexOf(':'));
+            uptimeSeconds = uptimeSeconds.substring(uptimeSeconds.indexOf("(") + 1);
+            uptimeSeconds = uptimeSeconds.substring(0, uptimeSeconds.indexOf(" "));
+            return parseInt(uptimeSeconds);
+        } else {
+            return 0;
+        }
     }
 
     public async getCPUUsagePercentage(): Promise<number> {
