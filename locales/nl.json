@@ -1,6 +1,7 @@
 {
     "pair": {
         "title_router_ip_config": "Vul het IP adres van uw apparaat in",
-        "alert_router_ip_incorrect": "Geen apparaat gevonden op het opgegeven IP adres"
+        "alert_router_ip_incorrect": "Geen apparaat gevonden op het opgegeven IP adres",
+        "http_only_warning": "Alleen HTTP wordt ondersteund. Als uw router of access point ingesteld is om HTTPS only te werken kan Homey geen verbinding maken."
     }
 }

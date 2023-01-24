@@ -1,6 +1,7 @@
 {
     "pair": {
         "title_router_ip_config": "Please fill in the IP address of your device",
-        "alert_router_ip_incorrect": "No device found on the IP provided"
+        "alert_router_ip_incorrect": "No device found on the IP provided",
+        "http_only_warning": "Only HTTP is supported. If your router or access point is configured to work only with HTTPS Homey won't be able to connect."
     }
 }
