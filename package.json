@@ -7,13 +7,14 @@
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
   },
   "dependencies": {
+    "node-asuswrt": "^1.0.6",
     "axios": "0.26.1",
     "qs": "6.10.3",
     "crypto": "1.0.1"
   },
   "devDependencies": {
     "@tsconfig/node12": "^1.0.9",
-    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.1",
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.3",
     "@types/node": "^17.0.25",
     "@types/qs": "6.9.7",
     "eslint": "^7.32.0",

@@ -1,8 +1,8 @@
 {
   "name": {
-    "en": "Asus Router"
+    "en": "Asus Router",
+    "nl": "Asus Router"
   },
-  "deprecated": true,
   "class": "other",
   "capabilities": [],
   "platforms": [
@@ -18,13 +18,16 @@
   },
   "pair": [
     {
+      "id": "prepare_pairing",
+      "template": "loading"
+    },
+    {
       "id": "router_ip"
     },
     {
       "id": "login_credentials",
       "template": "login_credentials",
       "options": {
-        "logo": "{{driverAssetsPath}}/images/logoColor.png",
         "usernameLabel": {
           "en": "Username",
           "nl": "Gebruikersnaam"
@@ -53,12 +56,6 @@
     {
       "id": "add_devices",
       "template": "add_devices"
-    }
-  ],
-  "repair": [
-    {
-      "id": "login_credentials",
-      "template": "login_credentials"
     }
   ]
 }
