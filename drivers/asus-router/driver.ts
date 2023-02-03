@@ -52,42 +52,23 @@ class AsusRouterDriver extends Homey.Driver {
 
     session.setHandler('list_devices', async () => {
       this.log('pair: list_devices');
-      const routerAPDevices = await client.getRouterAPDevices().catch(error => Promise.reject(error));
-      client.dispose;
+      const routerProductId = await client.getRouterProductId().catch(error => Promise.reject(error));
       const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
-      const foundDevices = routerAPDevices.map(device => {
-        return {
-          name: `${device.product_id} ${device.alias}`,
+      const devices = [
+        {
+          name: routerProductId,
           data: {
-            mac: device.mac,
-            productId: device.product_id
-          },
-          settings: {
-            ip: `http://${device.ip}`,
-            username: '',
-            password: ''
-          },
-          store: {
-            mac: device.mac,
-            productId: device.product_id,
+            id: routerProductId + '-' + routerIP,
             username: cryptoClient.encrypt(username),
-            password: cryptoClient.encrypt(password)
+            password: cryptoClient.encrypt(password),
+            ip: routerIP,
           },
-          icon: this.getIcon(device.product_id)
+          icon: this.getIcon(routerProductId)
         }
-      });
-      const existingDevices = this.getDevices();
-      const existingDeviceMacs = existingDevices.map(existingDevice => existingDevice.getData().mac);
-      let filteredFoundDevices = foundDevices.filter(foundDevice => !existingDeviceMacs.includes(foundDevice.data.mac));
-
-      //filter on old devices with old data object
-      const existingDeviceIds = existingDevices.map(existingDevice => existingDevice.getData().id);
-      this.log(existingDeviceIds);
-      this.log(filteredFoundDevices);
-      filteredFoundDevices = filteredFoundDevices.filter(foundDevice => !existingDeviceIds.includes(`${foundDevice.data.productId}-${foundDevice.settings.ip}`));
-
-      this.log(filteredFoundDevices);
-      return filteredFoundDevices;
+      ];
+      this.log(devices);
+      client.dispose;
+      return devices;
     });
   }
 

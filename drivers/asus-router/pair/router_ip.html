@@ -1,27 +1,17 @@
-<header class="homey-header">
-    <p class="homey-subtitle" data-i18n="pair.http_only_warning"></p>
-</header>
-
-<form class="homey-form">
-    <div class="homey-form-group">
-        <label class="homey-form-label" for="routerIP">Router IP</label>
-        <input class="homey-form-input" id="routerIP" type="text" value="192.168.1.1" placeholder="192.168.1.1", autocomplete="off"/>
-    </div>
-</form>
-<br><br>
-<button class="homey-button-primary-full" onclick="confirmIP()" id="submit">Submit</button>
-
+<div class="hy-tmpl-login_credentials-logo" style="background-image: url(&quot;/drivers/asus-router/assets/images/logoColor.png&quot;);"></div>
+<div class="hy-tmpl-login_credentials-row row">
+    <label class="hy-label hy-tmpl-login_credentials-label" for="routerIP">Router IP</label>
+    <input class="hy-input-text" name="routerIP" id="routerIP" type="text" value="192.168.1.1" placeholder="192.168.1.1" autocomplete="off" data-np-checked="1">
+    <input onclick="confirmIP()" class="hy-button hy-button-primary hy-button-fill hy-tmpl-login_credentials-submit button" type="submit" value="Submit" data-np-checked="1">
+</div>
 <script type="application/javascript">
     Homey.setTitle(Homey.__("pair.title_router_ip_config"));
-    const submitButton = document.getElementById("submit");
     function confirmIP() {
-        submitButton.classList.add("is-loading");
         Homey.emit("router_ip_confirmed", document.getElementById("routerIP").value).then(function (result) {
             if (result) {
                 Homey.nextView();
             } else {
                 Homey.alert(Homey.__("pair.alert_router_ip_incorrect"), 'error');
-                submitButton.classList.remove("is-loading");
             }
         });
     }

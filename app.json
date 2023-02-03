@@ -108,42 +108,6 @@
               "en": "AA:BB:CC:DD:EE:FF",
               "nl": "AA:BB:CC:DD:EE:FF"
             }
-          },
-          {
-            "type": "string",
-            "name": "vendor",
-            "title": {
-              "en": "vendor",
-              "nl": "fabrikant"
-            },
-            "example": {
-              "en": "Asus",
-              "nl": "Asus"
-            }
-          },
-          {
-            "type": "number",
-            "name": "rssi",
-            "title": {
-              "en": "rssi",
-              "nl": "rssi"
-            },
-            "example": {
-              "en": "-71",
-              "nl": "-71"
-            }
-          },
-          {
-            "type": "string",
-            "name": "ssid",
-            "title": {
-              "en": "ssid",
-              "nl": "ssid"
-            },
-            "example": {
-              "en": "Asus 2.4Ghz",
-              "nl": "Asus 2.4Ghz"
-            }
           }
         ],
         "id": "device-came-online"
@@ -211,42 +175,6 @@
             "example": {
               "en": "AA:BB:CC:DD:EE:FF",
               "nl": "AA:BB:CC:DD:EE:FF"
-            }
-          },
-          {
-            "type": "string",
-            "name": "vendor",
-            "title": {
-              "en": "vendor",
-              "nl": "fabrikant"
-            },
-            "example": {
-              "en": "Asus",
-              "nl": "Asus"
-            }
-          },
-          {
-            "type": "number",
-            "name": "rssi",
-            "title": {
-              "en": "rssi",
-              "nl": "rssi"
-            },
-            "example": {
-              "en": "-71",
-              "nl": "-71"
-            }
-          },
-          {
-            "type": "string",
-            "name": "ssid",
-            "title": {
-              "en": "ssid",
-              "nl": "ssid"
-            },
-            "example": {
-              "en": "Asus 2.4Ghz",
-              "nl": "Asus 2.4Ghz"
             }
           }
         ],
@@ -470,45 +398,6 @@
             "nl": "Polling intervallen"
           },
           "children": [
-            {
-              "id": "ip",
-              "type": "text",
-              "label": {
-                "en": "IP Address",
-                "nl": "IP adres"
-              },
-              "value": "",
-              "hint": {
-                "en": "Only change IP address if required. Only HTTP is supported.",
-                "nl": "Verander het IP adres alleen als het nodig is. Alleen HTTP is ondersteund."
-              }
-            },
-            {
-              "id": "username",
-              "type": "text",
-              "label": {
-                "en": "Username",
-                "nl": "Gebruikersnaam"
-              },
-              "value": "",
-              "hint": {
-                "en": "Sets the username, once set it cannot be viewed again.",
-                "nl": "Stelt de gebruikersnaam in, zodra ingesteld kan dit niet opnieuw bekeken worden."
-              }
-            },
-            {
-              "id": "password",
-              "type": "text",
-              "label": {
-                "en": "Password",
-                "nl": "Wachtwoord"
-              },
-              "value": "",
-              "hint": {
-                "en": "Sets the password, once set it cannot be viewed again.",
-                "nl": "Stelt het wachtwoord in, zodra ingesteld kan dit niet opnieuw bekeken worden."
-              }
-            },
             {
               "id": "online_devices_polling_interval",
               "type": "number",

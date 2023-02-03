@@ -1,8 +1,8 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import qs from 'qs';
+import { AsusWRTApp } from '../app';
 import { AsusWRTApplyResponse } from './models/AsusWRTApplyResponse';
 import { AsusWRTConnectedClient } from './models/AsusWRTConnectedClient';
-import { AsusWRTDevice } from './models/AsusWRTDevice';
 import { AsusWRTTrafficData } from './models/AsusWRTTrafficData';
 import { AsusWRTWANStatus } from './models/AsusWRTWANStatus';
 
@@ -113,18 +113,6 @@ export class AsusWRTClient {
         return routerData.productid;
     }
 
-    public async getRouterAPDevices(): Promise<AsusWRTDevice[]> {
-        const cfgClientListResponse = await this.appGet('get_cfg_clientlist()');
-        return cfgClientListResponse.get_cfg_clientlist.map((client: { product_id: string; alias: string; ip: string; mac: string; }) => {
-            return <AsusWRTDevice> {
-                product_id: client.product_id,
-                alias: client.alias,
-                ip: client.ip.replace('https://', '').replace('http://', ''),
-                mac: client.mac
-            }
-        });
-    }
-
     public async getTotalTrafficData(): Promise<AsusWRTTrafficData> {
         const trafficData = await this.appGet('netdev(appobj)');
         const trafficReceived = (parseInt(trafficData['netdev']['INTERNET_rx'], 16) * 8 / 1024 / 1024) * 0.125;
@@ -186,11 +174,7 @@ export class AsusWRTClient {
               ip: client.ip,
               mac: client.mac,
               name: client.name,
-              nickName: client.nickName,
-              ipMethod: client.ipMethod,
-              rssi: client.rssi === '' ? 0 : parseInt(client.rssi),
-              ssid: client.ssid,
-              vendor: client.vendor
+              nickName: client.nickName
             });
           }
         }

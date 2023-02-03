@@ -62,42 +62,6 @@
         "en": "AA:BB:CC:DD:EE:FF",
         "nl": "AA:BB:CC:DD:EE:FF"
       }
-    },
-    {
-      "type": "string",
-      "name": "vendor",
-      "title": {
-        "en": "vendor",
-        "nl": "fabrikant"
-      },
-      "example": {
-        "en": "Asus",
-        "nl": "Asus"
-      }
-    },
-    {
-      "type": "number",
-      "name": "rssi",
-      "title": {
-        "en": "rssi",
-        "nl": "rssi"
-      },
-      "example": {
-        "en": "-71",
-        "nl": "-71"
-      }
-    },
-    {
-      "type": "string",
-      "name": "ssid",
-      "title": {
-        "en": "ssid",
-        "nl": "ssid"
-      },
-      "example": {
-        "en": "Asus 2.4Ghz",
-        "nl": "Asus 2.4Ghz"
-      }
     }
   ]
 }

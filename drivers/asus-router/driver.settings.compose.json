@@ -7,45 +7,6 @@
         },
         "children": [
             {
-                "id": "ip",
-                "type": "text",
-                "label": {
-                    "en": "IP Address",
-                    "nl": "IP adres"
-                },
-                "value": "",
-                "hint": {
-                    "en": "Only change IP address if required. Only HTTP is supported.",
-                    "nl": "Verander het IP adres alleen als het nodig is. Alleen HTTP is ondersteund."
-                }
-            },
-            {
-                "id": "username",
-                "type": "text",
-                "label": {
-                    "en": "Username",
-                    "nl": "Gebruikersnaam"
-                },
-                "value": "",
-                "hint": {
-                    "en": "Sets the username, once set it cannot be viewed again.",
-                    "nl": "Stelt de gebruikersnaam in, zodra ingesteld kan dit niet opnieuw bekeken worden."
-                }
-            },
-            {
-                "id": "password",
-                "type": "text",
-                "label": {
-                    "en": "Password",
-                    "nl": "Wachtwoord"
-                },
-                "value": "",
-                "hint": {
-                    "en": "Sets the password, once set it cannot be viewed again.",
-                    "nl": "Stelt het wachtwoord in, zodra ingesteld kan dit niet opnieuw bekeken worden."
-                }
-            },
-            {
                 "id": "online_devices_polling_interval",
                 "type": "number",
                 "label": {
