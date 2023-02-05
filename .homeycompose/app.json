@@ -6,6 +6,9 @@
   "platforms": [
     "local"
   ],
+  "connectivity": [
+    "lan"
+  ],
   "name": {
     "en": "Asus WRT"
   },

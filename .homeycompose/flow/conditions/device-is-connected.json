@@ -15,7 +15,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=asus-router"
+      "filter": "driver_id=asus-router|asuswrt"
     },
     {
       "type": "autocomplete",

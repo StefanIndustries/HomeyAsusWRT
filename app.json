@@ -7,6 +7,9 @@
   "platforms": [
     "local"
   ],
+  "connectivity": [
+    "lan"
+  ],
   "name": {
     "en": "Asus WRT"
   },
@@ -57,7 +60,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router"
+            "filter": "driver_id=asus-router|asuswrt"
           }
         ],
         "tokens": [
@@ -125,7 +128,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router"
+            "filter": "driver_id=asus-router|asuswrt"
           }
         ],
         "tokens": [
@@ -193,7 +196,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router"
+            "filter": "driver_id=asus-router|asuswrt"
           }
         ],
         "tokens": [
@@ -221,7 +224,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router"
+            "filter": "driver_id=asus-router|asuswrt"
           }
         ],
         "tokens": [

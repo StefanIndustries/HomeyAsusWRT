@@ -11,7 +11,7 @@
     {
       "name": "device",
       "type": "device",
-      "filter": "driver_id=asus-router"
+      "filter": "driver_id=asus-router|asuswrt"
     }
   ],
   "tokens": [
