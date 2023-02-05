@@ -57,5 +57,32 @@
       "id": "add_devices",
       "template": "add_devices"
     }
+  ],
+  "repair": [
+    {
+      "id": "router_ip_repair"
+    },
+    {
+      "id": "login_credentials",
+      "template": "login_credentials",
+      "options": {
+        "usernameLabel": {
+          "en": "Username",
+          "nl": "Gebruikersnaam"
+        },
+        "usernamePlaceholder": {
+          "en": "admin",
+          "nl": "administrator"
+        },
+        "passwordLabel": {
+          "en": "Password",
+          "nl": "Wachtwoord"
+        },
+        "passwordPlaceholder": {
+          "en": "Password",
+          "nl": "Wachtwoord"
+        }
+      }
+    }
   ]
 }

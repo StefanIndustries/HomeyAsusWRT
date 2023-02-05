@@ -577,6 +577,33 @@
           "template": "add_devices"
         }
       ],
+      "repair": [
+        {
+          "id": "router_ip_repair"
+        },
+        {
+          "id": "login_credentials",
+          "template": "login_credentials",
+          "options": {
+            "usernameLabel": {
+              "en": "Username",
+              "nl": "Gebruikersnaam"
+            },
+            "usernamePlaceholder": {
+              "en": "admin",
+              "nl": "administrator"
+            },
+            "passwordLabel": {
+              "en": "Password",
+              "nl": "Wachtwoord"
+            },
+            "passwordPlaceholder": {
+              "en": "Password",
+              "nl": "Wachtwoord"
+            }
+          }
+        }
+      ],
       "id": "asuswrt"
     }
   ],
@@ -592,22 +619,6 @@
       },
       "icon": "./assets/cap_wan_connected.svg"
     },
-    "cpu_usage": {
-      "type": "number",
-      "title": {
-        "en": "CPU Usage",
-        "nl": "CPU Gebruik"
-      },
-      "getable": true,
-      "setable": false,
-      "units": {
-        "en": "%",
-        "nl": "%"
-      },
-      "decimals": 0,
-      "insights": true,
-      "icon": "./assets/cap_cpu_usage.svg"
-    },
     "external_ip": {
       "type": "string",
       "title": {
@@ -617,22 +628,6 @@
       "getable": true,
       "setable": false,
       "icon": "./assets/cap_external_ip.svg"
-    },
-    "mem_used": {
-      "type": "number",
-      "title": {
-        "en": "Memory Usage",
-        "nl": "Geheugen Gebruik"
-      },
-      "getable": true,
-      "setable": false,
-      "units": {
-        "en": "%",
-        "nl": "%"
-      },
-      "decimals": 0,
-      "insights": true,
-      "icon": "./assets/cap_mem_used.svg"
     },
     "meter_cpu_usage": {
       "type": "number",
@@ -667,17 +662,6 @@
       "icon": "./assets/cap_mem_used.svg"
     },
     "meter_online_devices": {
-      "type": "number",
-      "title": {
-        "en": "Online Devices",
-        "nl": "Online Apparaten"
-      },
-      "getable": true,
-      "setable": false,
-      "insights": true,
-      "icon": "./assets/cap_online_devices.svg"
-    },
-    "online_devices": {
       "type": "number",
       "title": {
         "en": "Online Devices",
@@ -766,17 +750,6 @@
       "setable": false,
       "insights": true,
       "icon": "./assets/cap_uptime_seconds.svg"
-    },
-    "wan_connected": {
-      "type": "boolean",
-      "getable": true,
-      "setable": false,
-      "insights": true,
-      "title": {
-        "en": "WAN Connected",
-        "nl": "WAN Verbonden"
-      },
-      "icon": "./assets/cap_wan_connected.svg"
     }
   }
 }
