@@ -3,6 +3,7 @@
     "en": "Turn on LEDs",
     "nl": "Zet LEDs aan"
   },
+  "deprecated": true,
   "hint": {
     "en": "Turns on the leds of your router",
     "nl": "Zet leds van uw router aan"
@@ -11,7 +12,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=asus-router|asuswrt"
+      "filter": "driver_id=asus-router"
     }
   ]
 }

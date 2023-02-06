@@ -3,6 +3,7 @@
     "en": "Reboot",
     "nl": "Herstart"
   },
+  "deprecated": true,
   "hint": {
     "en": "Reboots your router",
     "nl": "Herstart uw router"
@@ -11,7 +12,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=asus-router|asuswrt"
+      "filter": "driver_id=asus-router"
     }
   ]
 }

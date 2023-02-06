@@ -1,7 +1,7 @@
 import Homey from 'homey';
 import { AsusWRTOperationMode } from 'node-asuswrt/lib/models/AsusWRTOperationMode';
 
-class AsusWRTDevice extends Homey.Device {
+export class AsusWRTDevice extends Homey.Device {
 
   static routerCapabilities = [
     'alarm_wan_disconnected',

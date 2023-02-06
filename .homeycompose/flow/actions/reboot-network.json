@@ -1,0 +1,10 @@
+{
+  "title": {
+    "en": "Reboot Network",
+    "nl": "Herstart netwerk"
+  },
+  "hint": {
+    "en": "Reboots your entire network including all access points",
+    "nl": "Herstart uw gehele netwerk inclusief toegangspunten"
+  }
+}

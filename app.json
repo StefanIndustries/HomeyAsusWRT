@@ -52,6 +52,7 @@
           "en": "Came online",
           "nl": "Is verbonden"
         },
+        "deprecated": true,
         "hint": {
           "en": "Checks on a interval if a device connected to your network",
           "nl": "Checkt op basis van een interval of een apparaat is verbonden met uw netwerk"
@@ -60,7 +61,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router|asuswrt"
+            "filter": "driver_id=asus-router"
           }
         ],
         "tokens": [
@@ -120,6 +121,7 @@
           "en": "Went offline",
           "nl": "Verbinding verbroken"
         },
+        "deprecated": true,
         "hint": {
           "en": "Checks on a interval if a device connected to your network",
           "nl": "Checkt op basis van een interval of een apparaat de verbinding heeft verbroken met uw netwerk"
@@ -128,7 +130,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router|asuswrt"
+            "filter": "driver_id=asus-router"
           }
         ],
         "tokens": [
@@ -188,6 +190,7 @@
           "en": "External IP changed",
           "nl": "Extern IP is veranderd"
         },
+        "deprecated": true,
         "hint": {
           "en": "Checks on a interval if the external IP has changed",
           "nl": "Checkt op basis van een interval of het externe IP is veranderd"
@@ -196,7 +199,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router|asuswrt"
+            "filter": "driver_id=asus-router"
           }
         ],
         "tokens": [
@@ -216,6 +219,7 @@
           "en": "WAN status changed",
           "nl": "WAN status is veranderd"
         },
+        "deprecated": true,
         "hint": {
           "en": "Checks on a interval if your WAN is still online",
           "nl": "Checkt op basis van een interval of uw WAN nog verbonden is"
@@ -224,7 +228,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router|asuswrt"
+            "filter": "driver_id=asus-router"
           }
         ],
         "tokens": [
@@ -246,6 +250,7 @@
           "en": "Device !{{is|isn't}} connected",
           "nl": "Apparaat !{{is|is niet}} verbonden"
         },
+        "deprecated": true,
         "titleFormatted": {
           "en": "Device [[client]] !{{is|isn't}} connected",
           "nl": "Apparaat [[client]] !{{is|is niet}} verbonden"
@@ -270,6 +275,53 @@
           }
         ],
         "id": "device-is-connected"
+      },
+      {
+        "title": {
+          "en": "Device !{{Is|Isn't}} Connected To Access Point",
+          "nl": "Apparaat !{{is|is niet}} verbonden met het toegangspunt"
+        },
+        "hint": {
+          "en": "Checks if device is connected to specific access point",
+          "nl": "Controleert of apparaat is verbonden met specifiek toegangspunt"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          },
+          {
+            "type": "autocomplete",
+            "name": "client",
+            "placeholder": {
+              "en": "Stefan's Samsung Phone",
+              "nl": "Stefans Samsung Telefoon"
+            }
+          }
+        ],
+        "id": "device-is-connected-to-access-point"
+      },
+      {
+        "title": {
+          "en": "Device !{{Is|Isn't}} Connected To Network",
+          "nl": "Apparaat !{{is|is niet}} verbonden met het netwerk"
+        },
+        "hint": {
+          "en": "Checks if device is connected to network",
+          "nl": "Controleert of apparaat is verbonden met het netwerk"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "Device",
+            "placeholder": {
+              "en": "Stefan's Samsung Phone",
+              "nl": "Stefans Samsung Telefoon"
+            }
+          }
+        ],
+        "id": "device-is-connected-to-network"
       }
     ],
     "actions": [
@@ -278,6 +330,7 @@
           "en": "Reboot",
           "nl": "Herstart"
         },
+        "deprecated": true,
         "hint": {
           "en": "Reboots your router",
           "nl": "Herstart uw router"
@@ -293,9 +346,59 @@
       },
       {
         "title": {
+          "en": "Reboot Network",
+          "nl": "Herstart netwerk"
+        },
+        "hint": {
+          "en": "Reboots your entire network including all access points",
+          "nl": "Herstart uw gehele netwerk inclusief toegangspunten"
+        },
+        "id": "reboot-network"
+      },
+      {
+        "title": {
+          "en": "Set LEDs on/off",
+          "nl": "Zet LEDs aan/uit"
+        },
+        "hint": {
+          "en": "Set LEDs for your access point on or off",
+          "nl": "Zet LEDs van uw access point aan of uit"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          },
+          {
+            "type": "dropdown",
+            "name": "OnOrOff",
+            "values": [
+              {
+                "id": "on",
+                "label": {
+                  "en": "On",
+                  "nl": "Aan"
+                }
+              },
+              {
+                "id": "off",
+                "label": {
+                  "en": "Off",
+                  "nl": "Uit"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set-leds"
+      },
+      {
+        "title": {
           "en": "Turn off LEDs",
           "nl": "Zet LEDs uit"
         },
+        "deprecated": true,
         "hint": {
           "en": "Turns off the leds of your router",
           "nl": "Zet leds van uw router uit"
@@ -314,6 +417,7 @@
           "en": "Turn on LEDs",
           "nl": "Zet LEDs aan"
         },
+        "deprecated": true,
         "hint": {
           "en": "Turns on the leds of your router",
           "nl": "Zet leds van uw router aan"
@@ -667,8 +771,8 @@
     "meter_online_devices": {
       "type": "number",
       "title": {
-        "en": "Online Devices",
-        "nl": "Online Apparaten"
+        "en": "Connected Devices",
+        "nl": "Verbonden Apparaten"
       },
       "getable": true,
       "setable": false,

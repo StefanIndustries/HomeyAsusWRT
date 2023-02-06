@@ -1,0 +1,37 @@
+{
+  "title": {
+    "en": "Set LEDs on/off",
+    "nl": "Zet LEDs aan/uit"
+  },
+  "hint": {
+    "en": "Set LEDs for your access point on or off",
+    "nl": "Zet LEDs van uw access point aan of uit"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt"
+    },
+    {
+      "type": "dropdown",
+      "name": "OnOrOff",
+      "values": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "nl": "Aan"
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "nl": "Uit"
+          }
+        }
+      ]
+    }
+  ]
+}
