@@ -3,6 +3,7 @@
     "en": "Device !{{is|isn't}} connected",
     "nl": "Apparaat !{{is|is niet}} verbonden"
   },
+  "deprecated": true,
   "titleFormatted": {
     "en": "Device [[client]] !{{is|isn't}} connected",
     "nl": "Apparaat [[client]] !{{is|is niet}} verbonden"
@@ -15,7 +16,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=asus-router|asuswrt"
+      "filter": "driver_id=asus-router"
     },
     {
       "type": "autocomplete",

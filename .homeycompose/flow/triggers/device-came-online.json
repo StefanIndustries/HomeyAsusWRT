@@ -3,6 +3,7 @@
     "en": "Came online",
     "nl": "Is verbonden"
   },
+  "deprecated": true,
   "hint": {
     "en": "Checks on a interval if a device connected to your network",
     "nl": "Checkt op basis van een interval of een apparaat is verbonden met uw netwerk"
@@ -11,7 +12,7 @@
     {
       "name": "device",
       "type": "device",
-      "filter": "driver_id=asus-router|asuswrt"
+      "filter": "driver_id=asus-router"
     }
   ],
   "tokens": [

@@ -3,6 +3,7 @@
     "en": "WAN status changed",
     "nl": "WAN status is veranderd"
   },
+  "deprecated": true,
   "hint": {
     "en": "Checks on a interval if your WAN is still online",
     "nl": "Checkt op basis van een interval of uw WAN nog verbonden is"
@@ -11,7 +12,7 @@
     {
       "name": "device",
       "type": "device",
-      "filter": "driver_id=asus-router|asuswrt"
+      "filter": "driver_id=asus-router"
     }
   ],
   "tokens": [
