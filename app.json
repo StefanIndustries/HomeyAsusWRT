@@ -314,7 +314,7 @@
         "args": [
           {
             "type": "autocomplete",
-            "name": "Device",
+            "name": "client",
             "placeholder": {
               "en": "Stefan's Samsung Phone",
               "nl": "Stefans Samsung Telefoon"
@@ -842,6 +842,22 @@
       "setable": false,
       "insights": true,
       "icon": "./assets/cap_traffic_total_sent.svg"
+    },
+    "uptime_days": {
+      "type": "number",
+      "title": {
+        "en": "Uptime",
+        "nl": "Aan sinds"
+      },
+      "units": {
+        "en": "day(s)",
+        "nl": "dag(en)"
+      },
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "./assets/cap_uptime_days.svg"
     },
     "uptime_seconds": {
       "type": "number",

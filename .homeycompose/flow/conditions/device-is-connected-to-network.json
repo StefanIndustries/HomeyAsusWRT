@@ -10,7 +10,7 @@
   "args": [
     {
       "type": "autocomplete",
-      "name": "Device",
+      "name": "client",
       "placeholder": {
         "en": "Stefan's Samsung Phone",
         "nl": "Stefans Samsung Telefoon"

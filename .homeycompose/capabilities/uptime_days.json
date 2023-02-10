@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Uptime",
+    "nl": "Aan sinds"
+  },
+  "units": {
+    "en": "day(s)",
+    "nl": "dag(en)"
+  },
+  "decimals": 0,
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "icon": "./assets/cap_uptime_days.svg"
+}

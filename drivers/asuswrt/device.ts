@@ -1,7 +1,28 @@
 import Homey from 'homey';
 import { AsusWRTOperationMode } from 'node-asuswrt/lib/models/AsusWRTOperationMode';
+import { AsusWRTConnectedClient } from '../../lib/models/AsusWRTConnectedClient';
 
 export class AsusWRTDevice extends Homey.Device {
+
+  private wiredClients: AsusWRTConnectedClient[] = [];
+  private wireless24GClients: AsusWRTConnectedClient[] = [];
+  private wireless5GClients: AsusWRTConnectedClient[] = [];
+
+  public setConnectedClients(wiredClients: AsusWRTConnectedClient[], wireless24GClients: AsusWRTConnectedClient[], wireless5GClients: AsusWRTConnectedClient[]) {
+    this.wiredClients = wiredClients;
+    this.wireless24GClients = wireless24GClients;
+    this.wireless5GClients = wireless5GClients;
+  }
+
+  public getWiredClients(): AsusWRTConnectedClient[] {
+    return this.wiredClients;
+  }
+  public getWireless24GClients(): AsusWRTConnectedClient[] {
+    return this.wireless24GClients;
+  }
+  public getWireless5GClients(): AsusWRTConnectedClient[] {
+    return this.wireless5GClients;
+  }
 
   static routerCapabilities = [
     'alarm_wan_disconnected',
@@ -9,14 +30,18 @@ export class AsusWRTDevice extends Homey.Device {
     'meter_cpu_usage',
     'meter_mem_used',
     'meter_online_devices',
+    'realtime_download',
+    'realtime_upload',
     'traffic_total_received',
     'traffic_total_sent',
+    'uptime_days',
   ];
 
   static accessPointCapabilities = [
     'meter_cpu_usage',
     'meter_mem_used',
     'meter_online_devices',
+    'uptime_days',
   ];
 
   private async wait(milliseconds: number) {
@@ -26,19 +51,13 @@ export class AsusWRTDevice extends Homey.Device {
   private async setCapabilities(operationMode: AsusWRTOperationMode) {
     const capabilityList = operationMode === AsusWRTOperationMode.Router ? AsusWRTDevice.routerCapabilities : AsusWRTDevice.accessPointCapabilities;
     capabilityList.forEach(async cap => {
-      this.log(`test capability: ${cap} set for device`);
       if (!this.hasCapability(cap)) {
-        await this.wait(1000);
-        this.log(`capability: ${cap} for device missing, adding now.`);
+        await this.wait(5000);
         await this.addCapability(cap);
         if (!this.hasCapability(cap)) {
           await this.wait(10000);
-          this.log(`capability: ${cap} for device still missing, adding now.`);
           await this.addCapability(cap);
         }
-      } else
-      {
-        this.log(`capability: ${cap} already available for device.`)
       }
     });
   }
