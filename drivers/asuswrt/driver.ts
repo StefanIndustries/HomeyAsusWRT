@@ -42,6 +42,9 @@ class AsusWRTDriver extends Homey.Driver {
       if (!router.getAvailable()) {
         return;
       }
+      if (routerStatus?.firmwareVersion) {
+        router.setFirmwareVersion(routerStatus.firmwareVersion, routerStatus.newFirmwareVersion ? routerStatus.newFirmwareVersion : '');
+      }
       try {
         const newWiredClients = await this.asusClient!.getWiredClients(routerMac);
         const newWireless24GClients = await this.asusClient!.getWirelessClients(routerMac, "2G");
@@ -130,6 +133,21 @@ class AsusWRTDriver extends Homey.Driver {
         await this.asusClient.setLedsEnabled(args.device.getData().mac, args.OnOrOff === 'on' ? true : false);
       }
     });
+
+    const wakeOnLan = this.homey.flow.getActionCard('wake-on-lan');
+    wakeOnLan.registerRunListener(async (args: {wolclient: {name: string, mac: string, description: string}}) => {
+      await this.asusClient?.wakeOnLan(args.wolclient.mac);
+    })
+    .registerArgumentAutocompleteListener('wolclient', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
+      const searchFor = query.toUpperCase();
+      const wolClients = await this.asusClient?.getWakeOnLanList();
+      const devicesInQuery = wolClients!.filter(device => {
+        return device.name.toUpperCase().includes(searchFor) || device.mac.toUpperCase().includes(searchFor)
+      });
+      return [
+        ...devicesInQuery.map(device => ({ name: device.name, mac: device.mac, description: device.mac }))
+      ];
+    });
   }
 
   private deviceArgumentAutoCompleteListenerResults(query: string): Homey.FlowCard.ArgumentAutocompleteResults {
@@ -137,10 +155,9 @@ class AsusWRTDriver extends Homey.Driver {
     const devicesInQuery = this.connectedClients.filter(device => {
       return device.ip.toUpperCase().includes(searchFor) || device.name.toUpperCase().includes(searchFor) || device.nickName.toUpperCase().includes(searchFor) || device.vendor.toUpperCase().includes(searchFor)
     });
-    const results: Homey.FlowCard.ArgumentAutocompleteResults = [
+    return [
       ...devicesInQuery.map(device => ({ name: device.ip, mac: device.mac, description: device.name })),
     ];
-    return results;
   }
 
   /**

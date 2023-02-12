@@ -1,0 +1,20 @@
+{
+  "title": {
+    "en": "Run Wake On Lan",
+    "nl": "Voer Wake On Lan uit"
+  },
+  "hint": {
+    "en": "Runs the wake on lan command for device in wake on lan list",
+    "nl": "Voert het wake on lan commando uit voor apparaat in wake on lan lijst"
+  },
+  "args": [
+    {
+      "type": "autocomplete",
+      "name": "wolclient",
+      "placeholder": {
+        "en": "Stefan's Samsung Phone",
+        "nl": "Stefans Samsung Telefoon"
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": {
+    "en": "A new firmware version is available",
+    "nl": "Een nieuwe firmware versie is beschikbaar"
+  },
+  "highlight": true,
+  "hint": {
+    "en": "Checks on a interval if a new firmware version is available",
+    "nl": "Checkt op basis van een interval of een nieuwe firmware versie beschikbaar is"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt"
+    }
+  ],
+  "tokens": [
+    {
+      "type": "string",
+      "name": "version",
+      "title": {
+        "en": "version",
+        "nl": "versie"
+      },
+      "example": {
+        "en": "3.0.0.4.386_47468",
+        "nl": "3.0.0.4.386_47468"
+      }
+    }
+  ]
+}

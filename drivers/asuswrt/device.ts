@@ -9,6 +9,8 @@ import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnec
 
 export class AsusWRTDevice extends Homey.Device {
 
+  private triggerNewFirmwareAvailable!: (tokens: any) => void;
+
   private triggerDeviceConnected!: (tokens: any) => void;
   private trigger24GDeviceConnected!: (tokens: any) => void;
   private trigger5GDeviceConnected!: (tokens: any) => void;
@@ -18,6 +20,9 @@ export class AsusWRTDevice extends Homey.Device {
   private trigger24GDeviceDisconnected!: (tokens: any) => void;
   private trigger5GDeviceDisconnected!: (tokens: any) => void;
   private triggerWiredDeviceDisconnected!: (tokens: any) => void;
+
+  private firmwareVersion: string = '';
+  private newVersion: string = '';
 
   private wiredClients: AsusWRTConnectedDevice[] = [];
   private wireless24GClients: AsusWRTConnectedDevice[] = [];
@@ -55,6 +60,14 @@ export class AsusWRTDevice extends Homey.Device {
     if (this.hasCapability('meter_online_devices')) {
       await this.setCapabilityValue('meter_online_devices', this.wiredClients.length + this.wireless24GClients.length + this.wireless5GClients.length);
     }
+  }
+
+  public async setFirmwareVersion(currentVersion: string, newVersion: string) {
+    if (this.firmwareVersion !== '' && newVersion !== '' && this.newVersion !== newVersion) {
+      this.triggerNewFirmwareAvailable({"version": newVersion});
+    }
+    this.firmwareVersion = currentVersion;
+    this.newVersion = newVersion;
   }
 
   public async setLoad(load: AsusWRTLoad) {

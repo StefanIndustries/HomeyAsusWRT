@@ -3,6 +3,7 @@
     "en": "A device disconnected to the access point",
     "nl": "Een apparaat de verbinding heeft verbroken met het toegangspunt"
   },
+  "highlight": true,
   "hint": {
     "en": "Checks on a interval if a device disconnected to the access point",
     "nl": "Checkt op basis van een interval of een apparaat de verbinding heeft verbroken met het toegangspunt"
