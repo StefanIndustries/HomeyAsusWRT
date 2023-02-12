@@ -4,8 +4,8 @@
     "nl": "Een apparaat is verbonden met het netwerk"
   },
   "hint": {
-    "en": "Checks on a interval if a device connected to your network",
-    "nl": "Checkt op basis van een interval of een apparaat is verbonden met uw netwerk"
+    "en": "Checks on a interval if a device connected to the network",
+    "nl": "Checkt op basis van een interval of een apparaat is verbonden met het netwerk"
   },
   "tokens": [
     {

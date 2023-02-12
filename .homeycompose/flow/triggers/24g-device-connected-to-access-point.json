@@ -1,12 +1,19 @@
 {
   "title": {
-    "en": "A device disconnected from your network",
-    "nl": "Een apparaat heeft de verbinding verbroken met het netwerk"
+    "en": "A 2.4Ghz device connected to the access point",
+    "nl": "Een 2.4Ghz apparaat is verbonden met het toegangspunt"
   },
   "hint": {
-    "en": "Checks on a interval if a device disconnected from the network",
-    "nl": "Checkt op basis van een interval of een apparaat de verbinding heeft verbroken met het netwerk"
+    "en": "Checks on a interval if a 2.4Ghz device connected to the access point",
+    "nl": "Checkt op basis van een interval of een 2.4Ghz apparaat is verbonden met het toegangspunt"
   },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt"
+    }
+  ],
   "tokens": [
     {
       "type": "string",

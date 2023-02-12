@@ -6,8 +6,6 @@ export class AsusWRTApp extends Homey.App {
    * onInit is called when the app is initialized.
    */
   async onInit() {
-    this.log('AsusWRTApp has been initialized');
-
     const reboot = this.homey.flow.getActionCard('reboot');
 		reboot.registerRunListener(async (args) => {
       const device = <AsusRouterDevice> args.device;
@@ -25,6 +23,8 @@ export class AsusWRTApp extends Homey.App {
       const device = <AsusRouterDevice> args.device;
       await device.setLEDs(0);
     });
+
+    this.log('AsusWRTApp has been initialized');
   }
 }
 

@@ -3,6 +3,10 @@
     "en": "Device !{{Is|Isn't}} Connected To Network",
     "nl": "Apparaat !{{is|is niet}} verbonden met het netwerk"
   },
+  "titleFormatted": {
+    "en": "[[client]] !{{is|isn't}} connected to network",
+    "nl": "[[client]] !{{is|is niet}} verbonden met het netwerk"
+  },
   "hint": {
     "en": "Checks if device is connected to network",
     "nl": "Controleert of apparaat is verbonden met het netwerk"

@@ -3,6 +3,10 @@
     "en": "Set LEDs on/off",
     "nl": "Zet LEDs aan/uit"
   },
+  "titleFormatted": {
+    "en": "Turn LEDs [[OnOrOff]]",
+    "nl": "Zet LEDs [[OnOrOff]]"
+  },
   "hint": {
     "en": "Set LEDs for your access point on or off",
     "nl": "Zet LEDs van uw access point aan of uit"

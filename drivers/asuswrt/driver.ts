@@ -5,6 +5,7 @@ import { AsusWRTConnectedDevice } from 'node-asuswrt/lib/models/AsusWRTConnected
 import { AsusWRTOperationMode } from 'node-asuswrt/lib/models/AsusWRTOperationMode';
 import { AsusWRTRouter } from 'node-asuswrt/lib/models/AsusWRTRouter';
 import { AsusWRTDevice } from './device';
+import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices, wait } from './utils';
 
 class AsusWRTDriver extends Homey.Driver {
 
@@ -30,26 +31,9 @@ class AsusWRTDriver extends Homey.Driver {
         return;
       }
     }
-    this.getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => {
-      this.triggerDeviceDisconnectedFromNetwork({
-        name: missingDevice.name,
-        ip: missingDevice.ip,
-        mac: missingDevice.mac,
-        nickname: missingDevice.nickName,
-        vendor: missingDevice.vendor,
-        rssi: missingDevice.rssi
-      });
-    });
-    this.getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => {
-      this.triggerDeviceConnectedToNetwork({
-        name: newDevice.name,
-        ip: newDevice.ip,
-        mac: newDevice.mac,
-        nickname: newDevice.nickName,
-        vendor: newDevice.vendor,
-        rssi: newDevice.rssi
-      });
-    });
+    getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
+    getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+
     this.getDevices().forEach(async device => {
       const router = <AsusWRTDevice> device;
       const routerMac = router.getData().mac;
@@ -59,86 +43,31 @@ class AsusWRTDriver extends Homey.Driver {
         return;
       }
       try {
-        if (router.hasCapability('meter_online_devices')) {
-          const newWiredClients = await this.asusClient!.getWiredClients(routerMac);
-          const newWireless24GClients = await this.asusClient!.getWirelessClients(routerMac, "2G");
-          const newWireless5GClients = await this.asusClient!.getWirelessClients(routerMac, "5G");
-          router.setConnectedClients(newWiredClients, newWireless24GClients, newWireless5GClients);
-          await router.setCapabilityValue('meter_online_devices', router.getWiredClients().length + router.getWireless24GClients().length + router.getWireless5GClients().length);
+        const newWiredClients = await this.asusClient!.getWiredClients(routerMac);
+        const newWireless24GClients = await this.asusClient!.getWirelessClients(routerMac, "2G");
+        const newWireless5GClients = await this.asusClient!.getWirelessClients(routerMac, "5G");
+        await router.setConnectedClients(newWiredClients, newWireless24GClients, newWireless5GClients);
+  
+        const load = await this.asusClient!.getCPUMemoryLoad(routerMac);
+        await router.setLoad(load);
+  
+        const uptimeSeconds = await this.asusClient!.getUptime(routerMac);
+        await router.setUptimeDaysBySeconds(uptimeSeconds);
+  
+        if (router.getStoreValue('operationMode') === AsusWRTOperationMode.Router) {
+          const WANStatus = await this.asusClient!.getWANStatus();
+          await router.setWANStatus(WANStatus);
+  
+          const trafficDataFirst = await this.asusClient!.getTotalTrafficData();
+          await wait(2000);
+          const trafficDataSecond = await this.asusClient!.getTotalTrafficData();
+          await router.setTrafficValues(trafficDataFirst, trafficDataSecond);
         }
       } catch {
-        this.log('failed to update connected clients');
-      }
-
-      try {
-        if (router.hasCapability('meter_cpu_usage') && router.hasCapability('meter_mem_used')) {
-          const load = await this.asusClient!.getCPUMemoryLoad(routerMac);
-          await router.setCapabilityValue('meter_cpu_usage', load.CPUUsagePercentage);
-          await router.setCapabilityValue('meter_mem_used', load.MemoryUsagePercentage);
-        }
-      } catch {
-        this.log('failed to update cpu and memory loads');
-      }
-
-      try {
-        if (router.hasCapability('uptime_days')) {
-          const uptimeSeconds = await this.asusClient!.getUptime(routerMac);
-          await router.setCapabilityValue('uptime_days', uptimeSeconds * 0.0000115741);
-        }
-      } catch {
-        this.log('failed to update uptime');
-      }
-
-      if (router.getStoreValue('operationMode') === AsusWRTOperationMode.Router) {
-        try {
-          if (router.hasCapability('external_ip') && router.hasCapability('alarm_wan_disconnected')) {
-            const wanStatus = await this.asusClient!.getWANStatus();
-            await router.setCapabilityValue('external_ip', wanStatus.ipaddr);
-            await router.setCapabilityValue('alarm_wan_disconnected', wanStatus.status && wanStatus.status !== 1 ? true : false);
-          }
-        } catch {
-          this.log('failed to update wan status');
-        }
-
-        try {
-          if (router.hasCapability('traffic_total_received') && router.hasCapability('traffic_total_sent') && router.hasCapability('realtime_download') && router.hasCapability('realtime_upload')) {
-            const trafficDataFirst = await this.asusClient!.getTotalTrafficData();
-            await this.wait(2000);
-            const trafficDataSecond = await this.asusClient!.getTotalTrafficData();
-            await router.setCapabilityValue('traffic_total_received', trafficDataSecond.trafficReceived);
-            await router.setCapabilityValue('traffic_total_sent', trafficDataSecond.trafficSent);
-            await router.setCapabilityValue('realtime_download', trafficDataSecond.trafficReceived - trafficDataFirst.trafficReceived);
-            await router.setCapabilityValue('realtime_upload', trafficDataSecond.trafficSent - trafficDataFirst.trafficSent);
-          }
-        } catch {
-          this.log('failed to update traffic data');
-        }
+        this.log('failed to update router state, setting router unavailable');
+        router.setUnavailable();
       }
     });
-  }
-
-  private getMissingConnectedDevices(oldList: AsusWRTConnectedDevice[], newList: AsusWRTConnectedDevice[]): AsusWRTConnectedDevice[] {
-    const missingEntities: AsusWRTConnectedDevice[] = [];
-    oldList.forEach(device => {
-      if (!newList.some((device2) => device2.mac === device.mac)) {
-        missingEntities.push(device);
-      }
-    });
-    return missingEntities;
-  }
-
-  private getNewConnectedDevices(oldList: AsusWRTConnectedDevice[], newList: AsusWRTConnectedDevice[]): AsusWRTConnectedDevice[] {
-    const newEntities: AsusWRTConnectedDevice[] = [];
-    newList.forEach(device => {
-      if (!oldList.some((device2) => device2.mac === device.mac)) {
-        newEntities.push(device);
-      }
-    });
-    return newEntities;
-  }
-
-  private async wait(milliseconds: number) {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
   private registerFlowListeners() {
@@ -186,7 +115,6 @@ class AsusWRTDriver extends Homey.Driver {
       .registerArgumentAutocompleteListener('client', (query: string): Homey.FlowCard.ArgumentAutocompleteResults => {
         return this.deviceArgumentAutoCompleteListenerResults(query);
       });
-
 
     // actions
     const rebootNetwork = this.homey.flow.getActionCard('reboot-network');

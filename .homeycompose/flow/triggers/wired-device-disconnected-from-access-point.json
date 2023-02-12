@@ -1,12 +1,19 @@
 {
   "title": {
-    "en": "A device disconnected from your network",
-    "nl": "Een apparaat heeft de verbinding verbroken met het netwerk"
+    "en": "A wired device disconnected to the access point",
+    "nl": "Een bedraad apparaat heeft de verbinding verbroken met het toegangspunt"
   },
   "hint": {
-    "en": "Checks on a interval if a device disconnected from the network",
-    "nl": "Checkt op basis van een interval of een apparaat de verbinding heeft verbroken met het netwerk"
+    "en": "Checks on a interval if a wired device disconnected to the access point",
+    "nl": "Checkt op basis van een interval of een bedraad apparaat de verbinding heeft verbroken met het toegangspunt"
   },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt"
+    }
+  ],
   "tokens": [
     {
       "type": "string",

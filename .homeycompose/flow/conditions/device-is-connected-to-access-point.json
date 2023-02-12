@@ -3,6 +3,10 @@
     "en": "Device !{{Is|Isn't}} Connected To Access Point",
     "nl": "Apparaat !{{is|is niet}} verbonden met het toegangspunt"
   },
+  "titleFormatted": {
+    "en": "[[client]] !{{is|isn't}} connected to access point on network band [[band]]",
+    "nl": "[[client]] !{{is|is niet}} verbonden met toegangspunt via netwerk band [[band]]"
+  },
   "hint": {
     "en": "Checks if device is connected to specific access point",
     "nl": "Controleert of apparaat is verbonden met specifiek toegangspunt"
@@ -12,6 +16,40 @@
       "type": "device",
       "name": "device",
       "filter": "driver_id=asuswrt"
+    },
+    {
+      "type": "dropdown",
+      "name": "band",
+      "values": [
+        {
+          "id": "any",
+          "label": {
+            "en": "any",
+            "nl": "alle"
+          }
+        },
+        {
+          "id": "wired",
+          "label": {
+            "en": "wired",
+            "nl": "bedraad"
+          }
+        },
+        {
+          "id": "24g",
+          "label": {
+            "en": "2.4Ghz",
+            "nl": "2.4Ghz"
+          }
+        },
+        {
+          "id": "5g",
+          "label": {
+            "en": "5Ghz",
+            "nl": "5Ghz"
+          }
+        }
+      ]
     },
     {
       "type": "autocomplete",
