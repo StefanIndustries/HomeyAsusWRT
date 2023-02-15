@@ -3,6 +3,10 @@
     "en": "Run Wake On Lan",
     "nl": "Voer Wake On Lan uit"
   },
+  "titleFormatted": {
+    "en": "Run Wake On Lan for [[wolclient]]",
+    "nl": "Voer Wake On Lan uit voor [[wolclient]]"
+  },
   "hint": {
     "en": "Runs the wake on lan command for device in wake on lan list",
     "nl": "Voert het wake on lan commando uit voor apparaat in wake on lan lijst"
