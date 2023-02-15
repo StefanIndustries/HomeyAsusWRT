@@ -156,7 +156,7 @@ class AsusWRTDriver extends Homey.Driver {
       return device.ip.toUpperCase().includes(searchFor) || device.name.toUpperCase().includes(searchFor) || device.nickName.toUpperCase().includes(searchFor) || device.vendor.toUpperCase().includes(searchFor)
     });
     return [
-      ...devicesInQuery.map(device => ({ name: device.ip, mac: device.mac, description: device.name })),
+      ...devicesInQuery.map(device => ({ name: device.name, mac: device.mac, description: device.mac })),
     ];
   }
 
