@@ -39,24 +39,30 @@ export class AsusWRTDevice extends Homey.Device {
   }
 
   public async setConnectedClients(wiredClients: AsusWRTConnectedDevice[], wireless24GClients: AsusWRTConnectedDevice[], wireless5GClients: AsusWRTConnectedDevice[]) {
+    const oldWiredClients = this.wiredClients;
+    const oldWireless24GClients = this.wireless24GClients;
+    const oldWireless5GClients = this.wireless5GClients;
+
+    this.wiredClients = wiredClients;
+    this.wireless24GClients = wireless24GClients;
+    this.wireless5GClients = wireless5GClients;
+
     // trigger any device
-    getMissingConnectedDevices(this.wiredClients.concat(this.wireless24GClients, this.wireless5GClients), wiredClients.concat(wireless24GClients, wireless5GClients)).forEach(missingDevice => this.triggerDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
-    getNewConnectedDevices(this.wiredClients.concat(this.wireless24GClients, this.wireless5GClients), wiredClients.concat(wireless24GClients, wireless5GClients)).forEach(newDevice => this.triggerDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+    getMissingConnectedDevices(oldWiredClients.concat(oldWireless24GClients, oldWireless5GClients), wiredClients.concat(wireless24GClients, wireless5GClients)).forEach(missingDevice => this.triggerDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+    getNewConnectedDevices(oldWiredClients.concat(oldWireless24GClients, oldWireless5GClients), wiredClients.concat(wireless24GClients, wireless5GClients)).forEach(newDevice => this.triggerDeviceConnected(getConnectedDisconnectedToken(newDevice)));
 
     // trigger wired device
-    getMissingConnectedDevices(this.wiredClients, wiredClients).forEach(missingDevice => this.triggerWiredDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
-    getNewConnectedDevices(this.wiredClients, wiredClients).forEach(newDevice => this.triggerWiredDeviceConnected(getConnectedDisconnectedToken(newDevice)));
-    this.wiredClients = wiredClients;
-
+    getMissingConnectedDevices(oldWiredClients, wiredClients).forEach(missingDevice => this.triggerWiredDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+    getNewConnectedDevices(oldWiredClients, wiredClients).forEach(newDevice => this.triggerWiredDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+    
     // trigger 2.4ghz device
-    getMissingConnectedDevices(this.wireless24GClients, wireless24GClients).forEach(missingDevice => this.trigger24GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
-    getNewConnectedDevices(this.wireless24GClients, wireless24GClients).forEach(newDevice => this.trigger24GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
-    this.wireless24GClients = wireless24GClients;
-
+    getMissingConnectedDevices(oldWireless24GClients, wireless24GClients).forEach(missingDevice => this.trigger24GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+    getNewConnectedDevices(oldWireless24GClients, wireless24GClients).forEach(newDevice => this.trigger24GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+    
     // trigger 5ghz device
-    getMissingConnectedDevices(this.wireless5GClients, wireless5GClients).forEach(missingDevice => this.trigger5GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
-    getNewConnectedDevices(this.wireless5GClients, wireless5GClients).forEach(newDevice => this.trigger5GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
-    this.wireless5GClients = wireless5GClients;
+    getMissingConnectedDevices(oldWireless5GClients, wireless5GClients).forEach(missingDevice => this.trigger5GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+    getNewConnectedDevices(oldWireless5GClients, wireless5GClients).forEach(newDevice => this.trigger5GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+    
     if (this.hasCapability('meter_online_devices')) {
       await this.setCapabilityValue('meter_online_devices', this.wiredClients.length + this.wireless24GClients.length + this.wireless5GClients.length);
     }

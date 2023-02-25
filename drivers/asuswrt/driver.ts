@@ -28,6 +28,7 @@ class AsusWRTDriver extends Homey.Driver {
         this.connectedClients = await this.asusClient!.getAllClients();
       } catch {
         this.log('network not ready to receive requests');
+        this.getDevices().forEach(device => device.setUnavailable('Network not available to receive requests'));
         return;
       }
     }
@@ -38,7 +39,7 @@ class AsusWRTDriver extends Homey.Driver {
       const router = <AsusWRTDevice> device;
       const routerMac = router.getData().mac;
       const routerStatus = routers.find(client => client.mac === routerMac);
-      routerStatus && routerStatus.online ? router.setAvailable() : router.setUnavailable();
+      routerStatus && routerStatus.online ? router.setAvailable() : router.setUnavailable('Device not online');
       if (!router.getAvailable()) {
         return;
       }
@@ -68,7 +69,7 @@ class AsusWRTDriver extends Homey.Driver {
         }
       } catch {
         this.log('failed to update router state, setting router unavailable');
-        router.setUnavailable();
+        router.setUnavailable('Unable to get device info');
       }
     });
   }
