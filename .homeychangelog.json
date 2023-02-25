@@ -40,5 +40,8 @@
   },
   "2.0.0": {
     "en": "Improved memory usage, application flow, responsiveness and overall performance. New actions"
+  },
+  "2.0.1": {
+    "en": "Improved device triggers and added better unavailable message"
   }
 }
