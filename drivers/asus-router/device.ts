@@ -202,6 +202,7 @@ export class AsusRouterDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
+    this.setWarning('Please remove this device and re-add your device(s) due to changes.');
     this.registerTriggers();
     this.registerConditions();
     const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);

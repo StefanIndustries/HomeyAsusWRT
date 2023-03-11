@@ -67,9 +67,10 @@ class AsusWRTDriver extends Homey.Driver {
           const trafficDataSecond = await this.asusClient!.getTotalTrafficData();
           await router.setTrafficValues(trafficDataFirst, trafficDataSecond);
         }
+        router.setWarning(null);
       } catch {
-        this.log('failed to update router state, setting router unavailable');
-        router.setUnavailable('Unable to get device info');
+        this.log('failed to update device information');
+        router.setWarning('Failed to retrieve device info, will try again soon');
       }
     });
   }
