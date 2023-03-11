@@ -321,7 +321,18 @@ class AsusWRTDriver extends Homey.Driver {
       'RT-AX89U',
       'RT-AX89X',
       'RT-AC68U',
-      'RT-AC86U'
+      'RT-AC86U',
+      'RT-AX95Q',
+      'RT-AC1900',
+      'RT-AC65P',
+      'RT-AC85P',
+      'RT-AC2400',
+      'RT-AC2600',
+      'RT-AC2900',
+      'RT-AC3200',
+      'RT-AC88U',
+      'RT-AC3100',
+      'RT-AC5300'
     ];
     if (supportedIcons.indexOf(productId) === -1) {
       return `default.svg`;
