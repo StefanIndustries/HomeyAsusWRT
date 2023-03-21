@@ -924,7 +924,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router|asuswrt"
+            "filter": "driver_id=asus-router|asuswrt&capabilities=external_ip"
           }
         ],
         "tokens": [
@@ -1014,7 +1014,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asuswrt"
+            "filter": "driver_id=asuswrt&capabilities=wan_type"
           }
         ],
         "tokens": [
