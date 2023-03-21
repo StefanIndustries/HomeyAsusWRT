@@ -1,0 +1,27 @@
+{
+  "title": {
+    "en": "WAN type changed (dual wan)",
+    "nl": "WAN type is veranderd (dual wan)"
+  },
+  "hint": {
+    "en": "Checks on a interval if the WAN type has changed (dual wan)",
+    "nl": "Checkt op basis van een interval of het WAN type is veranderd (dual wan)"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=asuswrt"
+    }
+  ],
+  "tokens": [
+    {
+      "type": "string",
+      "name": "wan_type",
+      "title": {
+        "en": "WAN Type",
+        "nl": "WAN Type"
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.asus.wrt",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -916,7 +916,6 @@
           "en": "External IP changed",
           "nl": "Extern IP is veranderd"
         },
-        "deprecated": true,
         "hint": {
           "en": "Checks on a interval if the external IP has changed",
           "nl": "Checkt op basis van een interval of het externe IP is veranderd"
@@ -925,7 +924,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router"
+            "filter": "driver_id=asus-router|asuswrt"
           }
         ],
         "tokens": [
@@ -1001,6 +1000,34 @@
           }
         ],
         "id": "wan-connection-status-changed"
+      },
+      {
+        "title": {
+          "en": "WAN type changed (dual wan)",
+          "nl": "WAN type is veranderd (dual wan)"
+        },
+        "hint": {
+          "en": "Checks on a interval if the WAN type has changed (dual wan)",
+          "nl": "Checkt op basis van een interval of het WAN type is veranderd (dual wan)"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=asuswrt"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "wan_type",
+            "title": {
+              "en": "WAN Type",
+              "nl": "WAN Type"
+            }
+          }
+        ],
+        "id": "wan-type-changed"
       },
       {
         "title": {
@@ -1887,6 +1914,16 @@
       "setable": false,
       "insights": true,
       "icon": "./assets/cap_uptime_seconds.svg"
+    },
+    "wan_type": {
+      "type": "string",
+      "title": {
+        "en": "WAN Type",
+        "nl": "WAN Type"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "./assets/cap_wan_type.svg"
     }
   }
 }

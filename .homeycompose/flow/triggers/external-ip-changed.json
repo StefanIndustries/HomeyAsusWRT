@@ -3,7 +3,6 @@
     "en": "External IP changed",
     "nl": "Extern IP is veranderd"
   },
-  "deprecated": true,
   "hint": {
     "en": "Checks on a interval if the external IP has changed",
     "nl": "Checkt op basis van een interval of het externe IP is veranderd"
@@ -12,7 +11,7 @@
     {
       "name": "device",
       "type": "device",
-      "filter": "driver_id=asus-router"
+      "filter": "driver_id=asus-router|asuswrt"
     }
   ],
   "tokens": [

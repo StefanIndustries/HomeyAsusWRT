@@ -1,0 +1,10 @@
+{
+    "type": "string",
+    "title": {
+      "en": "WAN Type",
+      "nl": "WAN Type"
+    },
+    "getable": true,
+    "setable": false,
+    "icon": "./assets/cap_wan_type.svg"
+}

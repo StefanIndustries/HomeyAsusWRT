@@ -46,5 +46,14 @@
   },
   "2.0.2": {
     "en": "Added warning for deprecated driver. Reduced unavailability of devices not being updated in time. (show warning instead)"
+  },
+  "2.0.3": {
+    "en": "Added more icons for devices"
+  },
+  "2.0.4": {
+    "en": "Improved logging and exception handling in underlying node modules"
+  },
+  "2.0.5": {
+    "en": "Added external ip changed trigger, improved logging for better debugging"
   }
 }

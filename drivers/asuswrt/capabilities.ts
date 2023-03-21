@@ -9,6 +9,7 @@ export const RouterCapabilities = [
     'traffic_total_received',
     'traffic_total_sent',
     'uptime_days',
+    'wan_type'
 ];
 
 export const AccessPointCapabilities = [

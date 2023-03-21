@@ -3,6 +3,7 @@ import PairSession from 'homey/lib/PairSession';
 import { AsusWRT } from "node-asuswrt"
 import { AsusWRTConnectedDevice } from 'node-asuswrt/lib/models/AsusWRTConnectedDevice';
 import { AsusWRTOperationMode } from 'node-asuswrt/lib/models/AsusWRTOperationMode';
+import { AsusWRTOptions } from 'node-asuswrt/lib/models/AsusWRTOptions';
 import { AsusWRTRouter } from 'node-asuswrt/lib/models/AsusWRTRouter';
 import { AsusWRTDevice } from './device';
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices, wait } from './utils';
@@ -28,7 +29,7 @@ class AsusWRTDriver extends Homey.Driver {
         this.connectedClients = await this.asusClient!.getAllClients();
       } catch {
         this.log('network not ready to receive requests');
-        this.getDevices().forEach(device => device.setUnavailable('Network not available to receive requests'));
+        this.getDevices().forEach(async (device) => await device.setUnavailable('Network not available to receive requests'));
         return;
       }
     }
@@ -36,41 +37,66 @@ class AsusWRTDriver extends Homey.Driver {
     getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
 
     this.getDevices().forEach(async device => {
-      const router = <AsusWRTDevice> device;
+      const router = <AsusWRTDevice>device;
       const routerMac = router.getData().mac;
       const routerStatus = routers.find(client => client.mac === routerMac);
-      routerStatus && routerStatus.online ? router.setAvailable() : router.setUnavailable('Device not online');
+      routerStatus && routerStatus.online ? await router.setAvailable() : await router.setUnavailable('Device not online');
       if (!router.getAvailable()) {
         return;
       }
       if (routerStatus?.firmwareVersion) {
         router.setFirmwareVersion(routerStatus.firmwareVersion, routerStatus.newFirmwareVersion ? routerStatus.newFirmwareVersion : '');
       }
+      let successfullyUpdatedEverything = true;
+      Promise.all([this.asusClient!.getWiredClients(routerMac), this.asusClient!.getWirelessClients(routerMac, "2G"), this.asusClient!.getWirelessClients(routerMac, "5G")])
+        .then(async (values) => {
+          await router.setConnectedClients(values[0], values[1], values[2]);
+        }).catch(err => {
+          successfullyUpdatedEverything = false;
+          this.log(`failed to update connected device information for access point ${routerMac}`, err);
+        });
+
       try {
-        const newWiredClients = await this.asusClient!.getWiredClients(routerMac);
-        const newWireless24GClients = await this.asusClient!.getWirelessClients(routerMac, "2G");
-        const newWireless5GClients = await this.asusClient!.getWirelessClients(routerMac, "5G");
-        await router.setConnectedClients(newWiredClients, newWireless24GClients, newWireless5GClients);
-  
         const load = await this.asusClient!.getCPUMemoryLoad(routerMac);
         await router.setLoad(load);
-  
+      } catch (err) {
+        successfullyUpdatedEverything = false;
+        this.log(err);
+      }
+
+      try {
         const uptimeSeconds = await this.asusClient!.getUptime(routerMac);
         await router.setUptimeDaysBySeconds(uptimeSeconds);
-  
-        if (router.getStoreValue('operationMode') === AsusWRTOperationMode.Router) {
+      } catch (err) {
+        successfullyUpdatedEverything = false;
+        this.log(err);
+      }
+
+
+      if (router.getStoreValue('operationMode') === AsusWRTOperationMode.Router) {
+        try {
           const WANStatus = await this.asusClient!.getWANStatus();
           await router.setWANStatus(WANStatus);
-  
+        } catch (err) {
+          successfullyUpdatedEverything = false;
+          this.log(err);
+        }
+
+        try {
           const trafficDataFirst = await this.asusClient!.getTotalTrafficData();
           await wait(2000);
           const trafficDataSecond = await this.asusClient!.getTotalTrafficData();
           await router.setTrafficValues(trafficDataFirst, trafficDataSecond);
+        } catch (err) {
+          successfullyUpdatedEverything = false;
+          this.log(err);
         }
+      }
+
+      if (!successfullyUpdatedEverything) {
+        router.setWarning('Failed to retrieve (some) device info, some functionality might not work');
+      } else {
         router.setWarning(null);
-      } catch {
-        this.log('failed to update device information');
-        router.setWarning('Failed to retrieve device info, will try again soon');
       }
     });
   }
@@ -78,31 +104,30 @@ class AsusWRTDriver extends Homey.Driver {
   private registerFlowListeners() {
     // triggers
     const deviceConnectedToNetwork = this.homey.flow.getTriggerCard('device-connected-to-network');
-		this.triggerDeviceConnectedToNetwork = (tokens) => {
-			deviceConnectedToNetwork
-				.trigger(tokens)
-				.catch(this.error);
-		};
+    this.triggerDeviceConnectedToNetwork = (tokens) => {
+      deviceConnectedToNetwork
+        .trigger(tokens)
+        .catch(this.error);
+    };
 
     const deviceDisconnectedFromNetwork = this.homey.flow.getTriggerCard('device-disconnected-from-network');
-		this.triggerDeviceDisconnectedFromNetwork = (tokens) => {
-			deviceDisconnectedFromNetwork
-				.trigger(tokens)
-				.catch(this.error);
-		};
+    this.triggerDeviceDisconnectedFromNetwork = (tokens) => {
+      deviceDisconnectedFromNetwork
+        .trigger(tokens)
+        .catch(this.error);
+    };
 
     // conditions
     const conditionDeviceIsConnectedToAccessPoint = this.homey.flow.getConditionCard('device-is-connected-to-access-point');
     conditionDeviceIsConnectedToAccessPoint
-      .registerRunListener((args: {device: AsusWRTDevice, client: { name: string, mac: string, description: string }}, state: any) => {
-          if (args.device.getWiredClients().find(wclient => wclient.mac === args.client.mac)
-            || args.device.getWireless24GClients().find(wl2gclient => wl2gclient.mac === args.client.mac
-            || args.device.getWireless5GClients().find(wl5gclient => wl5gclient.mac === args.client.mac)))
-          {
-              return true;
-          } else {
-            return false;
-          }
+      .registerRunListener((args: { device: AsusWRTDevice, client: { name: string, mac: string, description: string } }, state: any) => {
+        if (args.device.getWiredClients().find(wclient => wclient.mac === args.client.mac)
+          || args.device.getWireless24GClients().find(wl2gclient => wl2gclient.mac === args.client.mac
+            || args.device.getWireless5GClients().find(wl5gclient => wl5gclient.mac === args.client.mac))) {
+          return true;
+        } else {
+          return false;
+        }
       })
       .registerArgumentAutocompleteListener('client', (query: string): Homey.FlowCard.ArgumentAutocompleteResults => {
         return this.deviceArgumentAutoCompleteListenerResults(query);
@@ -110,12 +135,12 @@ class AsusWRTDriver extends Homey.Driver {
 
     const conditionDeviceIsConnectedToNetwork = this.homey.flow.getConditionCard('device-is-connected-to-network');
     conditionDeviceIsConnectedToNetwork
-      .registerRunListener((args: {client: { name: string, mac: string, description: string }}, state: any) => {
-          if (this.connectedClients.find(device => device.mac === args.client.mac)) {
-              return true;
-          } else {
-            return false;
-          }
+      .registerRunListener((args: { client: { name: string, mac: string, description: string } }, state: any) => {
+        if (this.connectedClients.find(device => device.mac === args.client.mac)) {
+          return true;
+        } else {
+          return false;
+        }
       })
       .registerArgumentAutocompleteListener('client', (query: string): Homey.FlowCard.ArgumentAutocompleteResults => {
         return this.deviceArgumentAutoCompleteListenerResults(query);
@@ -123,33 +148,33 @@ class AsusWRTDriver extends Homey.Driver {
 
     // actions
     const rebootNetwork = this.homey.flow.getActionCard('reboot-network');
-		rebootNetwork.registerRunListener(async () => {
+    rebootNetwork.registerRunListener(async () => {
       if (this.asusClient) {
         await this.asusClient.rebootNetwork();
       }
     });
 
     const turnOnLeds = this.homey.flow.getActionCard('set-leds');
-    turnOnLeds.registerRunListener(async (args: {device: AsusWRTDevice, OnOrOff: string}) => {
+    turnOnLeds.registerRunListener(async (args: { device: AsusWRTDevice, OnOrOff: string }) => {
       if (this.asusClient) {
         await this.asusClient.setLedsEnabled(args.device.getData().mac, args.OnOrOff === 'on' ? true : false);
       }
     });
 
     const wakeOnLan = this.homey.flow.getActionCard('wake-on-lan');
-    wakeOnLan.registerRunListener(async (args: {wolclient: {name: string, mac: string, description: string}}) => {
+    wakeOnLan.registerRunListener(async (args: { wolclient: { name: string, mac: string, description: string } }) => {
       await this.asusClient?.wakeOnLan(args.wolclient.mac);
     })
-    .registerArgumentAutocompleteListener('wolclient', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
-      const searchFor = query.toUpperCase();
-      const wolClients = await this.asusClient?.getWakeOnLanList();
-      const devicesInQuery = wolClients!.filter(device => {
-        return device.name.toUpperCase().includes(searchFor) || device.mac.toUpperCase().includes(searchFor)
+      .registerArgumentAutocompleteListener('wolclient', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
+        const searchFor = query.toUpperCase();
+        const wolClients = await this.asusClient?.getWakeOnLanList();
+        const devicesInQuery = wolClients!.filter(device => {
+          return device.name.toUpperCase().includes(searchFor) || device.mac.toUpperCase().includes(searchFor)
+        });
+        return [
+          ...devicesInQuery.map(device => ({ name: device.name, mac: device.mac, description: device.mac }))
+        ];
       });
-      return [
-        ...devicesInQuery.map(device => ({ name: device.name, mac: device.mac, description: device.mac }))
-      ];
-    });
   }
 
   private deviceArgumentAutoCompleteListenerResults(query: string): Homey.FlowCard.ArgumentAutocompleteResults {
@@ -170,7 +195,14 @@ class AsusWRTDriver extends Homey.Driver {
     this.username = this.homey.settings.get('username');
     this.password = this.homey.settings.get('password');
     if (this.routerIP !== null && this.username !== null && this.password !== null) {
-      this.asusClient = new AsusWRT(this.routerIP, this.username, this.password);
+      const asusOptions: AsusWRTOptions = {
+        BaseUrl: this.routerIP,
+        Username: this.username,
+        Password: this.password,
+        InfoLogCallback: this.log,
+        ErrorLogCallback: this.log
+      };
+      this.asusClient = new AsusWRT(asusOptions);
     }
     this.registerFlowListeners();
     if (!this.updateDevicesPollingInterval) {
@@ -220,14 +252,21 @@ class AsusWRTDriver extends Homey.Driver {
       }
     });
 
-    session.setHandler('login', async (data: {username: string, password: string}) => {
+    session.setHandler('login', async (data: { username: string, password: string }) => {
       this.log('pair: login');
       this.username = data.username.trim();
       this.password = data.password;
       this.log('creating client');
       let routers = [];
       try {
-        const tempClient = new AsusWRT(this.routerIP, this.username, this.password);
+        const asusOptions: AsusWRTOptions = {
+          BaseUrl: this.routerIP,
+          Username: this.username,
+          Password: this.password,
+          InfoLogCallback: this.log,
+          ErrorLogCallback: this.log
+        };
+        const tempClient = new AsusWRT(asusOptions);
         routers = await tempClient.getRouters();
         tempClient.dispose();
       } catch {
@@ -246,7 +285,14 @@ class AsusWRTDriver extends Homey.Driver {
 
     session.setHandler('list_devices', async () => {
       this.log('pair: list_devices');
-      this.asusClient = new AsusWRT(this.routerIP, this.username, this.password);
+      const asusOptions: AsusWRTOptions = {
+        BaseUrl: this.routerIP,
+        Username: this.username,
+        Password: this.password,
+        InfoLogCallback: this.log,
+        ErrorLogCallback: this.log
+      };
+      this.asusClient = new AsusWRT(asusOptions);
       const routerAPDevices = await this.asusClient.getRouters().catch(error => {
         session.showView('router_ip');
         return;
@@ -285,13 +331,20 @@ class AsusWRTDriver extends Homey.Driver {
       }
     });
 
-    session.setHandler('login', async (data: {username: string, password: string}) => {
+    session.setHandler('login', async (data: { username: string, password: string }) => {
       this.log('pair: login');
       newUsername = data.username.trim();
       newPassword = data.password;
       this.log('creating client');
       try {
-        let tempClient = new AsusWRT(newRouterIP, newUsername, newPassword);
+        const asusOptions: AsusWRTOptions = {
+          BaseUrl: newRouterIP,
+          Username: newUsername,
+          Password: newPassword,
+          InfoLogCallback: this.log,
+          ErrorLogCallback: this.log
+        };
+        let tempClient = new AsusWRT(asusOptions);
         const routers = await tempClient.getRouters();
         tempClient.dispose();
         if (routers.length === 0) {
@@ -306,7 +359,14 @@ class AsusWRTDriver extends Homey.Driver {
           this.homey.settings.set("password", this.password);
           if (this.asusClient) {
             this.asusClient.dispose();
-            this.asusClient = new AsusWRT(this.routerIP, this.username, this.password);
+            const asusOptions: AsusWRTOptions = {
+              BaseUrl: this.routerIP,
+              Username: this.username,
+              Password: this.password,
+              InfoLogCallback: this.log,
+              ErrorLogCallback: this.log
+            };
+            this.asusClient = new AsusWRT(asusOptions);
           }
           return true;
         }
@@ -318,21 +378,20 @@ class AsusWRTDriver extends Homey.Driver {
 
   private getIcon(productId: string): string {
     const supportedIcons = [
-      'RT-AX89U',
-      'RT-AX89X',
-      'RT-AC68U',
-      'RT-AC86U',
-      'RT-AX95Q',
-      'RT-AC1900',
       'RT-AC65P',
       'RT-AC85P',
+      'RT-AC85U',
+      'RT-AC86U',
+      'RT-AC1900',
       'RT-AC2400',
       'RT-AC2600',
       'RT-AC2900',
-      'RT-AC3200',
-      'RT-AC88U',
       'RT-AC3100',
-      'RT-AC5300'
+      'RT-AC3200',
+      'RT-AC5300',
+      'RT-AX89U',
+      'RT-AX89X',
+      'RT-AX95Q'
     ];
     if (supportedIcons.indexOf(productId) === -1) {
       return `default.svg`;

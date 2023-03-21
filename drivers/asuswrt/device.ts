@@ -10,6 +10,8 @@ import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnec
 export class AsusWRTDevice extends Homey.Device {
 
   private triggerNewFirmwareAvailable!: (tokens: any) => void;
+  private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
+  private triggerWanTypeChanged!: (device: any, tokens: any, state: any) => void;
 
   private triggerDeviceConnected!: (tokens: any) => void;
   private trigger24GDeviceConnected!: (tokens: any) => void;
@@ -93,10 +95,19 @@ export class AsusWRTDevice extends Homey.Device {
 
   public async setWANStatus(WANStatus: AsusWRTWANStatus) {
     if (this.hasCapability('external_ip')) {
+      if (this.getCapabilityValue('external_ip') !== WANStatus.ipaddr) {
+        this.triggerExternalIPChanged(this, { external_ip: WANStatus.ipaddr }, {});
+      }
       await this.setCapabilityValue('external_ip', WANStatus.ipaddr);
     }
     if (this.hasCapability('alarm_wan_disconnected')) {
       await this.setCapabilityValue('alarm_wan_disconnected', WANStatus.status && WANStatus.status !== 1 ? true : false);
+    }
+    if (this.hasCapability('wan_type')) {
+      if (this.getCapabilityValue('wan_type') !== WANStatus.type) {
+        this.triggerWanTypeChanged(this, { wan_type: WANStatus.type }, {});
+      }
+      await this.setCapabilityValue('wan_type', WANStatus.type);
     }
   }
 
@@ -131,6 +142,27 @@ export class AsusWRTDevice extends Homey.Device {
 
   private registerFlowListeners() {
     // triggers
+    const newFirmware = this.homey.flow.getDeviceTriggerCard('new-firmware-available');
+    this.triggerNewFirmwareAvailable = (tokens) => {
+      newFirmware
+        .trigger(this, tokens)
+        .catch(this.error);
+    };
+
+    const externalIPChanged = this.homey.flow.getDeviceTriggerCard('external-ip-changed');
+    this.triggerExternalIPChanged = (device, tokens, state) => {
+      externalIPChanged
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    };
+
+    const wanTypeChanged = this.homey.flow.getDeviceTriggerCard('wan-type-changed');
+    this.triggerWanTypeChanged = (device, tokens, state) => {
+      wanTypeChanged
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    };
+
     const deviceConnected = this.homey.flow.getDeviceTriggerCard('device-connected-to-access-point');
     this.triggerDeviceConnected = (tokens) => {
       deviceConnected
