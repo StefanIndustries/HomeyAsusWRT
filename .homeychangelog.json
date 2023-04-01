@@ -55,5 +55,8 @@
   },
   "2.0.5": {
     "en": "Added external ip changed trigger, improved logging for better debugging"
+  },
+  "2.0.6": {
+    "en": "Added wan type trigger, fixed error when wiredclients are not found"
   }
 }
