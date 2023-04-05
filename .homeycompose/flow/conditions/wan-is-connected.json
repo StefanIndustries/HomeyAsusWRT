@@ -1,0 +1,21 @@
+{
+  "title": {
+    "en": "WAN !{{is|isn't}} connected",
+    "nl": "WAN !{{is|is niet}} verbonden"
+  },
+  "titleFormatted": {
+    "en": "WAN !{{is|isn't}} connected",
+    "nl": "WAN !{{is|is niet}} verbonden"
+  },
+  "hint": {
+    "en": "check if device WAN is online",
+    "nl": "Controleer of apparaat WAN verbonden is"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt&capabilities=alarm_wan_disconnected"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "title": {
+    "en": "WAN status changed",
+    "nl": "WAN status is veranderd"
+  },
+  "hint": {
+    "en": "Checks on a interval if your WAN is still online",
+    "nl": "Checkt op basis van een interval of uw WAN nog verbonden is"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=asuswrt&capabilities=alarm_wan_disconnected"
+    }
+  ],
+  "tokens": [
+    {
+      "type": "boolean",
+      "name": "wan_connected",
+      "title": {
+        "en": "WAN Connected",
+        "nl": "WAN Verbonden"
+      }
+    }
+  ]
+}

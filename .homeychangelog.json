@@ -64,5 +64,8 @@
   },
   "2.0.8": {
     "en": "Improved stability"
+  },
+  "2.0.9": {
+    "en": "Improved getclientlist on asus firmware that has strange behaviour"
   }
 }

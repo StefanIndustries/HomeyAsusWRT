@@ -12,6 +12,7 @@ export class AsusWRTDevice extends Homey.Device {
   private triggerNewFirmwareAvailable!: (tokens: any) => void;
   private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
   private triggerWanTypeChanged!: (device: any, tokens: any, state: any) => void;
+  private triggerWANConnectionStatusChanged!: (device: any, tokens: any, state: any) => void;
 
   private triggerDeviceConnected!: (tokens: any) => void;
   private trigger24GDeviceConnected!: (tokens: any) => void;
@@ -101,8 +102,13 @@ export class AsusWRTDevice extends Homey.Device {
       await this.setCapabilityValue('external_ip', WANStatus.ipaddr);
     }
     if (this.hasCapability('alarm_wan_disconnected')) {
+      const routerConnected = !!(WANStatus.status && WANStatus.status === 1);
+      if (this.getCapabilityValue('alarm_wan_disconnected') !== routerConnected) {
+        this.triggerWANConnectionStatusChanged(this, { wan_connected: routerConnected }, {});
+      }
       await this.setCapabilityValue('alarm_wan_disconnected', WANStatus.status && WANStatus.status !== 1 ? true : false);
     }
+
     if (this.hasCapability('wan_type')) {
       if (this.getCapabilityValue('wan_type') !== WANStatus.type) {
         this.triggerWanTypeChanged(this, { wan_type: WANStatus.type }, {});
@@ -163,6 +169,13 @@ export class AsusWRTDevice extends Homey.Device {
         .catch(this.error);
     };
 
+    const wanConnectionStatusChanged = this.homey.flow.getDeviceTriggerCard('wan-connection-changed');
+    this.triggerWANConnectionStatusChanged = (device, tokens, state) => {
+      wanConnectionStatusChanged
+        .trigger(device, tokens, state)
+        .catch(this.error);
+    };
+
     const deviceConnected = this.homey.flow.getDeviceTriggerCard('device-connected-to-access-point');
     this.triggerDeviceConnected = (tokens) => {
       deviceConnected
@@ -214,6 +227,17 @@ export class AsusWRTDevice extends Homey.Device {
         .trigger(this, tokens)
         .catch(this.error);
     };
+
+    //conditions
+    const conditionDeviceIsConnectedToAccessPoint = this.homey.flow.getConditionCard('wan-is-connected');
+    conditionDeviceIsConnectedToAccessPoint
+      .registerRunListener((args: { device: AsusWRTDevice }, state: any) => {
+        if (args.device.hasCapability('alarm_wan_disconnected')) {
+          return !args.device.getCapabilityValue('alarm_wan_disconnected');
+        } else {
+          return false;
+        }
+      });
   }
 
   /**

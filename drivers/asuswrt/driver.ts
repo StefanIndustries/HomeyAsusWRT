@@ -208,7 +208,7 @@ class AsusWRTDriver extends Homey.Driver {
     if (!this.updateDevicesPollingInterval) {
       this.updateDevicesPollingInterval = this.homey.setInterval(async () => {
         await this.updateStateOfDevices();
-      }, 60000);
+      }, 120000);
     }
     this.log('AsusWRTDriver has been initialized');
   }

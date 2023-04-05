@@ -1,6 +1,6 @@
 {
   "id": "com.asus.wrt",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -34,9 +34,9 @@
   },
   "author": {
     "name": "Stefan Simon",
-    "email": "sjsimon1996@gmail.com"
+    "email": "sjsimon1996+homeyasuswrt@gmail.com"
   },
-  "support": "mailto:sjsimon1996@gmail.com",
+  "support": "mailto:sjsimon1996+homeyasuswrt@gmail.com",
   "contributing": {
     "donate": {
       "bunq": {
