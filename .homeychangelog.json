@@ -67,5 +67,8 @@
   },
   "2.0.9": {
     "en": "Improved getclientlist on asus firmware that has strange behaviour"
+  },
+  "2.0.10": {
+    "en": "Improved stability, added WAN triggers/conditions"
   }
 }
