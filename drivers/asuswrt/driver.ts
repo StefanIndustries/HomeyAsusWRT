@@ -10,7 +10,8 @@ import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnec
 
 class AsusWRTDriver extends Homey.Driver {
 
-  private updateDevicesPollingInterval: any;
+  private pollingInterval = 60000;
+  private updateDevicesPollingIntervalId: any;
   private asusClient: AsusWRT | undefined | null;
   private username: string = '';
   private password: string = '';
@@ -24,14 +25,8 @@ class AsusWRTDriver extends Homey.Driver {
     let routers: AsusWRTRouter[] = [];
     let oldConnectedClients = this.connectedClients;
     if (this.asusClient) {
-      try {
         routers = await this.asusClient!.getRouters();
         this.connectedClients = await this.asusClient!.getAllClients();
-      } catch {
-        this.log('network not ready to receive requests');
-        this.getDevices().forEach(async (device) => await device.setUnavailable('Network not available to receive requests'));
-        return;
-      }
     }
     getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
     getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
@@ -205,17 +200,29 @@ class AsusWRTDriver extends Homey.Driver {
       this.asusClient = new AsusWRT(asusOptions);
     }
     this.registerFlowListeners();
-    if (!this.updateDevicesPollingInterval) {
-      this.updateDevicesPollingInterval = this.homey.setInterval(async () => {
-        await this.updateStateOfDevices();
-      }, 120000);
+    if (!this.updateDevicesPollingIntervalId) {
+      this.updateDevicesPollingIntervalId = this.homey.setInterval(this.updateDevicePollingInterval, this.pollingInterval);
     }
     this.log('AsusWRTDriver has been initialized');
   }
 
+  private updateDevicePollingInterval = async() => {
+    try {
+      await this.updateStateOfDevices();
+    } catch (error) {
+      this.homey.clearInterval(this.updateDevicesPollingIntervalId);
+      this.updateDevicesPollingIntervalId = this.homey.setInterval(this.updateDevicePollingInterval, this.pollingInterval * 5);
+      this.getDevices().forEach(device => device.setWarning('Something went wrong, trying again in 5 minutes'));
+      this.log(error);
+      return;
+    }
+    this.homey.clearInterval(this.updateDevicesPollingIntervalId);
+    this.updateDevicesPollingIntervalId = this.homey.setInterval(this.updateDevicePollingInterval, this.pollingInterval);
+  }
+
   async onUninit(): Promise<void> {
-    if (this.updateDevicesPollingInterval) {
-      this.homey.clearInterval(this.updateDevicesPollingInterval);
+    if (this.updateDevicesPollingIntervalId) {
+      this.homey.clearInterval(this.updateDevicesPollingIntervalId);
     }
     if (this.asusClient) {
       this.asusClient.dispose();
