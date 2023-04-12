@@ -70,5 +70,8 @@
   },
   "2.0.10": {
     "en": "Improved stability, added WAN triggers/conditions"
+  },
+  "2.0.11": {
+    "en": "Improved stability with updated npm package."
   }
 }
