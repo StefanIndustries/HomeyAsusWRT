@@ -76,5 +76,8 @@
   },
   "2.0.12": {
     "en": "Added debounce time when something went wrong to help relieve stress on routers."
+  },
+  "2.0.13": {
+    "en": "Fixed a bug with certain routers not having a alias property"
   }
 }
