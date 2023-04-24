@@ -79,5 +79,8 @@
   },
   "2.0.13": {
     "en": "Fixed a bug with certain routers not having a alias property"
+  },
+  "2.0.14": {
+    "en": "Improved overall stability by handling errors better."
   }
 }
