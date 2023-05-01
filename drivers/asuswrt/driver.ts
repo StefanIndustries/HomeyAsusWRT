@@ -26,23 +26,29 @@ class AsusWRTDriver extends Homey.Driver {
     let oldConnectedClients = this.connectedClients;
     if (this.asusClient) {
         routers = await this.asusClient!.getRouters();
-        this.connectedClients = await this.asusClient!.getAllClients();
     }
-    getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
-    getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+    try {
+      this.log(`updating connectedClients for entire network`);
+      this.connectedClients = await this.asusClient!.getAllClients();
+      getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
+      getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+    } catch (err) {
+      this.log(`failed to update connectedClients for entire network`, err);
+    }
 
-    this.getDevices().forEach(async device => {
+    for (const device of this.getDevices()) {
       const router = <AsusWRTDevice>device;
       const routerMac = router.getData().mac;
       const routerStatus = routers.find(client => client.mac === routerMac);
       routerStatus && routerStatus.online ? await router.setAvailable() : await router.setUnavailable('Device not online');
       if (!router.getAvailable()) {
-        return;
+        continue;
       }
       if (routerStatus?.firmwareVersion) {
         router.setFirmwareVersion(routerStatus.firmwareVersion, routerStatus.newFirmwareVersion ? routerStatus.newFirmwareVersion : '');
       }
       let successfullyUpdatedEverything = true;
+      this.log(`updating connected device information for access point ${routerMac}`);
       Promise.all([this.asusClient!.getWiredClients(routerMac), this.asusClient!.getWirelessClients(routerMac, "2G"), this.asusClient!.getWirelessClients(routerMac, "5G")])
         .then(async (values) => {
           await router.setConnectedClients(values[0], values[1], values[2]);
@@ -52,6 +58,7 @@ class AsusWRTDriver extends Homey.Driver {
         });
 
       try {
+        this.log(`updating cpu memory load for access point ${routerMac}`);
         const load = await this.asusClient!.getCPUMemoryLoad(routerMac);
         await router.setLoad(load);
       } catch (err) {
@@ -60,6 +67,7 @@ class AsusWRTDriver extends Homey.Driver {
       }
 
       try {
+        this.log(`updating uptime for access point ${routerMac}`);
         const uptimeSeconds = await this.asusClient!.getUptime(routerMac);
         await router.setUptimeDaysBySeconds(uptimeSeconds);
       } catch (err) {
@@ -69,7 +77,9 @@ class AsusWRTDriver extends Homey.Driver {
 
 
       if (router.getStoreValue('operationMode') === AsusWRTOperationMode.Router) {
+        this.log(`device is of type router, executing additional updates`);
         try {
+          this.log(`updating wan status for access point ${routerMac}`);
           const WANStatus = await this.asusClient!.getWANStatus();
           await router.setWANStatus(WANStatus);
         } catch (err) {
@@ -78,6 +88,7 @@ class AsusWRTDriver extends Homey.Driver {
         }
 
         try {
+          this.log(`updating traffic data for access point ${routerMac}`);
           const trafficDataFirst = await this.asusClient!.getTotalTrafficData();
           await wait(2000);
           const trafficDataSecond = await this.asusClient!.getTotalTrafficData();
@@ -89,11 +100,13 @@ class AsusWRTDriver extends Homey.Driver {
       }
 
       if (!successfullyUpdatedEverything) {
+        this.log(`failed to update some information for access point ${routerMac}`);
         router.setWarning('Failed to retrieve (some) device info, some functionality might not work');
       } else {
+        this.log(`successfully updated all information for access point ${routerMac}`);
         router.setWarning(null);
       }
-    });
+    }
   }
 
   private registerFlowListeners() {
@@ -210,10 +223,10 @@ class AsusWRTDriver extends Homey.Driver {
     try {
       await this.updateStateOfDevices();
     } catch (error) {
+      this.log(error);
       this.homey.clearInterval(this.updateDevicesPollingIntervalId);
       this.updateDevicesPollingIntervalId = this.homey.setInterval(this.updateDevicePollingInterval, this.pollingInterval * 5);
       this.getDevices().forEach(device => device.setWarning('Something went wrong, trying again in 5 minutes'));
-      this.log(error);
       return;
     }
     this.homey.clearInterval(this.updateDevicesPollingIntervalId);
