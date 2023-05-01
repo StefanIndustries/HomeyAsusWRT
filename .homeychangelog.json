@@ -82,5 +82,8 @@
   },
   "2.0.14": {
     "en": "Improved overall stability by handling errors better."
+  },
+  "2.0.15": {
+    "en": "Improved logging of update state, switched logic of updating online devices"
   }
 }
