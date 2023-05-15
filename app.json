@@ -1408,6 +1408,24 @@
       },
       {
         "title": {
+          "en": "Reboot",
+          "nl": "Herstart"
+        },
+        "hint": {
+          "en": "Reboots your router",
+          "nl": "Herstart uw router"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          }
+        ],
+        "id": "reboot-device"
+      },
+      {
+        "title": {
           "en": "Reboot Network",
           "nl": "Herstart netwerk"
         },

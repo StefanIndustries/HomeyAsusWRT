@@ -27,14 +27,6 @@ class AsusWRTDriver extends Homey.Driver {
     if (this.asusClient) {
         routers = await this.asusClient!.getRouters();
     }
-    try {
-      this.log(`updating connectedClients for entire network`);
-      this.connectedClients = await this.asusClient!.getAllClients();
-      getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
-      getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
-    } catch (err) {
-      this.log(`failed to update connectedClients for entire network`, err);
-    }
 
     for (const device of this.getDevices()) {
       const router = <AsusWRTDevice>device;
@@ -107,6 +99,15 @@ class AsusWRTDriver extends Homey.Driver {
         router.setWarning(null);
       }
     }
+
+    try {
+      this.log(`updating connectedClients for entire network`);
+      this.connectedClients = await this.asusClient!.getAllClients();
+      getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
+      getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+    } catch (err) {
+      this.log(`failed to update connectedClients for entire network`, err);
+    }
   }
 
   private registerFlowListeners() {
@@ -159,6 +160,13 @@ class AsusWRTDriver extends Homey.Driver {
     rebootNetwork.registerRunListener(async () => {
       if (this.asusClient) {
         await this.asusClient.rebootNetwork();
+      }
+    });
+
+    const rebootDevice = this.homey.flow.getActionCard('reboot-device');
+    rebootDevice.registerRunListener(async (args: { device: AsusWRTDevice }) => {
+      if (this.asusClient) {
+        await this.asusClient.rebootDevice(args.device.getData().mac);
       }
     });
 

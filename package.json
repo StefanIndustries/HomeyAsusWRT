@@ -5,12 +5,12 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
-    "install": "homey app install",
+    "hinstall": "homey app install",
     "run": "homey app run --remote",
     "publish": "homey app publish"
   },
   "dependencies": {
-    "node-asuswrt": "^1.0.26",
+    "node-asuswrt": "^1.0.27",
     "axios": "0.26.1",
     "qs": "6.10.3",
     "crypto": "1.0.1"
