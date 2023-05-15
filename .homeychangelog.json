@@ -85,5 +85,8 @@
   },
   "2.0.15": {
     "en": "Improved logging of update state, switched logic of updating online devices"
+  },
+  "2.1.0": {
+    "en": "Added reboot device card"
   }
 }
