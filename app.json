@@ -1479,6 +1479,67 @@
       },
       {
         "title": {
+          "en": "Speedtest"
+        },
+        "hint": {
+          "en": "Start a speedtest using a server you selected"
+        },
+        "advanced": true,
+        "tokens": [
+          {
+            "name": "download_speed",
+            "type": "number",
+            "title": {
+              "en": "download"
+            },
+            "example": {
+              "en": "1000"
+            }
+          },
+          {
+            "name": "upload_speed",
+            "type": "number",
+            "title": {
+              "en": "upload"
+            },
+            "example": {
+              "en": "1000"
+            }
+          },
+          {
+            "name": "ping",
+            "type": "number",
+            "title": {
+              "en": "ping"
+            },
+            "example": {
+              "en": "16"
+            }
+          },
+          {
+            "name": "packet_loss",
+            "type": "number",
+            "title": {
+              "en": "packet loss"
+            },
+            "example": {
+              "en": "0"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "server",
+            "placeholder": {
+              "en": "ookla"
+            }
+          }
+        ],
+        "id": "speedtest"
+      },
+      {
+        "title": {
           "en": "Turn off LEDs",
           "nl": "Zet LEDs uit"
         },
