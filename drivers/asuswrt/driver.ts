@@ -7,6 +7,7 @@ import { AsusWRTOptions } from 'node-asuswrt/lib/models/AsusWRTOptions';
 import { AsusWRTRouter } from 'node-asuswrt/lib/models/AsusWRTRouter';
 import { AsusWRTDevice } from './device';
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices, wait } from './utils';
+import { AsusWRTOoklaServer } from 'node-asuswrt/lib/models/AsusWRTOoklaServer';
 
 class AsusWRTDriver extends Homey.Driver {
 
@@ -156,6 +157,22 @@ class AsusWRTDriver extends Homey.Driver {
       });
 
     // actions
+    const speedTest = this.homey.flow.getActionCard('speedtest');
+    speedTest.registerRunListener(async (args: { server: AsusWRTOoklaServer }) => {
+      if (this.asusClient) {
+        await this.asusClient.startOoklaSpeedtest(args.server);
+      }
+    }).registerArgumentAutocompleteListener('server', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
+      const searchFor = query.toUpperCase();
+      const ooklaServers = await this.asusClient?.getOoklaServers();
+      const serversInQuery = ooklaServers!.filter(server => {
+        return server.name.toUpperCase().includes(searchFor);
+      });
+      return [
+        ...serversInQuery
+      ];
+    });
+
     const rebootNetwork = this.homey.flow.getActionCard('reboot-network');
     rebootNetwork.registerRunListener(async () => {
       if (this.asusClient) {
