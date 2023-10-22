@@ -88,5 +88,8 @@
   },
   "2.1.0": {
     "en": "Added reboot device card"
+  },
+  "2.2.0": {
+    "en": "Added speedtesting (advanced) and enabling disabling vpn. Improved overall stability of token refresh in the background."
   }
 }
