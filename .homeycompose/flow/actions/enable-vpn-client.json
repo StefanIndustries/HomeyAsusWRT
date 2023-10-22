@@ -1,0 +1,24 @@
+{
+  "title": {
+    "en": "Enable VPN Client",
+    "nl": "Schakel VPN client in"
+  },
+  "titleFormatted": {
+    "en": "Enable [[client]] VPN Client",
+    "nl": "Schakel [[client]] VPN client in"
+  },
+  "hint": {
+    "en": "Enables router wide VPN Client",
+    "nl": "Schakelt een router-wijde VPN client in"
+  },
+  "args": [
+    {
+      "type": "autocomplete",
+      "name": "client",
+      "placeholder": {
+        "en": "VPN Provider",
+        "nl": "VPN Provider"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "title": {
+    "en": "Disable VPN Client",
+    "nl": "Schakel VPN client uit"
+  },
+  "hint": {
+    "en": "Disables the router wide VPN Client",
+    "nl": "Schakelt de router-wijde VPN client uit"
+  }
+}

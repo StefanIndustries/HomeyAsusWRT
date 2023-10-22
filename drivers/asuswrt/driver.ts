@@ -8,6 +8,7 @@ import { AsusWRTRouter } from 'node-asuswrt/lib/models/AsusWRTRouter';
 import { AsusWRTDevice } from './device';
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices, wait } from './utils';
 import { AsusWRTOoklaServer } from 'node-asuswrt/lib/models/AsusWRTOoklaServer';
+import { AsusWRTVPNClient } from 'node-asuswrt/lib/models/AsusWRTVPNClient';
 
 class AsusWRTDriver extends Homey.Driver {
 
@@ -177,6 +178,29 @@ class AsusWRTDriver extends Homey.Driver {
       return [
         ...serversInQuery
       ];
+    });
+
+    const enableVPNClient = this.homey.flow.getActionCard('enable-vpn-client');
+    enableVPNClient.registerRunListener(async (args: { client: AsusWRTVPNClient }) => {
+      if (this.asusClient) {
+        await this.asusClient.setActiveVPNClient(args.client);
+      }
+    }).registerArgumentAutocompleteListener('client', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
+      const searchFor = query.toUpperCase();
+      const vpnClients = <AsusWRTVPNClient[]> await this.asusClient?.getVPNClients();
+      const clientsInQuery = vpnClients!.filter(client => {
+        return client.description.toUpperCase().includes(searchFor);
+      });
+      return [
+        ...clientsInQuery.map(client => ({ name: client.description, description: client.description, protocol: client.protocol, unit: client.unit, username: client.username, password: client.password }))
+      ];
+    });
+
+    const disableVPNClient = this.homey.flow.getActionCard('disable-vpn-client');
+    disableVPNClient.registerRunListener(async () => {
+      if (this.asusClient) {
+        await this.asusClient.disableVPNClient();
+      }
     });
 
     const rebootNetwork = this.homey.flow.getActionCard('reboot-network');

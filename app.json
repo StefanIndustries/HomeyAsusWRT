@@ -1389,6 +1389,42 @@
     "actions": [
       {
         "title": {
+          "en": "Disable VPN Client",
+          "nl": "Schakel VPN client uit"
+        },
+        "hint": {
+          "en": "Disables the router wide VPN Client",
+          "nl": "Schakelt de router-wijde VPN client uit"
+        },
+        "id": "disable-vpn-client"
+      },
+      {
+        "title": {
+          "en": "Enable VPN Client",
+          "nl": "Schakel VPN client in"
+        },
+        "titleFormatted": {
+          "en": "Enable [[client]] VPN Client",
+          "nl": "Schakel [[client]] VPN client"
+        },
+        "hint": {
+          "en": "Enables router wide VPN Client",
+          "nl": "Schakelt een router-wijde VPN client in"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "client",
+            "placeholder": {
+              "en": "VPN Provider",
+              "nl": "VPN Provider"
+            }
+          }
+        ],
+        "id": "enable-vpn-client"
+      },
+      {
+        "title": {
           "en": "Reboot",
           "nl": "Herstart"
         },
@@ -1479,10 +1515,16 @@
       },
       {
         "title": {
-          "en": "Speedtest"
+          "en": "Speedtest",
+          "nl": "Snelheidstest"
+        },
+        "titleFormatted": {
+          "en": "Speedtest with server [[server]]",
+          "nl": "Snelheidstest met server [[server]]"
         },
         "hint": {
-          "en": "Start a speedtest using a server you selected"
+          "en": "Start a speedtest using a server you selected",
+          "nl": "Start een snelheidstest met de geselecteerde server"
         },
         "advanced": true,
         "tokens": [
