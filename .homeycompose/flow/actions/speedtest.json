@@ -1,9 +1,15 @@
 {
   "title": {
-    "en": "Speedtest"
+    "en": "Speedtest",
+    "nl": "Snelheidstest"
+  },
+  "titleFormatted": {
+    "en": "Speedtest with server [[server]]",
+    "nl": "Snelheidstest met server [[server]]"
   },
   "hint": {
-    "en": "Start a speedtest using a server you selected"
+    "en": "Start a speedtest using a server you selected",
+    "nl": "Start een snelheidstest met de geselecteerde server"
   },
   "advanced": true,
   "tokens": [

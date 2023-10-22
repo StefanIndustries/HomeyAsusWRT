@@ -160,7 +160,13 @@ class AsusWRTDriver extends Homey.Driver {
     const speedTest = this.homey.flow.getActionCard('speedtest');
     speedTest.registerRunListener(async (args: { server: AsusWRTOoklaServer }) => {
       if (this.asusClient) {
-        await this.asusClient.startOoklaSpeedtest(args.server);
+        const result = await this.asusClient.runOoklaSpeedtest(args.server);
+        return {
+          download_speed: ((result.download.bytes * 8) / (result.download.elapsed * 0.001)) / 1000000,
+          upload_speed: ((result.upload.bytes * 8) / (result.upload.elapsed * 0.001)) / 1000000,
+          ping: result.ping.latency,
+          packet_loss: result.packetLoss
+        };
       }
     }).registerArgumentAutocompleteListener('server', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
       const searchFor = query.toUpperCase();

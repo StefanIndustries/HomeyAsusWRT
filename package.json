@@ -10,7 +10,7 @@
     "publish": "homey app publish"
   },
   "dependencies": {
-    "node-asuswrt": "^1.0.28",
+    "node-asuswrt": "1.0.32",
     "axios": "0.26.1",
     "qs": "6.10.3",
     "crypto": "1.0.1"
