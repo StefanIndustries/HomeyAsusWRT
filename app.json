@@ -1405,7 +1405,7 @@
         },
         "titleFormatted": {
           "en": "Enable [[client]] VPN Client",
-          "nl": "Schakel [[client]] VPN client"
+          "nl": "Schakel [[client]] VPN client in"
         },
         "hint": {
           "en": "Enables router wide VPN Client",
