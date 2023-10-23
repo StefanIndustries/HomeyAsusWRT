@@ -91,5 +91,8 @@
   },
   "2.2.0": {
     "en": "Added speedtesting (advanced) and enabling disabling vpn. Improved overall stability of token refresh in the background."
+  },
+  "2.2.1": {
+    "en": "Crypto environment variable for backwards compatibility"
   }
 }
