@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script
+            type="text/javascript"
+            src="/homey.js"
+            data-origin="settings"
+    ></script>
+</head>
+<body>
+<fieldset class="homey-form-fieldset">
+    <legend class="homey-form-legend">Asus WRT Settings</legend>
+
+    <div class="homey-form-group">
+        <label class="homey-form-label" for="update-interval">Update Interval (seconds)</label>
+        <input class="homey-form-input" id="update-interval" type="number" value="" />
+    </div>
+</fieldset>
+
+<button id="save" class="homey-button-primary-full">Save</button>
+
+<script type="text/javascript">
+  function onHomeyReady(Homey) {
+    const updateInterval = document.getElementById("update-interval");
+    const saveElement = document.getElementById("save");
+
+    Homey.get("pollingInterval", function (err, interval) {
+      if (err || interval === null) {
+        updateInterval.value = 60;
+      } else {
+        updateInterval.value = interval / 1000;
+      }
+    });
+
+    saveElement.addEventListener("click", function (e) {
+      Homey.set("pollingInterval", updateInterval.value * 1000, function (err) {
+        if (err) {
+          return Homey.alert(err);
+        } else {
+          // close html page
+
+        }
+      });
+    });
+
+    Homey.ready();
+  }
+</script>
+</body>
+</html>

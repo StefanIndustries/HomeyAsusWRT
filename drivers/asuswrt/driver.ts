@@ -257,6 +257,7 @@ class AsusWRTDriver extends Homey.Driver {
     this.routerIP = this.homey.settings.get('ip');
     this.username = this.homey.settings.get('username');
     this.password = this.homey.settings.get('password');
+    this.pollingInterval = this.homey.settings.get('pollingInterval') || 60000;
     if (this.routerIP !== null && this.username !== null && this.password !== null) {
       const asusOptions: AsusWRTOptions = {
         BaseUrl: this.routerIP,
@@ -274,7 +275,7 @@ class AsusWRTDriver extends Homey.Driver {
     this.log('AsusWRTDriver has been initialized');
   }
 
-  private updateDevicePollingInterval = async() => {
+  private updateDevicePollingInterval = async () => {
     try {
       await this.updateStateOfDevices();
     } catch (error) {
