@@ -94,5 +94,8 @@
   },
   "2.2.1": {
     "en": "Crypto environment variable for backwards compatibility"
+  },
+  "2.2.2": {
+    "en": "Fixed uptime counters. Added app setting for polling interval."
   }
 }
