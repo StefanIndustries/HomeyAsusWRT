@@ -1,0 +1,30 @@
+<header class="homey-header">
+    <p class="homey-subtitle" data-i18n="pair.http_only_warning"></p>
+</header>
+
+<form class="homey-form">
+    <div class="homey-form-group">
+        <label class="homey-form-label" for="routerUrl">Router Url</label>
+        <input class="homey-form-input" id="routerUrl" type="url" placeholder="https://192.168.1.1:443" autocomplete="on"/>
+    </div>
+</form>
+<br><br>
+<button class="homey-button-primary-full" onclick="confirmUrl()" id="submit">Submit</button>
+
+<script type="application/javascript">
+  Homey.setTitle(Homey.__('pair.title_router_url_config'));
+  const submitButton = document.getElementById('submit');
+
+  function confirmUrl() {
+    submitButton.classList.add('is-loading');
+    Homey.emit('router_url_confirmed', document.getElementById('routerUrl').value)
+      .then(function(result) {
+        if (result) {
+          Homey.nextView();
+        } else {
+          Homey.alert(Homey.__('pair.alert_router_url_incorrect'), 'error');
+          submitButton.classList.remove('is-loading');
+        }
+      });
+  }
+</script>

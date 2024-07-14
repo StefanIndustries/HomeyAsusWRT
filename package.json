@@ -10,10 +10,10 @@
     "publish": "homey app publish"
   },
   "dependencies": {
-    "node-asuswrt": "1.0.33",
+    "node-asuswrt": "1.0.34",
     "axios": "0.26.1",
-    "qs": "6.10.3",
-    "crypto": "1.0.1"
+    "crypto": "1.0.1",
+    "qs": "6.10.3"
   },
   "devDependencies": {
     "@tsconfig/node12": "^1.0.9",
