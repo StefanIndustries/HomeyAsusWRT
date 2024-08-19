@@ -267,6 +267,13 @@ class AsusWRTDriver extends Homey.Driver {
      * onInit is called when the driver is initialized.
      */
     async onInit() {
+        const ip = this.homey.settings.get('ip');
+        if (ip == null || ip === '') {
+            this.routerUrl = this.homey.settings.get('url');
+        } else {
+            this.routerUrl = `http://${ip}`;
+            this.homey.settings.set('ip', null);
+        }
         this.routerUrl = this.homey.settings.get('url');
         this.username = this.homey.settings.get('username');
         this.password = this.homey.settings.get('password');
