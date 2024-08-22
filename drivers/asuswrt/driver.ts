@@ -272,7 +272,8 @@ class AsusWRTDriver extends Homey.Driver {
             this.routerUrl = this.homey.settings.get('url');
         } else {
             this.routerUrl = `http://${ip}`;
-            this.homey.settings.set('ip', null);
+            this.homey.settings.set("url", this.routerUrl);
+            this.homey.settings.unset('ip');
         }
 
         this.username = this.homey.settings.get('username');
