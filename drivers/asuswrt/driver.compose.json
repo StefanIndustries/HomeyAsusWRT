@@ -60,7 +60,7 @@
   ],
   "repair": [
     {
-      "id": "router_ip_repair"
+      "id": "router_url_repair"
     },
     {
       "id": "login_credentials",

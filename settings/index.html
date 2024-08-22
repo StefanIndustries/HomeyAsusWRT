@@ -41,7 +41,6 @@
     });
 
     Homey.get('isSelfSignedCertificate', function(err, value) {
-      Homey.alert(value);
       if (err || value === null) {
         isSelfSignedCertificate.checked = false;
       } else {
@@ -50,7 +49,6 @@
     });
 
     saveElement.addEventListener('click', function(e) {
-      Homey.alert('save');
       Homey.set('pollingInterval', updateInterval.value * 1000, function(err) {
         if (err) {
           return Homey.alert(err);
@@ -59,8 +57,6 @@
         }
       });
       Homey.set('isSelfSignedCertificate', isSelfSignedCertificate.checked, function(err) {
-        Homey.alert(isSelfSignedCertificate.checked);
-
         if (err) {
           return Homey.alert(err);
         } else {
