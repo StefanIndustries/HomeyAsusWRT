@@ -97,5 +97,11 @@
   },
   "2.2.2": {
     "en": "Fixed uptime counters. Added app setting for polling interval."
+  },
+  "2.3.0": {
+    "en": "HTTPS and self signed certificates can now be used as a connection method."
+  },
+  "2.3.1": {
+    "en": "HTTPS and self signed certificates can now be used as a connection method."
   }
 }
