@@ -1,6 +1,6 @@
 {
   "id": "com.asus.wrt",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -43,5 +43,12 @@
         "username": "StefanJSimon"
       }
     }
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Rúben Caceiro"
+      }
+    ]
   }
 }
