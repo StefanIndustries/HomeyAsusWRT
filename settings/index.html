@@ -13,7 +13,14 @@
 
     <div class="homey-form-group">
         <label class="homey-form-label" for="update-interval">Update Interval (seconds)</label>
-        <input class="homey-form-input" id="update-interval" type="number" value="" />
+        <input class="homey-form-input" id="update-interval" type="number" value=""/>
+    </div>
+
+    <div class="homey-form-group">
+        <input class="homey-form-input" id="is-self-signed-certificate" type="checkbox"/>
+        <label class="homey-form-label" for="is-self-signed-certificate" style="display: inline">
+            Allow self-signed certificate
+        </label>
     </div>
 </fieldset>
 
@@ -21,10 +28,11 @@
 
 <script type="text/javascript">
   function onHomeyReady(Homey) {
-    const updateInterval = document.getElementById("update-interval");
-    const saveElement = document.getElementById("save");
+    const updateInterval = document.getElementById('update-interval');
+    const isSelfSignedCertificate = document.getElementById('is-self-signed-certificate');
+    const saveElement = document.getElementById('save');
 
-    Homey.get("pollingInterval", function (err, interval) {
+    Homey.get('pollingInterval', function(err, interval) {
       if (err || interval === null) {
         updateInterval.value = 60;
       } else {
@@ -32,13 +40,27 @@
       }
     });
 
-    saveElement.addEventListener("click", function (e) {
-      Homey.set("pollingInterval", updateInterval.value * 1000, function (err) {
+    Homey.get('isSelfSignedCertificate', function(err, value) {
+      if (err || value === null) {
+        isSelfSignedCertificate.checked = false;
+      } else {
+        isSelfSignedCertificate.checked = value;
+      }
+    });
+
+    saveElement.addEventListener('click', function(e) {
+      Homey.set('pollingInterval', updateInterval.value * 1000, function(err) {
         if (err) {
           return Homey.alert(err);
         } else {
           // close html page
-
+        }
+      });
+      Homey.set('isSelfSignedCertificate', isSelfSignedCertificate.checked, function(err) {
+        if (err) {
+          return Homey.alert(err);
+        } else {
+          // close html page
         }
       });
     });

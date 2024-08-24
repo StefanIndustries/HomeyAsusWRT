@@ -3,6 +3,7 @@ import PairSession from 'homey/lib/PairSession';
 import { AsusWRTClient } from '../../lib/AsusWRTClient';
 import { CryptoClient } from '../../lib/CryptoClient';
 import { AsusWRTOperationMode } from "../../lib/models/AsusWRTOperationMode";
+import { URL } from "node:url";
 
 class AsusRouterDriver extends Homey.Driver {
 
@@ -17,20 +18,19 @@ class AsusRouterDriver extends Homey.Driver {
     this.log('starting a new pair session');
     let username = '';
     let password = '';
-    let routerIP = '';
+    let routerUrl = '';
     let client: AsusWRTClient;
 
-    session.setHandler('router_ip_confirmed', async (routerIPFromView) => {
-      this.log('pair: router_ip_confirmed');
-      routerIP = routerIPFromView;
-      this.log(routerIP);
-      const ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
-      if (ipRegex.test(routerIP)) {
-        routerIP = 'http://' + routerIP;
-        this.log(routerIP);
+    session.setHandler('router_url_confirmed', async (routerUrlFromView) => {
+      this.log('pair: router_url_confirmed');
+      routerUrl = routerUrlFromView;
+      this.log(routerUrl);
+      const urlRegex = /https?:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::\d+)?(?:\/\S*)?|https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?::\d+)?(?:\/\S*)?/gi;
+      if (urlRegex.test(routerUrl)) {
+        this.log(routerUrl);
         return true;
       } else {
-        this.log('invalid ip provided');
+        this.log('invalid url provided');
         return false;
       }
     });
@@ -40,7 +40,7 @@ class AsusRouterDriver extends Homey.Driver {
       username = data.username.trim();
       password = data.password;
       this.log('creating client');
-      client = new AsusWRTClient(routerIP, username, password);
+      client = new AsusWRTClient(routerUrl, username, password);
       const tokenReceived = await client.login().catch(error => {
         this.log('failed to login');
         this.log(error);
@@ -54,14 +54,15 @@ class AsusRouterDriver extends Homey.Driver {
       this.log('pair: list_devices');
       const routerProductId = await client.getRouterProductId().catch(error => Promise.reject(error));
       const cryptoClient = new CryptoClient(Homey.env.CRYPTO_KEY);
+      const url = new URL(routerUrl)
       const devices = [
         {
           name: routerProductId,
           data: {
-            id: routerProductId + '-' + routerIP,
+            id: routerProductId + '-' + url.hostname,
             username: cryptoClient.encrypt(username),
             password: cryptoClient.encrypt(password),
-            ip: routerIP,
+            ip: url.hostname,
           },
           icon: this.getIcon(routerProductId)
         }

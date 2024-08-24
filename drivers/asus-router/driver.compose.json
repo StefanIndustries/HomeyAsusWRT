@@ -18,7 +18,7 @@
   },
   "pair": [
     {
-      "id": "router_ip"
+      "id": "router_url"
     },
     {
       "id": "login_credentials",
