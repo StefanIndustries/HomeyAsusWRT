@@ -263,18 +263,27 @@ class AsusWRTDriver extends Homey.Driver {
         ];
     }
 
+    private fixMalformedUrl(url: string): string {
+        const regex = /(http:\/+)+(http\/+)?/;
+
+        if (regex.test(url)) {
+            return url.replace(regex, 'http://');
+        } else {
+            return 'http://' + url;
+        }
+    }
+
     /**
      * onInit is called when the driver is initialized.
      */
     async onInit() {
-        const ip = this.homey.settings.get('ip');
-        if (ip == null || ip === '') {
-            this.routerUrl = this.homey.settings.get('url');
-        } else {
-            this.routerUrl = `http://${ip}`;
-            this.homey.settings.set("url", this.routerUrl);
-            this.homey.settings.unset('ip');
-        }
+        const legacyIp = this.homey.settings.get('ip');
+        const url = this.homey.settings.get('url');
+
+        this.routerUrl = this.fixMalformedUrl(url || (legacyIp.startsWith('http://') || legacyIp.startsWith('https://') ? legacyIp : `http://${legacyIp}`));
+
+        this.homey.settings.set('url', this.routerUrl);
+        this.homey.settings.unset('ip');
 
         this.username = this.homey.settings.get('username');
         this.password = this.homey.settings.get('password');

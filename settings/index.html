@@ -12,6 +12,11 @@
     <legend class="homey-form-legend">Asus WRT Settings</legend>
 
     <div class="homey-form-group">
+        <label class="homey-form-label" for="url">Router URL</label>
+        <input class="homey-form-input" id="url" type="text" value=""/>
+    </div>
+
+    <div class="homey-form-group">
         <label class="homey-form-label" for="update-interval">Update Interval (seconds)</label>
         <input class="homey-form-input" id="update-interval" type="number" value=""/>
     </div>
@@ -28,9 +33,18 @@
 
 <script type="text/javascript">
   function onHomeyReady(Homey) {
+    const url = document.getElementById('url');
     const updateInterval = document.getElementById('update-interval');
     const isSelfSignedCertificate = document.getElementById('is-self-signed-certificate');
     const saveElement = document.getElementById('save');
+
+    Homey.get('url', function(err, value) {
+      if (err || value === null) {
+        url.value = '';
+      } else {
+        url.value = value;
+      }
+    });
 
     Homey.get('pollingInterval', function(err, interval) {
       if (err || interval === null) {
@@ -47,20 +61,40 @@
         isSelfSignedCertificate.checked = value;
       }
     });
-
     saveElement.addEventListener('click', function(e) {
+      saveElement.classList.add('is-loading');
+      let urlSaved = false;
+      let pollingSaved = false;
+      let isSelfSignedSaved = false;
+
+      Homey.set('url', url.value, function(err) {
+        if (err) {
+          return Homey.alert(err);
+        } else {
+          urlSaved = true;
+          if (urlSaved && pollingSaved && isSelfSignedSaved) {
+            saveElement.classList.remove('is-loading');
+          }
+        }
+      });
       Homey.set('pollingInterval', updateInterval.value * 1000, function(err) {
         if (err) {
           return Homey.alert(err);
         } else {
-          // close html page
+          pollingSaved = true;
+          if (urlSaved && pollingSaved && isSelfSignedSaved) {
+            saveElement.classList.remove('is-loading');
+          }
         }
       });
       Homey.set('isSelfSignedCertificate', isSelfSignedCertificate.checked, function(err) {
         if (err) {
           return Homey.alert(err);
         } else {
-          // close html page
+          isSelfSignedSaved = true;
+          if (urlSaved && pollingSaved && isSelfSignedSaved) {
+            saveElement.classList.remove('is-loading');
+          }
         }
       });
     });

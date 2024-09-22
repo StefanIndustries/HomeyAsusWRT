@@ -1,6 +1,6 @@
 {
   "name": "com.asus.wrt",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "main": "app.ts",
   "scripts": {
     "build": "tsc",
