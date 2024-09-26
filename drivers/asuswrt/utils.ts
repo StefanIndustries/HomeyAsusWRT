@@ -1,6 +1,6 @@
-import { AsusWRTConnectedDevice } from "node-asuswrt/lib/models/AsusWRTConnectedDevice";
+import { AsusConnectedDevice } from "node-asuswrt/lib/models/asus-connected-device";
 
-export function getConnectedDisconnectedToken(device: AsusWRTConnectedDevice): {name: string, ip: string, mac: string, nickname: string, vendor: string, rssi: number} {
+export function getConnectedDisconnectedToken(device: AsusConnectedDevice): {name: string, ip: string, mac: string, nickname: string, vendor: string, rssi: number} {
   return {
     name: device.name,
     ip: device.ip,
@@ -11,8 +11,8 @@ export function getConnectedDisconnectedToken(device: AsusWRTConnectedDevice): {
   }
 }
 
-export function getMissingConnectedDevices(oldList: AsusWRTConnectedDevice[], newList: AsusWRTConnectedDevice[]): AsusWRTConnectedDevice[] {
-    const missingEntities: AsusWRTConnectedDevice[] = [];
+export function getMissingConnectedDevices(oldList: AsusConnectedDevice[], newList: AsusConnectedDevice[]): AsusConnectedDevice[] {
+    const missingEntities: AsusConnectedDevice[] = [];
     oldList.forEach(device => {
       if (!newList.some((device2) => device2.mac === device.mac)) {
         missingEntities.push(device);
@@ -21,8 +21,8 @@ export function getMissingConnectedDevices(oldList: AsusWRTConnectedDevice[], ne
     return missingEntities;
   }
 
-export function getNewConnectedDevices(oldList: AsusWRTConnectedDevice[], newList: AsusWRTConnectedDevice[]): AsusWRTConnectedDevice[] {
-    const newEntities: AsusWRTConnectedDevice[] = [];
+export function getNewConnectedDevices(oldList: AsusConnectedDevice[], newList: AsusConnectedDevice[]): AsusConnectedDevice[] {
+    const newEntities: AsusConnectedDevice[] = [];
     newList.forEach(device => {
         if (!oldList.some((device2) => device2.mac === device.mac)) {
         newEntities.push(device);

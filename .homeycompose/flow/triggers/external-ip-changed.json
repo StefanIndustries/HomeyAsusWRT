@@ -11,7 +11,7 @@
     {
       "name": "device",
       "type": "device",
-      "filter": "driver_id=asus-router|asuswrt&capabilities=external_ip"
+      "filter": "driver_id=asuswrt&capabilities=external_ip"
     }
   ],
   "tokens": [

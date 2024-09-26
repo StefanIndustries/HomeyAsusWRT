@@ -1,8 +1,8 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.asus.wrt",
-  "version": "2.3.2",
-  "compatibility": ">=5.0.0",
+  "version": "3.0.0",
+  "compatibility": ">=12.0.0",
   "sdk": 3,
   "platforms": [
     "local"
@@ -424,75 +424,6 @@
       },
       {
         "title": {
-          "en": "Came online",
-          "nl": "Is verbonden"
-        },
-        "deprecated": true,
-        "hint": {
-          "en": "Checks on a interval if a device connected to your network",
-          "nl": "Checkt op basis van een interval of een apparaat is verbonden met uw netwerk"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=asus-router"
-          }
-        ],
-        "tokens": [
-          {
-            "type": "string",
-            "name": "name",
-            "title": {
-              "en": "name",
-              "nl": "naam"
-            },
-            "example": {
-              "en": "Samsung Phone",
-              "nl": "Samsung Telefoon"
-            }
-          },
-          {
-            "type": "string",
-            "name": "nickname",
-            "title": {
-              "en": "nickname",
-              "nl": "bijnaam"
-            },
-            "example": {
-              "en": "Stefan's Phone",
-              "nl": "Stefan's Telefoon"
-            }
-          },
-          {
-            "type": "string",
-            "name": "ip",
-            "title": {
-              "en": "ip",
-              "nl": "ip"
-            },
-            "example": {
-              "en": "192.168.1.1",
-              "nl": "192.168.1.1"
-            }
-          },
-          {
-            "type": "string",
-            "name": "mac",
-            "title": {
-              "en": "mac",
-              "nl": "mac adres"
-            },
-            "example": {
-              "en": "AA:BB:CC:DD:EE:FF",
-              "nl": "AA:BB:CC:DD:EE:FF"
-            }
-          }
-        ],
-        "id": "device-came-online"
-      },
-      {
-        "title": {
           "en": "A device connected to the access point",
           "nl": "Een apparaat is verbonden met het toegangspunt"
         },
@@ -851,75 +782,6 @@
       },
       {
         "title": {
-          "en": "Went offline",
-          "nl": "Verbinding verbroken"
-        },
-        "deprecated": true,
-        "hint": {
-          "en": "Checks on a interval if a device connected to your network",
-          "nl": "Checkt op basis van een interval of een apparaat de verbinding heeft verbroken met uw netwerk"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=asus-router"
-          }
-        ],
-        "tokens": [
-          {
-            "type": "string",
-            "name": "name",
-            "title": {
-              "en": "name",
-              "nl": "naam"
-            },
-            "example": {
-              "en": "Samsung Phone",
-              "nl": "Samsung Telefoon"
-            }
-          },
-          {
-            "type": "string",
-            "name": "nickname",
-            "title": {
-              "en": "nickname",
-              "nl": "bijnaam"
-            },
-            "example": {
-              "en": "Stefan's Phone",
-              "nl": "Stefan's Telefoon"
-            }
-          },
-          {
-            "type": "string",
-            "name": "ip",
-            "title": {
-              "en": "ip",
-              "nl": "ip"
-            },
-            "example": {
-              "en": "192.168.1.1",
-              "nl": "192.168.1.1"
-            }
-          },
-          {
-            "type": "string",
-            "name": "mac",
-            "title": {
-              "en": "mac",
-              "nl": "mac adres"
-            },
-            "example": {
-              "en": "AA:BB:CC:DD:EE:FF",
-              "nl": "AA:BB:CC:DD:EE:FF"
-            }
-          }
-        ],
-        "id": "device-went-offline"
-      },
-      {
-        "title": {
           "en": "External IP changed",
           "nl": "Extern IP is veranderd"
         },
@@ -931,7 +793,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=asus-router|asuswrt&capabilities=external_ip"
+            "filter": "driver_id=asuswrt&capabilities=external_ip"
           }
         ],
         "tokens": [
@@ -1006,35 +868,6 @@
           }
         ],
         "id": "wan-connection-changed"
-      },
-      {
-        "title": {
-          "en": "WAN status changed",
-          "nl": "WAN status is veranderd"
-        },
-        "deprecated": true,
-        "hint": {
-          "en": "Checks on a interval if your WAN is still online",
-          "nl": "Checkt op basis van een interval of uw WAN nog verbonden is"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=asus-router"
-          }
-        ],
-        "tokens": [
-          {
-            "type": "boolean",
-            "name": "wan_connected",
-            "title": {
-              "en": "WAN Connected",
-              "nl": "WAN Verbonden"
-            }
-          }
-        ],
-        "id": "wan-connection-status-changed"
       },
       {
         "title": {
@@ -1252,37 +1085,6 @@
     "conditions": [
       {
         "title": {
-          "en": "Device !{{is|isn't}} connected",
-          "nl": "Apparaat !{{is|is niet}} verbonden"
-        },
-        "deprecated": true,
-        "titleFormatted": {
-          "en": "Device [[client]] !{{is|isn't}} connected",
-          "nl": "Apparaat [[client]] !{{is|is niet}} verbonden"
-        },
-        "hint": {
-          "en": "check if device with IP is online",
-          "nl": "Controleer of apparaat met IP verbonden is"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=asus-router"
-          },
-          {
-            "type": "autocomplete",
-            "name": "client",
-            "placeholder": {
-              "en": "192.168.1.4",
-              "nl": "192.168.1.4"
-            }
-          }
-        ],
-        "id": "device-is-connected"
-      },
-      {
-        "title": {
           "en": "Device !{{Is|Isn't}} Connected To Access Point",
           "nl": "Apparaat !{{is|is niet}} verbonden met het toegangspunt"
         },
@@ -1435,25 +1237,6 @@
           "en": "Reboot",
           "nl": "Herstart"
         },
-        "deprecated": true,
-        "hint": {
-          "en": "Reboots your router",
-          "nl": "Herstart uw router"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=asus-router"
-          }
-        ],
-        "id": "reboot"
-      },
-      {
-        "title": {
-          "en": "Reboot",
-          "nl": "Herstart"
-        },
         "hint": {
           "en": "Reboots your router",
           "nl": "Herstart uw router"
@@ -1589,44 +1372,6 @@
       },
       {
         "title": {
-          "en": "Turn off LEDs",
-          "nl": "Zet LEDs uit"
-        },
-        "deprecated": true,
-        "hint": {
-          "en": "Turns off the leds of your router",
-          "nl": "Zet leds van uw router uit"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=asus-router"
-          }
-        ],
-        "id": "turn-off-leds"
-      },
-      {
-        "title": {
-          "en": "Turn on LEDs",
-          "nl": "Zet LEDs aan"
-        },
-        "deprecated": true,
-        "hint": {
-          "en": "Turns on the leds of your router",
-          "nl": "Zet leds van uw router aan"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=asus-router"
-          }
-        ],
-        "id": "turn-on-leds"
-      },
-      {
-        "title": {
           "en": "Run Wake On Lan",
           "nl": "Voer Wake On Lan uit"
         },
@@ -1655,200 +1400,10 @@
   "drivers": [
     {
       "name": {
-        "en": "Asus Router"
-      },
-      "deprecated": true,
-      "class": "other",
-      "capabilities": [],
-      "platforms": [
-        "local"
-      ],
-      "connectivity": [
-        "lan"
-      ],
-      "images": {
-        "small": "/drivers/asus-router/assets/images/small.png",
-        "large": "/drivers/asus-router/assets/images/large.png",
-        "xlarge": "/drivers/asus-router/assets/images/xlarge.png"
-      },
-      "pair": [
-        {
-          "id": "router_url"
-        },
-        {
-          "id": "login_credentials",
-          "template": "login_credentials",
-          "options": {
-            "logo": "/drivers/asus-router/assets/images/logoColor.png",
-            "usernameLabel": {
-              "en": "Username",
-              "nl": "Gebruikersnaam"
-            },
-            "usernamePlaceholder": {
-              "en": "admin",
-              "nl": "administrator"
-            },
-            "passwordLabel": {
-              "en": "Password",
-              "nl": "Wachtwoord"
-            },
-            "passwordPlaceholder": {
-              "en": "Password",
-              "nl": "Wachtwoord"
-            }
-          }
-        },
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
-        }
-      ],
-      "repair": [
-        {
-          "id": "login_credentials",
-          "template": "login_credentials"
-        }
-      ],
-      "id": "asus-router",
-      "settings": [
-        {
-          "type": "group",
-          "label": {
-            "en": "Polling intervals",
-            "nl": "Polling intervallen"
-          },
-          "children": [
-            {
-              "id": "online_devices_polling_interval",
-              "type": "number",
-              "label": {
-                "en": "Online Devices",
-                "nl": "Online Apparaten"
-              },
-              "value": 60,
-              "min": 5,
-              "max": 300,
-              "units": {
-                "en": "seconds",
-                "nl": "seconden"
-              },
-              "hint": {
-                "en": "60 is recommended. Lower could make Homey or your Asus device unresponsive.",
-                "nl": "60 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
-              }
-            },
-            {
-              "id": "traffic_data_polling_interval",
-              "type": "number",
-              "label": {
-                "en": "Traffic Data",
-                "nl": "Verkeersgegevens"
-              },
-              "value": 60,
-              "min": 5,
-              "max": 300,
-              "units": {
-                "en": "seconds",
-                "nl": "seconden"
-              },
-              "hint": {
-                "en": "60 is recommended. Lower could make Homey or your Asus device unresponsive.",
-                "nl": "60 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
-              }
-            },
-            {
-              "id": "wan_status_polling_interval",
-              "type": "number",
-              "label": {
-                "en": "WAN Status",
-                "nl": "WAN-status"
-              },
-              "value": 300,
-              "min": 5,
-              "max": 900,
-              "units": {
-                "en": "seconds",
-                "nl": "seconden"
-              },
-              "hint": {
-                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
-                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
-              }
-            },
-            {
-              "id": "memory_usage_polling_interval",
-              "type": "number",
-              "label": {
-                "en": "Memory Usage",
-                "nl": "Geheugen Gebruik"
-              },
-              "value": 300,
-              "min": 5,
-              "max": 900,
-              "units": {
-                "en": "seconds",
-                "nl": "seconden"
-              },
-              "hint": {
-                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
-                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
-              }
-            },
-            {
-              "id": "cpu_usage_polling_interval",
-              "type": "number",
-              "label": {
-                "en": "CPU Usage",
-                "nl": "CPU Gebruik"
-              },
-              "value": 300,
-              "min": 5,
-              "max": 900,
-              "units": {
-                "en": "seconds",
-                "nl": "seconden"
-              },
-              "hint": {
-                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
-                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
-              }
-            },
-            {
-              "id": "uptime_polling_interval",
-              "type": "number",
-              "label": {
-                "en": "Uptime",
-                "nl": "Uptime"
-              },
-              "value": 300,
-              "min": 5,
-              "max": 900,
-              "units": {
-                "en": "seconds",
-                "nl": "seconden"
-              },
-              "hint": {
-                "en": "300 is recommended. Lower could make Homey or your Asus device unresponsive.",
-                "nl": "300 is aanbevolen. Lager kan Homey of uw Asus apparaat niet laten reageren."
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": {
         "en": "Asus Router",
         "nl": "Asus Router"
       },
-      "class": "other",
+      "class": "networkrouter",
       "capabilities": [],
       "platforms": [
         "local"

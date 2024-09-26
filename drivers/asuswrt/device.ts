@@ -1,13 +1,15 @@
 import Homey from 'homey';
-import { AsusWRTConnectedDevice } from 'node-asuswrt/lib/models/AsusWRTConnectedDevice';
-import { AsusWRTLoad } from 'node-asuswrt/lib/models/AsusWRTLoad';
-import { AsusWRTOperationMode } from 'node-asuswrt/lib/models/AsusWRTOperationMode';
-import { AsusWRTTrafficData } from 'node-asuswrt/lib/models/AsusWRTTrafficData';
-import { AsusWRTWANStatus } from 'node-asuswrt/lib/models/AsusWRTWANStatus';
 import { AccessPointCapabilities, RouterCapabilities } from './capabilities';
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices, wait } from './utils';
+import { AsusConnectedDevice } from "node-asuswrt/lib/models/asus-connected-device";
+import { AsusCpuMemLoad } from "node-asuswrt/lib/models/asus-cpu-mem-load";
+import { AsusWanLinkStatus } from "node-asuswrt/lib/models/asus-wan-link-status";
+import { AsusTrafficData } from "node-asuswrt/lib/models/asus-traffic-data";
+import { AsusClient } from "node-asuswrt/lib/classes/asus-client";
+import { AsusRouter } from "node-asuswrt/lib/classes/asus-router";
 
 export class AsusWRTDevice extends Homey.Device {
+  public asusClient: AsusClient | undefined;
 
   private triggerNewFirmwareAvailable!: (tokens: any) => void;
   private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
@@ -27,21 +29,95 @@ export class AsusWRTDevice extends Homey.Device {
   private firmwareVersion: string = '';
   private newVersion: string = '';
 
-  private wiredClients: AsusWRTConnectedDevice[] = [];
-  private wireless24GClients: AsusWRTConnectedDevice[] = [];
-  private wireless5GClients: AsusWRTConnectedDevice[] = [];
+  private wiredClients: AsusConnectedDevice[] = [];
+  private wireless24GClients: AsusConnectedDevice[] = [];
+  private wireless5GClients: AsusConnectedDevice[] = [];
 
-  public getWiredClients(): AsusWRTConnectedDevice[] {
+  public async updateCapabilities() {
+    const routerMac = this.getData().mac;
+    this.asusClient ? await this.setAvailable() : await this.setUnavailable('Device not online');
+    if (!this.getAvailable() || !this.asusClient) {
+      return;
+    }
+    let successfullyUpdatedEverything = true;
+    this.log(`updating connected device information for access point ${routerMac}`);
+
+    const wiredDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == 'wired');
+    const twoGDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == '2g');
+    const fiveGDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == '5g');
+    try {
+      await this.setConnectedClients(wiredDevices, twoGDevices, fiveGDevices);
+    } catch(err) {
+      successfullyUpdatedEverything = false;
+      this.log(`failed to update connected device information for access point ${routerMac}`, err);
+    }
+
+    try {
+      this.log(`updating cpu memory load for access point ${routerMac}`);
+      const load = await this.asusClient.getCPUMemoryLoad();
+      await this.setLoad(load);
+    } catch (err) {
+      successfullyUpdatedEverything = false;
+      this.log(err);
+    }
+
+    try {
+      this.log(`updating uptime for access point ${routerMac}`);
+      const uptimeSeconds = await this.asusClient.getUptimeSeconds();
+      await this.setUptimeDaysBySeconds(uptimeSeconds);
+    } catch (err) {
+      successfullyUpdatedEverything = false;
+      this.log(err);
+    }
+
+    if (this.getStoreValue('operationMode') === 0) {
+      const router = this.asusClient as AsusRouter;
+      this.log(`device is of type router, executing additional updates`);
+      try {
+        this.log(`updating wan status for access point ${routerMac}`);
+        const WANStatus = await router.getWANStatus();
+        await this.setWANStatus(WANStatus);
+      } catch (err) {
+        successfullyUpdatedEverything = false;
+        this.log(err);
+      }
+
+      try {
+        this.log(`updating traffic data for access point ${routerMac}`);
+        const trafficDataFirst = await router.getTotalTrafficData();
+        await wait(2000);
+        const trafficDataSecond = await router.getTotalTrafficData();
+        await this.setTrafficValues(trafficDataFirst, trafficDataSecond);
+      } catch (err) {
+        successfullyUpdatedEverything = false;
+        this.log(err);
+      }
+    }
+
+    if (!successfullyUpdatedEverything) {
+      this.log(`failed to update some information for access point ${routerMac}`);
+      await this.setWarning('Failed to retrieve (some) device info, some functionality might not work');
+    } else {
+      this.log(`successfully updated all information for access point ${routerMac}`);
+      await this.setWarning(null);
+    }
+  }
+
+  public setAsusClient(client: AsusClient) {
+    this.asusClient = client;
+  }
+
+  public getWiredClients(): AsusConnectedDevice[] {
     return this.wiredClients;
   }
-  public getWireless24GClients(): AsusWRTConnectedDevice[] {
+  public getWireless24GClients(): AsusConnectedDevice[] {
     return this.wireless24GClients;
   }
-  public getWireless5GClients(): AsusWRTConnectedDevice[] {
+  public getWireless5GClients(): AsusConnectedDevice[] {
     return this.wireless5GClients;
   }
 
-  public async setConnectedClients(wiredClients: AsusWRTConnectedDevice[], wireless24GClients: AsusWRTConnectedDevice[], wireless5GClients: AsusWRTConnectedDevice[]) {
+  public async setConnectedClients(wiredClients: AsusConnectedDevice[], wireless24GClients: AsusConnectedDevice[], wireless5GClients: AsusConnectedDevice[]) {
     const oldWiredClients = this.wiredClients;
     const oldWireless24GClients = this.wireless24GClients;
     const oldWireless5GClients = this.wireless5GClients;
@@ -79,7 +155,7 @@ export class AsusWRTDevice extends Homey.Device {
     this.newVersion = newVersion;
   }
 
-  public async setLoad(load: AsusWRTLoad) {
+  public async setLoad(load: AsusCpuMemLoad) {
     if (this.hasCapability('meter_cpu_usage')) {
       await this.setCapabilityValue('meter_cpu_usage', load.CPUUsagePercentage);
     }
@@ -94,7 +170,7 @@ export class AsusWRTDevice extends Homey.Device {
     }
   }
 
-  public async setWANStatus(WANStatus: AsusWRTWANStatus) {
+  public async setWANStatus(WANStatus: AsusWanLinkStatus) {
     if (this.hasCapability('external_ip')) {
       if (this.getCapabilityValue('external_ip') !== WANStatus.ipaddr) {
         this.triggerExternalIPChanged(this, { external_ip: WANStatus.ipaddr }, {});
@@ -117,7 +193,7 @@ export class AsusWRTDevice extends Homey.Device {
     }
   }
 
-  public async setTrafficValues(trafficDataFirst: AsusWRTTrafficData, trafficDataSecond: AsusWRTTrafficData) {
+  public async setTrafficValues(trafficDataFirst: AsusTrafficData, trafficDataSecond: AsusTrafficData) {
     if (this.hasCapability('traffic_total_received')) {
       await this.setCapabilityValue('traffic_total_received', trafficDataSecond.trafficReceived);
     }
@@ -132,8 +208,11 @@ export class AsusWRTDevice extends Homey.Device {
     }
   }
 
-  private async setCapabilities(operationMode: AsusWRTOperationMode) {
-    const capabilityList = operationMode === AsusWRTOperationMode.Router ? RouterCapabilities : AccessPointCapabilities;
+  private async setCapabilities() {
+    if (!this.asusClient) {
+      return;
+    }
+    const capabilityList = this.asusClient.deviceInfo.config.backhalctrl ? RouterCapabilities : AccessPointCapabilities;
     capabilityList.forEach(async cap => {
       if (!this.hasCapability(cap)) {
         await wait(5000);
@@ -244,7 +323,7 @@ export class AsusWRTDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
-    await this.setCapabilities(this.getStoreValue('operationMode'));
+    await this.setCapabilities();
     this.registerFlowListeners();
     this.log('AsusWRTDevice has been initialized');
   }
@@ -253,7 +332,7 @@ export class AsusWRTDevice extends Homey.Device {
    * onAdded is called when the user adds the device, called just after pairing.
    */
   async onAdded() {
-    await this.setCapabilities(this.getStoreValue('operationMode'));
+    await this.setCapabilities();
     this.log('AsusWRTDevice has been added');
   }
 

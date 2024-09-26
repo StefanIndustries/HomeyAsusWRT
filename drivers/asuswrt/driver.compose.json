@@ -3,7 +3,7 @@
     "en": "Asus Router",
     "nl": "Asus Router"
   },
-  "class": "other",
+  "class": "networkrouter",
   "capabilities": [],
   "platforms": [
     "local"
