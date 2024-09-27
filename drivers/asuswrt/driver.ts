@@ -7,6 +7,7 @@ import { AsusWrt } from "node-asuswrt";
 import { AsusOoklaServer } from "node-asuswrt/lib/models/asus-ookla-server";
 import { AsusVpnClient } from "node-asuswrt/lib/models/asus-vpn-client";
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices } from "./utils";
+import { exec } from "node:child_process";
 
 class AsusWRTDriver extends Homey.Driver {
     private pollingInterval = 60000;
@@ -21,7 +22,7 @@ class AsusWRTDriver extends Homey.Driver {
     private triggerDeviceConnectedToNetwork!: (tokens: any) => void;
     private triggerDeviceDisconnectedFromNetwork!: (tokens: any) => void;
 
-    public async updateStateOfDevices() {
+    public async updateStateOfDevices(executeTriggers: boolean = true) {
         let oldConnectedClients = this.connectedClients;
         if (!this.asusWrt) {
             return;
@@ -29,8 +30,8 @@ class AsusWRTDriver extends Homey.Driver {
         await this.asusWrt.updateConnectedDevices();
 
         for (const device of this.getDevices()) {
-            const router = <AsusWRTDevice>device;
-            await router.updateCapabilities();
+            const asusDevice = <AsusWRTDevice>device;
+            await asusDevice.updateCapabilities(executeTriggers);
         }
 
         try {
@@ -40,8 +41,10 @@ class AsusWRTDriver extends Homey.Driver {
                 this.connectedClients = this.connectedClients.concat(client.connectedDevices);
             });
             if (oldConnectedClients.length !== 0 || this.connectedClients.length !== 0) {
-                getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
-                getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+                if (executeTriggers) {
+                    getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
+                    getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+                }
             }
         } catch (err) {
             this.log(`failed to update connectedClients for entire network`, err);
@@ -245,17 +248,21 @@ class AsusWRTDriver extends Homey.Driver {
             this.asusWrt = new AsusWrt(asusOptions);
         }
 
-        const clients = await this.asusWrt!.discoverClients();
+        if (this.asusWrt) {
+            const clients = await this.asusWrt!.discoverClients();
 
-        for (const device of this.getDevices()) {
-            const router = <AsusWRTDevice>device;
-            const routerMac = router.getData().mac;
-            const asusClient = clients.find(client => client.mac === routerMac);
-            if (asusClient) {
-                router.setAsusClient(asusClient);
-            } else {
-                await router.setUnavailable('Device seems offline');
+            for (const device of this.getDevices()) {
+                const router = <AsusWRTDevice>device;
+                const routerMac = router.getData().mac;
+                const asusClient = clients.find(client => client.mac === routerMac);
+                if (asusClient) {
+                    router.setAsusClient(asusClient);
+                } else {
+                    await router.setUnavailable('Device seems offline');
+                }
             }
+
+            await this.updateStateOfDevices(false);
         }
 
         this.registerFlowListeners();
