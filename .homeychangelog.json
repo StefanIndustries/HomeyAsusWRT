@@ -106,5 +106,11 @@
   },
   "2.3.2": {
     "en": "Added url setting, fixed migration error."
+  },
+  "3.0.0": {
+    "en": "Your routers now update more efficiently and fixed some trigger problems with starting the app."
+  },
+  "3.0.1": {
+    "en": "Fixed issue with newly added devices not updating properly"
   }
 }
