@@ -112,5 +112,8 @@
   },
   "3.0.1": {
     "en": "Fixed issue with newly added devices not updating properly"
+  },
+  "3.0.2": {
+    "en": "Fixed url being malformed in settings."
   }
 }
