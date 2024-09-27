@@ -31,6 +31,12 @@ class AsusWRTDriver extends Homey.Driver {
 
         for (const device of this.getDevices()) {
             const asusDevice = <AsusWRTDevice>device;
+            if (!asusDevice.asusClient) {
+                const asusClient = this.asusWrt.allClients.find(client => client.mac === asusDevice.getData().mac);
+                if (asusClient) {
+                    asusDevice.setAsusClient(asusClient);
+                }
+            }
             await asusDevice.updateCapabilities(executeTriggers);
         }
 
@@ -380,7 +386,7 @@ class AsusWRTDriver extends Homey.Driver {
                         mac: device.mac
                     },
                     store: {
-                        operationMode: device.deviceInfo.config.backhalctrl ? 0 : 1
+                        operationMode: device.deviceInfo.config.backhalctrl ? 1 : 0
                     },
                     icon: this.getIcon(device.deviceInfo.product_id)
                 }
