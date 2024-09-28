@@ -7,7 +7,6 @@ import { AsusWrt } from "node-asuswrt";
 import { AsusOoklaServer } from "node-asuswrt/lib/models/asus-ookla-server";
 import { AsusVpnClient } from "node-asuswrt/lib/models/asus-vpn-client";
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices } from "./utils";
-import { exec } from "node:child_process";
 
 class AsusWRTDriver extends Homey.Driver {
     private pollingInterval = 60000;
@@ -302,11 +301,13 @@ class AsusWRTDriver extends Homey.Driver {
             }
         });
 
-        session.setHandler('router_url_confirmed', async (routerUrlFromView) => {
+        session.setHandler('router_url_confirmed', async (data: {url: string, isSelfSignedCertificate: boolean}) => {
             this.log('pair: router_ip_confirmed');
-            const urlRegex = /https?:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::\d+)?(?:\/\S*)?|https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?::\d+)?(?:\/[^\s]*)?/gi;
-            if (urlRegex.test(routerUrlFromView)) {
-                this.routerUrl = routerUrlFromView;
+            const urlRegex = /^(https?):\/\/([^:\/\s]+)(:([0-9]+))?(\/.*)?$/;
+            console.log(data.url);
+            if (urlRegex.test(data.url)) {
+                this.routerUrl = data.url;
+                this.isSelfSignedCertificate = data.isSelfSignedCertificate;
                 return true;
             } else {
                 this.log('invalid url provided');
@@ -317,7 +318,6 @@ class AsusWRTDriver extends Homey.Driver {
         session.setHandler('login', async (data: {
             username: string,
             password: string,
-            ignoreCertificate: boolean,
         }) => {
             this.log('pair: login');
             this.username = data.username.trim();
@@ -380,15 +380,17 @@ class AsusWRTDriver extends Homey.Driver {
 
     async onRepair(session: PairSession, device: any) {
         let newRouterUrl = '';
+        let newIsSelfSignedCertificate = false;
         let newUsername = '';
         let newPassword = '';
 
         this.log('starting repair');
-        session.setHandler('router_url_confirmed', async (routerUrlFromView) => {
+        session.setHandler('router_url_confirmed', async (data: {url: string, isSelfSignedCertificate: boolean}) => {
             this.log('pair: router_ip_confirmed');
-            const urlRegex = /https?:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::\d+)?(?:\/\S*)?|https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?::\d+)?(?:\/[^\s]*)?/gi;
-            if (urlRegex.test(routerUrlFromView)) {
-                newRouterUrl = routerUrlFromView;
+            const urlRegex = /^(https?):\/\/([^:\/\s]+)(:([0-9]+))?(\/.*)?$/;
+            if (urlRegex.test(data.url)) {
+                newRouterUrl = data.url;
+                newIsSelfSignedCertificate = data.isSelfSignedCertificate;
                 return true;
             } else {
                 this.log('invalid url provided');
@@ -406,7 +408,7 @@ class AsusWRTDriver extends Homey.Driver {
                     baseURL: newRouterUrl,
                     username: newUsername,
                     password: newPassword,
-                    isSelfSignedCertificate: this.isSelfSignedCertificate,
+                    isSelfSignedCertificate: newIsSelfSignedCertificate,
                 };
                 let tempClient = new AsusWrt(asusOptions);
                 const routers = await tempClient.discoverClients();
@@ -418,9 +420,11 @@ class AsusWRTDriver extends Homey.Driver {
                     this.routerUrl = newRouterUrl;
                     this.username = newUsername;
                     this.password = newPassword;
+                    this.isSelfSignedCertificate = newIsSelfSignedCertificate;
                     this.homey.settings.set("url", this.routerUrl);
                     this.homey.settings.set("username", this.username);
                     this.homey.settings.set("password", this.password);
+                    this.homey.settings.set("isSelfSignedCertificate", this.isSelfSignedCertificate);
                     if (this.asusWrt) {
                         this.asusWrt.dispose();
                         const asusOptions: AsusOptions = {

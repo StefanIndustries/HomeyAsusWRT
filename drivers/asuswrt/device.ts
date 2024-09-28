@@ -86,7 +86,7 @@ export class AsusWRTDevice extends Homey.Device {
       try {
         this.log(`updating wan status for access point ${routerMac}`);
         const WANStatus = await router.getWANStatus();
-        await this.setWANStatus(WANStatus);
+        await this.setWANStatus(WANStatus, executeTriggers);
       } catch (err) {
         successfullyUpdatedEverything = false;
         errorOnDataPoints.push('WAN Status');

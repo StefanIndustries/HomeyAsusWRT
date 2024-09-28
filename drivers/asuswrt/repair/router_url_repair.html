@@ -1,11 +1,13 @@
-<header class="homey-header">
-    <p class="homey-subtitle" data-i18n="pair.http_only_warning"></p>
-</header>
-
 <form class="homey-form">
     <div class="homey-form-group">
         <label class="homey-form-label" for="routerUrl">Router Url</label>
-        <input class="homey-form-input" id="routerUrl" type="url" placeholder="https://192.168.1.1:443" autocomplete="on"/>
+        <input class="homey-form-input" id="routerUrl" type="url" placeholder="https://192.168.1.1:8443" autocomplete="on"/>
+    </div>
+    <div class="homey-form-group">
+        <input class="homey-form-input" id="is-self-signed-certificate" type="checkbox"/>
+        <label class="homey-form-label" for="is-self-signed-certificate" style="display: inline">
+            Allow self-signed certificate
+        </label>
     </div>
 </form>
 <br><br>
@@ -17,7 +19,10 @@
 
   function confirmUrl() {
     submitButton.classList.add('is-loading');
-    Homey.emit('router_url_confirmed', document.getElementById('routerUrl').value)
+    const routerUrl = document.getElementById('routerUrl').value;
+    const isSelfSignedCertificate = document.getElementById('is-self-signed-certificate').checked;
+    const dataToSend = {url: routerUrl, isSelfSignedCertificate: isSelfSignedCertificate};
+    Homey.emit('router_url_confirmed', dataToSend)
       .then(function(result) {
         if (result) {
           Homey.nextView();
