@@ -1,0 +1,178 @@
+<html>
+<head>
+    <style>
+        .speed-indicator {
+            font-size: var(--homey-font-size-xxlarge);
+            font-weight: var(--homey-font-weight-bold);
+        }
+    </style>
+</head>
+
+<body class="homey-widget">
+<div class="homey-text-align-left" style="float: left; width: 40%">
+    <p class="homey-text-small-light" id="date">...</p>
+    <p class="homey-text-bold" id="time">...</p>
+</div>
+<div class="homey-text-align-right" style="float: right; width: 60%">
+    <div style="float: left;">
+        <p class="homey-text-regular">
+            Download
+        </p>
+        <p class="speed-indicator" id="download">...</p>
+    </div>
+    <div style="float: right;">
+        <p class="homey-text-regular">
+            Upload
+        </p>
+        <p class="speed-indicator" id="upload">...</p>
+    </div>
+</div>
+<div style="width: 100%; clear: both;">
+    <div class="homey-text-align-left" style="float: left; width: 33%;">
+        <span class="homey-text-small-light">Ping</span>
+        <span class="homey-text-small" id="ping">...</span>
+        <span class="homey-text-small-light">ms</span>
+    </div>
+    <div class="homey-text-align-center" style="float: left; width: 33%;">
+        <span class="homey-text-small-light">Jitter</span>
+        <span class="homey-text-small" id="jitter">...</span>
+        <span class="homey-text-small-light">ms</span>
+    </div>
+    <div class="homey-text-align-right" style="float: left; width: 33%;">
+        <span class="homey-text-small-light">Packet loss</span>
+        <span class="homey-text-small" id="packet-loss">...</span>
+    </div>
+</div>
+<div class="homey-border-top" style="clear: both; margin-top: 5px;"></div>
+<div style="clear: both; margin-top: 5px;">
+    <div style="float: left; width: 50%">
+        <div class="homey-text-align-left" style="clear: both; margin-top: 5px;">
+            <img src="speed_normal.svg" id="speed-icon" alt="normal" style="float: left;">
+            <p class="homey-text-bold" id="speed-title-text">...</p>
+        </div>
+    </div>
+    <div class="homey-text-align-right" style="float: right; width: 50%">
+        <p class="homey-text-bold" id="speed-test-server">...</p>
+    </div>
+</div>
+<div class="homey-text-align-left" style="clear: both; margin-top: 5px;">
+    <p class="homey-text-small-light" style="clear: both;" id="speed-text">...</p>
+</div>
+
+<script type="text/javascript">
+  const date = document.getElementById('date');
+  const time = document.getElementById('time');
+  const download = document.getElementById('download');
+  const upload = document.getElementById(('upload'));
+  const ping = document.getElementById('ping');
+  const jitter = document.getElementById('jitter');
+  const packetLoss = document.getElementById('packet-loss');
+
+  const speedIcon = document.getElementById('speed-icon');
+  const speedTitleText = document.getElementById('speed-title-text');
+  const speedText = document.getElementById('speed-text');
+  const speedTestServer = document.getElementById('speed-test-server');
+
+  const speedIcons = {
+    FAST: 'speed_fast.svg',
+    GOOD: 'speed_good.svg',
+    GREAT: 'speed_great.svg',
+    NORMAL: 'speed_normal.svg',
+    SUPER: 'speed_super.svg',
+    ULTRA: 'speed_ultra.svg'
+  };
+
+  const speedTitleTexts = {
+    FAST: 'Fast',
+    GOOD: 'Good',
+    GREAT: 'Great',
+    NORMAL: 'Normal',
+    SUPER: 'Super',
+    ULTRA: 'Ultra'
+  };
+
+  const speedTexts = {
+    FAST: 'Your Internet speeds are fast! You can stream many 4K movies simultaneously.',
+    GOOD: 'Your Internet speeds are good! You can have a smooth Web browsing experience!',
+    GREAT: 'Your Internet speeds are great! You can do streaming on multiple devices!',
+    NORMAL: 'Your Internet speed is normal. You can stream SD video on a couple devices. If you are streaming on lots of devices, you may see some buffering.',
+    SUPER: 'Your Internet speeds are super fast! You can stream many 4K movies and play online games simultaneously on multiple devices!',
+    ULTRA: 'Your Internet speeds are ultra fast! You can do anything with this incredible Internet speed.'
+  };
+
+  function onHomeyReady(Homey) {
+    Homey.ready();
+    Homey.api('GET', '/', {})
+      .then((result) => {
+        if (result !== null) {
+          const dateObj = new Date(result.timestamp);
+          const year = dateObj.getFullYear();
+          const month = dateObj.getMonth() + 1;
+          const day = dateObj.getDate();
+
+          const hours = dateObj.getHours();
+          const minutes = dateObj.getMinutes();
+
+          const downloadSpeed = (((result.download.bytes * 8) / (result.download.elapsed * 0.001)) / 1000000).toFixed(2);
+          const uploadSpeed = (((result.upload.bytes * 8) / (result.upload.elapsed * 0.001)) / 1000000).toFixed(2);
+
+          const pingResult = (result.ping.latency).toFixed(3);
+          const jitterResult = (result.ping.jitter).toFixed(3);
+
+          date.textContent = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          time.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+          download.textContent = downloadSpeed;
+          upload.textContent = uploadSpeed;
+          ping.textContent = pingResult;
+          packetLoss.textContent = result.packetLoss;
+          jitter.textContent = jitterResult;
+          speedTestServer.textContent = result.server.name;
+
+          switch (true) {
+            case (downloadSpeed >= 0 && downloadSpeed <= 5):
+              speedIcon.src = speedIcons.NORMAL;
+              speedIcon.alt = speedTexts.NORMAL;
+              speedTitleText.textContent = speedTitleTexts.NORMAL;
+              speedText.textContent = speedTexts.NORMAL;
+              break;
+            case (downloadSpeed >= 6 && downloadSpeed <= 50):
+              speedIcon.src = speedIcons.GOOD;
+              speedIcon.alt = speedTexts.GOOD;
+              speedTitleText.textContent = speedTitleTexts.GOOD;
+              speedText.textContent = speedTexts.GOOD;
+              break;
+            case (downloadSpeed >= 51 && downloadSpeed <= 100):
+              speedIcon.src = speedIcons.GREAT;
+              speedIcon.alt = speedTexts.GREAT;
+              speedTitleText.textContent = speedTitleTexts.GREAT;
+              speedText.textContent = speedTexts.GREAT;
+              break;
+            case (downloadSpeed >= 101 && downloadSpeed <= 250):
+              speedIcon.src = speedIcons.FAST;
+              speedIcon.alt = speedTexts.FAST;
+              speedTitleText.textContent = speedTitleTexts.FAST;
+              speedText.textContent = speedTexts.FAST;
+              break;
+            case (downloadSpeed >= 251 && downloadSpeed <= 900):
+              speedIcon.src = speedIcons.SUPER;
+              speedIcon.alt = speedTexts.SUPER;
+              speedTitleText.textContent = speedTitleTexts.SUPER;
+              speedText.textContent = speedTexts.SUPER;
+              break;
+            case (downloadSpeed >= 901):
+              speedIcon.src = speedIcons.ULTRA;
+              speedIcon.alt = speedTexts.ULTRA;
+              speedTitleText.textContent = speedTitleTexts.ULTRA;
+              speedText.textContent = speedTexts.ULTRA;
+              break;
+            default:
+              console.log("Number is out of range");
+              break;
+          }
+        }
+      })
+      .catch(console.error);
+  }
+</script>
+</body>
+</html>

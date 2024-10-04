@@ -115,5 +115,8 @@
   },
   "3.0.2": {
     "en": "Fixed url being malformed in settings."
+  },
+  "3.0.3": {
+    "en": "Fixed custom port usage during setup and repair. Added ability to set self signed certificate during pair."
   }
 }

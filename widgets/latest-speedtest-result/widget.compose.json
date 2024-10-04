@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Latest speed test"
+  },
+  "settings": [],
+  "height": 188,
+  "api": {
+    "getLatestSpeedtestResult": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

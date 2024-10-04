@@ -8,11 +8,11 @@ import { AsusOoklaServer } from "node-asuswrt/lib/models/asus-ookla-server";
 import { AsusVpnClient } from "node-asuswrt/lib/models/asus-vpn-client";
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices } from "./utils";
 
-class AsusWRTDriver extends Homey.Driver {
+export class AsusWRTDriver extends Homey.Driver {
     private pollingInterval = 60000;
     private isSelfSignedCertificate = false;
     private updateDevicesPollingIntervalId: any;
-    private asusWrt: AsusWrt | undefined | null;
+    public asusWrt: AsusWrt | undefined | null;
     private username: string = '';
     private password: string = '';
     private routerUrl: string = '';
