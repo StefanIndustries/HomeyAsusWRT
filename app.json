@@ -1494,7 +1494,7 @@
         "en": "Latest speed test"
       },
       "settings": [],
-      "height": 188,
+      "height": 110,
       "api": {
         "getLatestSpeedtestResult": {
           "method": "GET",

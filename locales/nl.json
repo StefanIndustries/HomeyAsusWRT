@@ -2,5 +2,9 @@
     "pair": {
         "title_router_url_config": "Vul de url van uw apparaat in",
         "alert_router_ip_incorrect": "Er is geen apparaat gevonden op de opgegeven URL"
+    },
+    "widget": {
+        "today": "Vandaag",
+        "yesterday": "Gisteren"
     }
 }

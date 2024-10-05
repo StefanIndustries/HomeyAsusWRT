@@ -2,5 +2,9 @@
     "pair": {
         "title_router_url_config": "Please fill in the url of your device",
         "alert_router_ip_incorrect": "No device found on the url provided"
+    },
+    "widget": {
+        "today": "Today",
+        "yesterday": "Yesterday"
     }
 }
