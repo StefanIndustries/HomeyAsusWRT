@@ -124,5 +124,8 @@
   },
   "3.0.5": {
     "en": "Improved look of widget. Added translations"
+  },
+  "3.0.6": {
+    "en": "Fix issue with invalid devices at startup"
   }
 }
