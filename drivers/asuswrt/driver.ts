@@ -36,7 +36,9 @@ export class AsusWRTDriver extends Homey.Driver {
                     asusDevice.setAsusClient(asusClient);
                 }
             }
-            await asusDevice.updateCapabilities(executeTriggers);
+            if (asusDevice.deviceIsReady) {
+                await asusDevice.updateCapabilities(executeTriggers);
+            }
         }
 
         try {

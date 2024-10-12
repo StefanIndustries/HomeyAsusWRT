@@ -10,6 +10,7 @@ import { AsusRouter } from "node-asuswrt/lib/classes/asus-router";
 
 export class AsusWRTDevice extends Homey.Device {
   public asusClient: AsusClient | undefined;
+  public deviceIsReady = false;
 
   private triggerNewFirmwareAvailable!: (tokens: any) => void;
   private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
@@ -187,7 +188,7 @@ export class AsusWRTDevice extends Homey.Device {
   public async setWANStatus(WANStatus: AsusWanLinkStatus, executeTriggers: boolean = true) {
     if (this.hasCapability('external_ip')) {
       if (this.getCapabilityValue('external_ip') !== WANStatus.ipaddr) {
-        if (executeTriggers) {
+        if (executeTriggers && this.triggerExternalIPChanged) {
           this.triggerExternalIPChanged(this, { external_ip: WANStatus.ipaddr }, {});
         }
       }
@@ -196,7 +197,7 @@ export class AsusWRTDevice extends Homey.Device {
     if (this.hasCapability('alarm_wan_disconnected')) {
       const routerConnected = !!(WANStatus.status && WANStatus.status === 1);
       if (this.getCapabilityValue('alarm_wan_disconnected') !== routerConnected) {
-        if (executeTriggers) {
+        if (executeTriggers && this.triggerWANConnectionStatusChanged) {
           this.triggerWANConnectionStatusChanged(this, { wan_connected: routerConnected }, {});
         }
       }
@@ -205,7 +206,7 @@ export class AsusWRTDevice extends Homey.Device {
 
     if (this.hasCapability('wan_type')) {
       if (this.getCapabilityValue('wan_type') !== WANStatus.type) {
-        if (executeTriggers) {
+        if (executeTriggers && this.triggerWanTypeChanged) {
           this.triggerWanTypeChanged(this, { wan_type: WANStatus.type }, {});
         }
       }
@@ -343,8 +344,9 @@ export class AsusWRTDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
-    await this.setCapabilities();
     this.registerFlowListeners();
+    await this.setCapabilities();
+    this.deviceIsReady = true;
     this.log('AsusWRTDevice has been initialized');
   }
 
