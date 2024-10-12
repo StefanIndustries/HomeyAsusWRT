@@ -15,8 +15,7 @@ export class AsusWRTApp extends Homey.App {
     if (driver.asusWrt && driver.asusWrt.asusRouter) {
       const history = await driver.asusWrt.asusRouter.getOoklaSpeedtestHistory()
       if (history) {
-        const mostRecent = history.reduce((latest: AsusOoklaSpeedtestResult, current: AsusOoklaSpeedtestResult) => current.timestamp > latest.timestamp ? current : latest);
-        return mostRecent;
+        return history.reduce((latest: AsusOoklaSpeedtestResult, current: AsusOoklaSpeedtestResult) => current.timestamp > latest.timestamp ? current : latest);
       }
     }
     return null;

@@ -2,10 +2,28 @@
 <head>
     <style>
         .speed-indicator {
+            display: flex;
             font-size: var(--homey-font-size-xxlarge);
             font-weight: var(--homey-font-weight-bold);
+            flex-direction: row;
+            gap: 20px;
+            align-items: center;
         }
-        
+
+        .download, .upload {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .download img, .upload img {
+            margin-right: 10px;
+        }
+
+        .download p, .upload p {
+            margin: 0;
+        }
+
         .speed-icon {
             float: left;
             margin-top: 2px;
@@ -25,15 +43,17 @@
     </span>
 </div>
 
-<div class="homey-text-align-left" style="float: left; width: 90%">
-    <div style="float: left;">
-        <img src="download.svg" alt="download" style="float: left;">
-        <p><span class="speed-indicator" id="download">...</span><span class="homey-text-small-light">Mbps</span></p>
-
-    </div>
-    <div style="float: right;">
-        <img src="upload.svg" alt="download" style="float: left;">
-        <p><span class="speed-indicator" id="upload">...</span><span class="homey-text-small-light">Mbps</span></p>
+<div class="homey-text-align-left">
+    <div class="speed-indicator">
+        <div class="download">
+            <img src="download.svg" alt="download">
+            <p><span class="speed-indicator" id="download">...</span><span class="homey-text-small-light">Mbps</span>
+            </p>
+        </div>
+        <div class="upload">
+            <img src="upload.svg" alt="upload">
+            <p><span class="speed-indicator" id="upload">...</span><span class="homey-text-small-light">Mbps</span></p>
+        </div>
     </div>
 </div>
 
@@ -59,7 +79,7 @@
     GREAT: '#1AC7FF',
     SUPER: '#7E00F1',
     ULTRA: '#DC01B9',
-  }
+  };
 
   const speedTexts = {
     FAST: 'Fast',
@@ -70,14 +90,13 @@
     ULTRA: 'Ultra'
   };
 
-
   function onHomeyReady(Homey) {
     Homey.ready();
 
     retrieveAndSetData();
 
     setInterval(retrieveAndSetData, 300000);
-    
+
     function retrieveAndSetData() {
       Homey.api('GET', '/', {})
         .then((result) => {
@@ -124,7 +143,7 @@
                 speedTestServer.style.color = speedTextStyles.ULTRA;
                 break;
               default:
-                console.log("Number is out of range");
+                console.log('Number is out of range');
                 break;
             }
 
@@ -140,13 +159,15 @@
       yesterday.setDate(today.getDate() - 1);
 
       if (datePar.toDateString() === today.toDateString()) {
-        return Homey.__("widget.today");
-      } else if (datePar.toDateString() === yesterday.toDateString())
-      {
-        return Homey.__("widget.yesterday");
-      } else
-      {
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return Homey.__('widget.today');
+      } else if (datePar.toDateString() === yesterday.toDateString()) {
+        return Homey.__('widget.yesterday');
+      } else {
+        const options = {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        };
         return datePar.toLocaleDateString(options);
       }
     }
