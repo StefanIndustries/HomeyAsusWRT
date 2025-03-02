@@ -7,6 +7,7 @@ import { AsusWrt } from "node-asuswrt";
 import { AsusOoklaServer } from "node-asuswrt/lib/models/asus-ookla-server";
 import { AsusVpnClient } from "node-asuswrt/lib/models/asus-vpn-client";
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices } from "./utils";
+import { AsusTester } from "node-asuswrt/lib/asus-tester";
 
 export class AsusWRTDriver extends Homey.Driver {
     private pollingInterval = 60000;
@@ -325,7 +326,6 @@ export class AsusWRTDriver extends Homey.Driver {
             this.username = data.username.trim();
             this.password = data.password;
             this.log('creating client');
-            let routers = [];
             try {
                 const asusOptions: AsusOptions = {
                     baseURL: this.routerUrl,
@@ -333,20 +333,21 @@ export class AsusWRTDriver extends Homey.Driver {
                     password: this.password,
                     isSelfSignedCertificate: this.isSelfSignedCertificate,
                 };
-                const tempClient = new AsusWrt(asusOptions);
-                routers = await tempClient.discoverClients();
-                tempClient.dispose();
+                const asusTester = new AsusTester(asusOptions);
+                const diagnosticResult = await asusTester.runDiagnostics();
+                this.log(diagnosticResult);
+                asusTester.dispose();
+                if (diagnosticResult && diagnosticResult.isAuthValid) {
+                    this.homey.settings.set("url", this.routerUrl);
+                    this.homey.settings.set("username", this.username);
+                    this.homey.settings.set("password", this.password);
+                    return true;
+                } else {
+                    this.log(diagnosticResult.message);
+                    return Promise.reject(Error(diagnosticResult.message));
+                }
             } catch {
                 return false;
-            }
-            if (routers.length === 0) {
-                this.log('failed to login');
-                return Promise.reject(Error('Failed to login'));
-            } else {
-                this.homey.settings.set("url", this.routerUrl);
-                this.homey.settings.set("username", this.username);
-                this.homey.settings.set("password", this.password);
-                return true;
             }
         });
 
@@ -359,24 +360,25 @@ export class AsusWRTDriver extends Homey.Driver {
                 isSelfSignedCertificate: this.isSelfSignedCertificate,
             };
             this.asusWrt = new AsusWrt(asusOptions);
-            const asusClients = await this.asusWrt.discoverClients().catch(error => {
-                session.showView('router_url');
-                this.asusWrt?.dispose();
-                return;
-            })
-            const foundDevices = asusClients!.map(device => {
-                return {
-                    name: `${device.deviceInfo.product_id} ${device.deviceInfo.alias}`,
-                    data: {
-                        mac: device.mac
-                    },
-                    store: {
-                        operationMode: device.deviceInfo.config.backhalctrl ? 1 : 0
-                    },
-                    icon: this.getIcon(device.deviceInfo.product_id)
-                }
-            });
-            return foundDevices;
+            try {
+                const asusClients = await this.asusWrt.discoverClients();
+                const foundDevices = asusClients!.map(device => {
+                    return {
+                        name: `${device.deviceInfo.product_id} ${device.deviceInfo.alias}`,
+                        data: {
+                            mac: device.mac
+                        },
+                        store: {
+                            operationMode: device.deviceInfo.config.backhalctrl ? 1 : 0
+                        },
+                        icon: this.getIcon(device.deviceInfo.product_id)
+                    }
+                });
+                return foundDevices;
+            } catch (exc) {
+                this.log(exc);
+                return Promise.reject(Error(`${exc}`));
+            }
         });
     }
 

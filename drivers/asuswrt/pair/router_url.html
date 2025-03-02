@@ -26,10 +26,9 @@
       .then(function(result) {
         if (result) {
           Homey.nextView();
-        } else {
-          Homey.alert(Homey.__('pair.alert_router_url_incorrect'), 'error');
-          submitButton.classList.remove('is-loading');
         }
-      });
+      }).catch(function(err) {
+        Homey.alert(err);
+    });
   }
 </script>
