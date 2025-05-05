@@ -19,6 +19,8 @@ export class AsusWRTDriver extends Homey.Driver {
     private routerUrl: string = '';
     private connectedClients: AsusConnectedDevice[] = [];
 
+    private triggerConnectedToNetwork!: (args: any, tokens: any) => void;
+    private triggerDisconnectedFromNetwork!: (args: any, tokens: any) => void;
     private triggerDeviceConnectedToNetwork!: (tokens: any) => void;
     private triggerDeviceDisconnectedFromNetwork!: (tokens: any) => void;
 
@@ -50,10 +52,17 @@ export class AsusWRTDriver extends Homey.Driver {
             });
             if (oldConnectedClients.length !== 0 || this.connectedClients.length !== 0) {
                 if (executeTriggers) {
-                    getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice)));
-                    getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice)));
+                    getMissingConnectedDevices(oldConnectedClients, this.connectedClients).forEach(missingDevice => {
+                        this.triggerDisconnectedFromNetwork(missingDevice, getConnectedDisconnectedToken(missingDevice));
+                        this.triggerDeviceDisconnectedFromNetwork(getConnectedDisconnectedToken(missingDevice));
+                    });
+                    getNewConnectedDevices(oldConnectedClients, this.connectedClients).forEach(newDevice => {
+                        this.triggerConnectedToNetwork(newDevice, getConnectedDisconnectedToken(newDevice));
+                        this.triggerDeviceConnectedToNetwork(getConnectedDisconnectedToken(newDevice));
+                    });
                 }
             }
+            this.log(`updated connectedClients`);
         } catch (err) {
             this.log(`failed to update connectedClients for entire network`, err);
         }
@@ -61,6 +70,30 @@ export class AsusWRTDriver extends Homey.Driver {
 
     private registerFlowListeners() {
         // triggers
+        const connectedToNetwork = this.homey.flow.getTriggerCard('connected-to-network');
+        connectedToNetwork.registerRunListener(async (args: any, state: any) => {
+            return args.client.mac === state.mac;
+        }).registerArgumentAutocompleteListener('client', (query: string): Homey.FlowCard.ArgumentAutocompleteResults => {
+            return this.deviceArgumentAutoCompleteListenerResults(query);
+        });
+        this.triggerConnectedToNetwork = (args: any, tokens: any) => {
+            connectedToNetwork
+                .trigger(tokens, args)
+                .catch(this.error);
+        }
+
+        const disconnectedFromNetwork = this.homey.flow.getTriggerCard('disconnected-from-network');
+        disconnectedFromNetwork.registerRunListener(async (args: any, state: any) => {
+            return args.client.mac === state.mac;
+        }).registerArgumentAutocompleteListener('client', (query: string): Homey.FlowCard.ArgumentAutocompleteResults => {
+            return this.deviceArgumentAutoCompleteListenerResults(query);
+        });
+        this.triggerDisconnectedFromNetwork = (args: any, tokens: any) => {
+            disconnectedFromNetwork
+                .trigger(tokens, args)
+                .catch(this.error);
+        }
+
         const deviceConnectedToNetwork = this.homey.flow.getTriggerCard('device-connected-to-network');
         this.triggerDeviceConnectedToNetwork = (tokens) => {
             deviceConnectedToNetwork

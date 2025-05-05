@@ -1,13 +1,27 @@
 {
   "title": {
-    "en": "A device connected to your network",
-    "nl": "Een apparaat is verbonden met het netwerk"
+    "en": "Device connected to your network",
+    "nl": "Apparaat is verbonden met het netwerk"
   },
-  "highlight": false,
+  "titleFormatted": {
+    "en": "[[client]] is connected to network",
+    "nl": "[[client]] is verbonden met het netwerk"
+  },
+  "highlight": true,
   "hint": {
-    "en": "Checks on a interval if a device connected to the network",
-    "nl": "Checkt op basis van een interval of een apparaat is verbonden met het netwerk"
+    "en": "Checks on a interval if the selected device connected to the network",
+    "nl": "Checkt op basis van een interval of het geselecteerde apparaat is verbonden met het netwerk"
   },
+  "args": [
+    {
+      "type": "autocomplete",
+      "name": "client",
+      "placeholder": {
+        "en": "Stefan's Samsung Phone",
+        "nl": "Stefans Samsung Telefoon"
+      }
+    }
+  ],
   "tokens": [
     {
       "type": "string",
