@@ -20,11 +20,15 @@ export class AsusWRTDevice extends Homey.Device {
   private triggerDeviceConnected!: (tokens: any) => void;
   private trigger24GDeviceConnected!: (tokens: any) => void;
   private trigger5GDeviceConnected!: (tokens: any) => void;
+  private trigger6GDeviceConnected!: (tokens: any) => void;
+  private trigger7GDeviceConnected!: (tokens: any) => void;
   private triggerWiredDeviceConnected!: (tokens: any) => void;
 
   private triggerDeviceDisconnected!: (tokens: any) => void;
   private trigger24GDeviceDisconnected!: (tokens: any) => void;
   private trigger5GDeviceDisconnected!: (tokens: any) => void;
+  private trigger6GDeviceDisconnected!: (tokens: any) => void;
+  private trigger7GDeviceDisconnected!: (tokens: any) => void;
   private triggerWiredDeviceDisconnected!: (tokens: any) => void;
 
   private firmwareVersion: string = '';
@@ -33,6 +37,8 @@ export class AsusWRTDevice extends Homey.Device {
   private wiredClients: AsusConnectedDevice[] = [];
   private wireless24GClients: AsusConnectedDevice[] = [];
   private wireless5GClients: AsusConnectedDevice[] = [];
+  private wireless6GClients: AsusConnectedDevice[] = [];
+  private wireless7GClients: AsusConnectedDevice[] = [];
 
   public async updateCapabilities(executeTriggers: boolean = true) {
     const routerMac = this.getData().mac;
@@ -53,8 +59,10 @@ export class AsusWRTDevice extends Homey.Device {
     const wiredDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == 'wired');
     const twoGDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == '2g');
     const fiveGDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == '5g');
+    const sixGDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == '6g');
+    const sevenGDevices = this.asusClient.connectedDevices.filter(cd => cd.connectionMethod == '7g');
     try {
-      await this.setConnectedClients(wiredDevices, twoGDevices, fiveGDevices, executeTriggers);
+      await this.setConnectedClients(wiredDevices, twoGDevices, fiveGDevices, sixGDevices, sevenGDevices, executeTriggers);
     } catch(err) {
       successfullyUpdatedEverything = false;
       errorOnDataPoints.push('Connected clients');
@@ -129,20 +137,30 @@ export class AsusWRTDevice extends Homey.Device {
   public getWireless5GClients(): AsusConnectedDevice[] {
     return this.wireless5GClients;
   }
+  public getWireless6GClients(): AsusConnectedDevice[] {
+    return this.wireless6GClients;
+  }
+  public getWireless7GClients(): AsusConnectedDevice[] {
+    return this.wireless7GClients;
+  }
 
-  public async setConnectedClients(wiredClients: AsusConnectedDevice[], wireless24GClients: AsusConnectedDevice[], wireless5GClients: AsusConnectedDevice[], executeTriggers: boolean = true) {
+  public async setConnectedClients(wiredClients: AsusConnectedDevice[], wireless24GClients: AsusConnectedDevice[], wireless5GClients: AsusConnectedDevice[], wireless6GClients: AsusConnectedDevice[], wireless7GClients: AsusConnectedDevice[], executeTriggers: boolean = true) {
     const oldWiredClients = this.wiredClients;
     const oldWireless24GClients = this.wireless24GClients;
     const oldWireless5GClients = this.wireless5GClients;
+    const oldWireless6GClients = this.wireless6GClients;
+    const oldWireless7GClients = this.wireless7GClients;
 
     this.wiredClients = wiredClients;
     this.wireless24GClients = wireless24GClients;
     this.wireless5GClients = wireless5GClients;
+    this.wireless6GClients = wireless6GClients;
+    this.wireless7GClients = wireless7GClients;
 
     if (executeTriggers) {
       // trigger any device
-      getMissingConnectedDevices(oldWiredClients.concat(oldWireless24GClients, oldWireless5GClients), wiredClients.concat(wireless24GClients, wireless5GClients)).forEach(missingDevice => this.triggerDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
-      getNewConnectedDevices(oldWiredClients.concat(oldWireless24GClients, oldWireless5GClients), wiredClients.concat(wireless24GClients, wireless5GClients)).forEach(newDevice => this.triggerDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+      getMissingConnectedDevices(oldWiredClients.concat(oldWireless24GClients, oldWireless5GClients, oldWireless6GClients, oldWireless7GClients), wiredClients.concat(wireless24GClients, wireless5GClients, wireless6GClients, wireless7GClients)).forEach(missingDevice => this.triggerDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+      getNewConnectedDevices(oldWiredClients.concat(oldWireless24GClients, oldWireless5GClients, oldWireless6GClients, oldWireless7GClients), wiredClients.concat(wireless24GClients, wireless5GClients, wireless6GClients, wireless7GClients)).forEach(newDevice => this.triggerDeviceConnected(getConnectedDisconnectedToken(newDevice)));
 
       // trigger wired device
       getMissingConnectedDevices(oldWiredClients, wiredClients).forEach(missingDevice => this.triggerWiredDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
@@ -155,6 +173,14 @@ export class AsusWRTDevice extends Homey.Device {
       // trigger 5ghz device
       getMissingConnectedDevices(oldWireless5GClients, wireless5GClients).forEach(missingDevice => this.trigger5GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
       getNewConnectedDevices(oldWireless5GClients, wireless5GClients).forEach(newDevice => this.trigger5GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+
+      // trigger 6ghz device
+      getMissingConnectedDevices(oldWireless6GClients, wireless6GClients).forEach(missingDevice => this.trigger6GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+      getNewConnectedDevices(oldWireless6GClients, wireless6GClients).forEach(newDevice => this.trigger6GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
+
+      // trigger 7ghz device
+      getMissingConnectedDevices(oldWireless7GClients, wireless7GClients).forEach(missingDevice => this.trigger7GDeviceDisconnected(getConnectedDisconnectedToken(missingDevice)));
+      getNewConnectedDevices(oldWireless7GClients, wireless7GClients).forEach(newDevice => this.trigger7GDeviceConnected(getConnectedDisconnectedToken(newDevice)));
     }
     
     if (this.hasCapability('meter_online_devices')) {
@@ -313,6 +339,32 @@ export class AsusWRTDevice extends Homey.Device {
       device5GDisconnected
         .trigger(this, tokens)
         .catch(this.error);
+    };
+
+    const device6GConnected = this.homey.flow.getDeviceTriggerCard('6g-device-connected-to-access-point');
+    this.trigger6GDeviceConnected = (tokens) => {
+      device6GConnected
+          .trigger(this, tokens)
+          .catch(this.error);
+    };
+    const device6GDisconnected = this.homey.flow.getDeviceTriggerCard('6g-device-disconnected-from-access-point');
+    this.trigger6GDeviceDisconnected = (tokens) => {
+      device6GDisconnected
+          .trigger(this, tokens)
+          .catch(this.error);
+    };
+
+    const device7GConnected = this.homey.flow.getDeviceTriggerCard('7g-device-connected-to-access-point');
+    this.trigger7GDeviceConnected = (tokens) => {
+      device7GConnected
+          .trigger(this, tokens)
+          .catch(this.error);
+    };
+    const device7GDisconnected = this.homey.flow.getDeviceTriggerCard('7g-device-disconnected-from-access-point');
+    this.trigger7GDeviceDisconnected = (tokens) => {
+      device7GDisconnected
+          .trigger(this, tokens)
+          .catch(this.error);
     };
 
     const deviceWiredConnected = this.homey.flow.getDeviceTriggerCard('wired-device-connected-to-access-point');

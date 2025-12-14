@@ -115,9 +115,13 @@ export class AsusWRTDriver extends Homey.Driver {
                 device: AsusWRTDevice,
                 client: { name: string, mac: string, description: string }
             }, state: any) => {
-                if (args.device.getWiredClients().find(wclient => wclient.mac === args.client.mac)
-                    || args.device.getWireless24GClients().find(wl2gclient => wl2gclient.mac === args.client.mac
-                        || args.device.getWireless5GClients().find(wl5gclient => wl5gclient.mac === args.client.mac))) {
+                if (
+                       args.device.getWiredClients().find(wclient => wclient.mac === args.client.mac)
+                    || args.device.getWireless24GClients().find(wl2gclient => wl2gclient.mac === args.client.mac)
+                    || args.device.getWireless5GClients().find(wl5gclient => wl5gclient.mac === args.client.mac)
+                    || args.device.getWireless6GClients().find(wl6gclient => wl6gclient.mac === args.client.mac)
+                    || args.device.getWireless7GClients().find(wl7gclient => wl7gclient.mac === args.client.mac)
+                ) {
                     return true;
                 } else {
                     return false;

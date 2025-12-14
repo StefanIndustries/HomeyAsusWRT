@@ -48,6 +48,20 @@
             "en": "5Ghz",
             "nl": "5Ghz"
           }
+        },
+        {
+          "id": "6g",
+          "label": {
+            "en": "6Ghz",
+            "nl": "6Ghz"
+          }
+        },
+        {
+          "id": "7g",
+          "label": {
+            "en": "7Ghz",
+            "nl": "7Ghz"
+          }
         }
       ]
     },
