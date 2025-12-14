@@ -136,5 +136,8 @@
   },
   "3.2.0": {
     "en": "Added new triggers for specific device connect/disconnect to network."
+  },
+  "3.2.1": {
+    "en": "Possible fix for 6G and 7G APs"
   }
 }

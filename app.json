@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.asus.wrt",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "compatibility": ">=12.1.0",
   "sdk": 3,
   "platforms": [
@@ -422,6 +422,374 @@
           }
         ],
         "id": "5g-device-disconnected-from-access-point"
+      },
+      {
+        "title": {
+          "en": "A 6Ghz device connected to the access point",
+          "nl": "Een 6Ghz apparaat is verbonden met het toegangspunt"
+        },
+        "hint": {
+          "en": "Checks on a interval if a 6Ghz device connected to the access point",
+          "nl": "Checkt op basis van een interval of een 6Ghz apparaat is verbonden met het toegangspunt"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "name",
+            "title": {
+              "en": "name",
+              "nl": "naam"
+            },
+            "example": {
+              "en": "Samsung Phone",
+              "nl": "Samsung Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "nickname",
+            "title": {
+              "en": "nickname",
+              "nl": "bijnaam"
+            },
+            "example": {
+              "en": "Stefan's Phone",
+              "nl": "Stefan's Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "vendor",
+            "title": {
+              "en": "vendor",
+              "nl": "fabrikant"
+            },
+            "example": {
+              "en": "Samsung",
+              "nl": "Samsung"
+            }
+          },
+          {
+            "type": "string",
+            "name": "ip",
+            "title": {
+              "en": "ip",
+              "nl": "ip"
+            },
+            "example": {
+              "en": "192.168.1.1",
+              "nl": "192.168.1.1"
+            }
+          },
+          {
+            "type": "string",
+            "name": "mac",
+            "title": {
+              "en": "mac",
+              "nl": "mac adres"
+            },
+            "example": {
+              "en": "AA:BB:CC:DD:EE:FF",
+              "nl": "AA:BB:CC:DD:EE:FF"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rssi",
+            "title": {
+              "en": "rssi",
+              "nl": "rssi"
+            },
+            "example": {
+              "en": "-61",
+              "nl": "-61"
+            }
+          }
+        ],
+        "id": "6g-device-connected-to-access-point"
+      },
+      {
+        "title": {
+          "en": "A 6Ghz device disconnected from the access point",
+          "nl": "Een 6Ghz apparaat heeft de verbinding verbroken met het toegangspunt"
+        },
+        "hint": {
+          "en": "Checks on a interval if a 6Ghz device disconnected to the access point",
+          "nl": "Checkt op basis van een interval of een 6hz apparaat de verbinding heeft verbroken met het toegangspunt"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "name",
+            "title": {
+              "en": "name",
+              "nl": "naam"
+            },
+            "example": {
+              "en": "Samsung Phone",
+              "nl": "Samsung Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "nickname",
+            "title": {
+              "en": "nickname",
+              "nl": "bijnaam"
+            },
+            "example": {
+              "en": "Stefan's Phone",
+              "nl": "Stefan's Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "vendor",
+            "title": {
+              "en": "vendor",
+              "nl": "fabrikant"
+            },
+            "example": {
+              "en": "Samsung",
+              "nl": "Samsung"
+            }
+          },
+          {
+            "type": "string",
+            "name": "ip",
+            "title": {
+              "en": "ip",
+              "nl": "ip"
+            },
+            "example": {
+              "en": "192.168.1.1",
+              "nl": "192.168.1.1"
+            }
+          },
+          {
+            "type": "string",
+            "name": "mac",
+            "title": {
+              "en": "mac",
+              "nl": "mac adres"
+            },
+            "example": {
+              "en": "AA:BB:CC:DD:EE:FF",
+              "nl": "AA:BB:CC:DD:EE:FF"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rssi",
+            "title": {
+              "en": "rssi",
+              "nl": "rssi"
+            },
+            "example": {
+              "en": "-61",
+              "nl": "-61"
+            }
+          }
+        ],
+        "id": "6g-device-disconnected-from-access-point"
+      },
+      {
+        "title": {
+          "en": "A 7Ghz device connected to the access point",
+          "nl": "Een 7Ghz apparaat is verbonden met het toegangspunt"
+        },
+        "hint": {
+          "en": "Checks on a interval if a 7Ghz device connected to the access point",
+          "nl": "Checkt op basis van een interval of een 7Ghz apparaat is verbonden met het toegangspunt"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "name",
+            "title": {
+              "en": "name",
+              "nl": "naam"
+            },
+            "example": {
+              "en": "Samsung Phone",
+              "nl": "Samsung Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "nickname",
+            "title": {
+              "en": "nickname",
+              "nl": "bijnaam"
+            },
+            "example": {
+              "en": "Stefan's Phone",
+              "nl": "Stefan's Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "vendor",
+            "title": {
+              "en": "vendor",
+              "nl": "fabrikant"
+            },
+            "example": {
+              "en": "Samsung",
+              "nl": "Samsung"
+            }
+          },
+          {
+            "type": "string",
+            "name": "ip",
+            "title": {
+              "en": "ip",
+              "nl": "ip"
+            },
+            "example": {
+              "en": "192.168.1.1",
+              "nl": "192.168.1.1"
+            }
+          },
+          {
+            "type": "string",
+            "name": "mac",
+            "title": {
+              "en": "mac",
+              "nl": "mac adres"
+            },
+            "example": {
+              "en": "AA:BB:CC:DD:EE:FF",
+              "nl": "AA:BB:CC:DD:EE:FF"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rssi",
+            "title": {
+              "en": "rssi",
+              "nl": "rssi"
+            },
+            "example": {
+              "en": "-61",
+              "nl": "-61"
+            }
+          }
+        ],
+        "id": "7g-device-connected-to-access-point"
+      },
+      {
+        "title": {
+          "en": "A 5Ghz device disconnected from the access point",
+          "nl": "Een 5Ghz apparaat heeft de verbinding verbroken met het toegangspunt"
+        },
+        "hint": {
+          "en": "Checks on a interval if a 5Ghz device disconnected to the access point",
+          "nl": "Checkt op basis van een interval of een 5Ghz apparaat de verbinding heeft verbroken met het toegangspunt"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=asuswrt"
+          }
+        ],
+        "tokens": [
+          {
+            "type": "string",
+            "name": "name",
+            "title": {
+              "en": "name",
+              "nl": "naam"
+            },
+            "example": {
+              "en": "Samsung Phone",
+              "nl": "Samsung Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "nickname",
+            "title": {
+              "en": "nickname",
+              "nl": "bijnaam"
+            },
+            "example": {
+              "en": "Stefan's Phone",
+              "nl": "Stefan's Telefoon"
+            }
+          },
+          {
+            "type": "string",
+            "name": "vendor",
+            "title": {
+              "en": "vendor",
+              "nl": "fabrikant"
+            },
+            "example": {
+              "en": "Samsung",
+              "nl": "Samsung"
+            }
+          },
+          {
+            "type": "string",
+            "name": "ip",
+            "title": {
+              "en": "ip",
+              "nl": "ip"
+            },
+            "example": {
+              "en": "192.168.1.1",
+              "nl": "192.168.1.1"
+            }
+          },
+          {
+            "type": "string",
+            "name": "mac",
+            "title": {
+              "en": "mac",
+              "nl": "mac adres"
+            },
+            "example": {
+              "en": "AA:BB:CC:DD:EE:FF",
+              "nl": "AA:BB:CC:DD:EE:FF"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rssi",
+            "title": {
+              "en": "rssi",
+              "nl": "rssi"
+            },
+            "example": {
+              "en": "-61",
+              "nl": "-61"
+            }
+          }
+        ],
+        "id": "7g-device-disconnected-from-access-point"
       },
       {
         "title": {
@@ -1331,6 +1699,20 @@
                 "label": {
                   "en": "5Ghz",
                   "nl": "5Ghz"
+                }
+              },
+              {
+                "id": "6g",
+                "label": {
+                  "en": "6Ghz",
+                  "nl": "6Ghz"
+                }
+              },
+              {
+                "id": "7g",
+                "label": {
+                  "en": "7Ghz",
+                  "nl": "7Ghz"
                 }
               }
             ]
