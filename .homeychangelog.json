@@ -139,5 +139,8 @@
   },
   "3.2.1": {
     "en": "Possible fix for 6G and 7G APs"
+  },
+  "3.2.2": {
+    "en": "Fix for 6G devices and APs with api level 7."
   }
 }
