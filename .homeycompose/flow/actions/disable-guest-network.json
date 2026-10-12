@@ -1,0 +1,24 @@
+{
+  "title": {
+    "en": "Disable guest network",
+    "nl": "Schakel gastnetwerk uit"
+  },
+  "titleFormatted": {
+    "en": "Disable guest network [[network]]",
+    "nl": "Schakel gastnetwerk [[network]] uit"
+  },
+  "hint": {
+    "en": "Disables the selected guest network. Applying the change may briefly interrupt Wi-Fi.",
+    "nl": "Schakelt het geselecteerde gastnetwerk uit. De wijziging kan wifi kort onderbreken."
+  },
+  "args": [
+    {
+      "type": "autocomplete",
+      "name": "network",
+      "placeholder": {
+        "en": "Guest network",
+        "nl": "Gastnetwerk"
+      }
+    }
+  ]
+}
