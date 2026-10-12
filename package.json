@@ -4,6 +4,7 @@
   "main": "app.ts",
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --test test/*.test.cjs",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "hinstall": "homey app install",
     "run": "homey app run --remote",
