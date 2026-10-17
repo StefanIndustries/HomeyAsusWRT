@@ -11,7 +11,7 @@
     "publish": "homey app publish"
   },
   "dependencies": {
-    "node-asuswrt": "^2.2.0"
+    "node-asuswrt": "^2.3.0"
   },
   "devDependencies": {
     "@tsconfig/node12": "^12.1.7",
