@@ -1,0 +1,24 @@
+{
+  "title": {
+    "en": "Enable guest network",
+    "nl": "Schakel gastnetwerk in"
+  },
+  "titleFormatted": {
+    "en": "Enable guest network [[network]]",
+    "nl": "Schakel gastnetwerk [[network]] in"
+  },
+  "hint": {
+    "en": "Enables an existing classic guest network without a time limit. Applying the change may briefly interrupt Wi-Fi.",
+    "nl": "Schakelt een bestaand klassiek gastnetwerk in zonder tijdslimiet. De wijziging kan wifi kort onderbreken."
+  },
+  "args": [
+    {
+      "type": "autocomplete",
+      "name": "network",
+      "placeholder": {
+        "en": "Guest network",
+        "nl": "Gastnetwerk"
+      }
+    }
+  ]
+}

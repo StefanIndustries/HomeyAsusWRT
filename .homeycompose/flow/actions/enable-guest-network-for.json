@@ -1,0 +1,39 @@
+{
+  "title": {
+    "en": "Enable guest network for a duration",
+    "nl": "Schakel gastnetwerk tijdelijk in"
+  },
+  "titleFormatted": {
+    "en": "Enable guest network [[network]] for [[minutes]] minutes",
+    "nl": "Schakel gastnetwerk [[network]] in voor [[minutes]] minuten"
+  },
+  "hint": {
+    "en": "Starts a fresh router-managed countdown, even if the network is already enabled. Applying the change may briefly interrupt Wi-Fi.",
+    "nl": "Start een nieuwe door de router beheerde aftelling, ook als het netwerk al aan staat. De wijziging kan wifi kort onderbreken."
+  },
+  "args": [
+    {
+      "type": "autocomplete",
+      "name": "network",
+      "placeholder": {
+        "en": "Guest network",
+        "nl": "Gastnetwerk"
+      }
+    },
+    {
+      "type": "number",
+      "name": "minutes",
+      "title": {
+        "en": "Duration in minutes",
+        "nl": "Duur in minuten"
+      },
+      "placeholder": {
+        "en": "240",
+        "nl": "240"
+      },
+      "min": 1,
+      "max": 43200,
+      "step": 1
+    }
+  ]
+}

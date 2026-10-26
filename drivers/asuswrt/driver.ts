@@ -8,6 +8,7 @@ import { AsusOoklaServer } from "node-asuswrt/lib/models/asus-ookla-server";
 import { AsusVpnClient } from "node-asuswrt/lib/models/asus-vpn-client";
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices } from "./utils";
 import { AsusTester } from "node-asuswrt/lib/asus-tester";
+import { registerGuestNetworkFlows } from "./guest-network-flows";
 
 export class AsusWRTDriver extends Homey.Driver {
     private pollingInterval = 60000;
@@ -69,6 +70,8 @@ export class AsusWRTDriver extends Homey.Driver {
     }
 
     private registerFlowListeners() {
+        registerGuestNetworkFlows(this.homey.flow, () => this.asusWrt?.asusRouter);
+
         // triggers
         const connectedToNetwork = this.homey.flow.getTriggerCard('connected-to-network');
         connectedToNetwork.registerRunListener(async (args: any, state: any) => {

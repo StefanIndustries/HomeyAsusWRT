@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build
+      - run: npm ci --legacy-peer-deps
+      - run: npm test
       - uses: athombv/github-action-homey-app-validate@master
         with:
           level: publish

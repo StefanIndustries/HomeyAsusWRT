@@ -50,6 +50,9 @@
     "developers": [
       {
         "name": "Rúben Caceiro"
+      },
+      {
+        "name": "Michal Granec"
       }
     ]
   },
@@ -1588,6 +1591,31 @@
     "actions": [
       {
         "title": {
+          "en": "Disable guest network",
+          "nl": "Schakel gastnetwerk uit"
+        },
+        "titleFormatted": {
+          "en": "Disable guest network [[network]]",
+          "nl": "Schakel gastnetwerk [[network]] uit"
+        },
+        "hint": {
+          "en": "Disables the selected guest network. Applying the change may briefly interrupt Wi-Fi.",
+          "nl": "Schakelt het geselecteerde gastnetwerk uit. De wijziging kan wifi kort onderbreken."
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "network",
+            "placeholder": {
+              "en": "Guest network",
+              "nl": "Gastnetwerk"
+            }
+          }
+        ],
+        "id": "disable-guest-network"
+      },
+      {
+        "title": {
           "en": "Disable VPN Client",
           "nl": "Schakel VPN client uit"
         },
@@ -1596,6 +1624,71 @@
           "nl": "Schakelt de router-wijde VPN client uit"
         },
         "id": "disable-vpn-client"
+      },
+      {
+        "title": {
+          "en": "Enable guest network",
+          "nl": "Schakel gastnetwerk in"
+        },
+        "titleFormatted": {
+          "en": "Enable guest network [[network]]",
+          "nl": "Schakel gastnetwerk [[network]] in"
+        },
+        "hint": {
+          "en": "Enables an existing classic guest network without a time limit. Applying the change may briefly interrupt Wi-Fi.",
+          "nl": "Schakelt een bestaand klassiek gastnetwerk in zonder tijdslimiet. De wijziging kan wifi kort onderbreken."
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "network",
+            "placeholder": {
+              "en": "Guest network",
+              "nl": "Gastnetwerk"
+            }
+          }
+        ],
+        "id": "enable-guest-network"
+      },
+      {
+        "title": {
+          "en": "Enable guest network for a duration",
+          "nl": "Schakel gastnetwerk tijdelijk in"
+        },
+        "titleFormatted": {
+          "en": "Enable guest network [[network]] for [[minutes]] minutes",
+          "nl": "Schakel gastnetwerk [[network]] in voor [[minutes]] minuten"
+        },
+        "hint": {
+          "en": "Starts a fresh router-managed countdown, even if the network is already enabled. Applying the change may briefly interrupt Wi-Fi.",
+          "nl": "Start een nieuwe door de router beheerde aftelling, ook als het netwerk al aan staat. De wijziging kan wifi kort onderbreken."
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "network",
+            "placeholder": {
+              "en": "Guest network",
+              "nl": "Gastnetwerk"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Duration in minutes",
+              "nl": "Duur in minuten"
+            },
+            "placeholder": {
+              "en": "240",
+              "nl": "240"
+            },
+            "min": 1,
+            "max": 43200,
+            "step": 1
+          }
+        ],
+        "id": "enable-guest-network-for"
       },
       {
         "title": {

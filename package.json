@@ -4,13 +4,14 @@
   "main": "app.ts",
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --test test/*.test.cjs",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "hinstall": "homey app install",
     "run": "homey app run --remote",
     "publish": "homey app publish"
   },
   "dependencies": {
-    "node-asuswrt": "^2.2.0"
+    "node-asuswrt": "^2.3.0"
   },
   "devDependencies": {
     "@tsconfig/node12": "^12.1.7",
