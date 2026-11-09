@@ -1,0 +1,14 @@
+{
+  "name": {
+    "en": "Connected clients",
+    "nl": "Verbonden apparaten"
+  },
+  "settings": [],
+  "height": 110,
+  "api": {
+    "getConnectedClients": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

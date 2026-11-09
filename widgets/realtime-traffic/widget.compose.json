@@ -1,0 +1,29 @@
+{
+  "name": {
+    "en": "Realtime traffic",
+    "nl": "Realtime verkeer"
+  },
+  "settings": [
+    {
+      "id": "show",
+      "type": "dropdown",
+      "title": {
+        "en": "Show",
+        "nl": "Toon"
+      },
+      "value": "both",
+      "values": [
+        { "id": "both", "title": { "en": "Download and upload", "nl": "Download en upload" } },
+        { "id": "download", "title": { "en": "Download", "nl": "Download" } },
+        { "id": "upload", "title": { "en": "Upload", "nl": "Upload" } }
+      ]
+    }
+  ],
+  "height": 180,
+  "api": {
+    "getRealtimeTraffic": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

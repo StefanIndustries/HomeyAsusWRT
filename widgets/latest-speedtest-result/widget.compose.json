@@ -1,6 +1,7 @@
 {
   "name": {
-    "en": "Latest speed test"
+    "en": "Latest speed test",
+    "nl": "Laatste snelheidstest"
   },
   "settings": [],
   "height": 110,

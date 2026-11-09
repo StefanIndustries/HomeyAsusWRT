@@ -1,0 +1,26 @@
+{
+  "title": {
+    "en": "Ethernet port !{{is|isn't}} connected",
+    "nl": "Ethernetpoort !{{is|is niet}} verbonden"
+  },
+  "titleFormatted": {
+    "en": "Ethernet port [[port]] !{{is|isn't}} connected",
+    "nl": "Ethernetpoort [[port]] !{{is|is niet}} verbonden"
+  },
+  "hint": {
+    "en": "Check if a cable with an active link is plugged into the port",
+    "nl": "Controleer of er een kabel met een actieve verbinding in de poort zit"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt&capabilities=wan_type"
+    },
+    {
+      "type": "autocomplete",
+      "name": "port",
+      "placeholder": { "en": "LAN 1" }
+    }
+  ]
+}

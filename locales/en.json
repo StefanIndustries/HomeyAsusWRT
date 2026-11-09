@@ -5,6 +5,14 @@
     },
     "widget": {
         "today": "Today",
-        "yesterday": "Yesterday"
+        "yesterday": "Yesterday",
+        "network": "Network",
+        "devices": "devices",
+        "wired": "wired",
+        "wireless": "wireless",
+        "measuring": "Measuring…",
+        "unavailable": "Router unavailable",
+        "seconds_ago": "30 s ago",
+        "now": "now"
     }
 }

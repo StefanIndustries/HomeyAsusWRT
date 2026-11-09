@@ -1,0 +1,11 @@
+{
+    "type": "string",
+    "title": {
+      "en": "Public IP address",
+      "nl": "Publiek IP adres"
+    },
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "icon": "./assets/cap_external_ip.svg"
+}

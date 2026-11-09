@@ -1,0 +1,102 @@
+<html>
+<head>
+    <style>
+        .counters {
+            display: flex;
+            font-size: var(--homey-font-size-xxlarge);
+            font-weight: var(--homey-font-weight-bold);
+            flex-direction: row;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .wired, .wireless {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .wired img, .wireless img {
+            margin-right: 10px;
+        }
+
+        .wired p, .wireless p {
+            margin: 0;
+        }
+
+        .bands span + span::before {
+            content: ' · ';
+        }
+    </style>
+</head>
+
+<body class="homey-widget">
+
+<div class="homey-text-align-left">
+    <span>
+        <span class="homey-text-small" id="title">...</span>&nbsp;
+        <span class="homey-text-small-light" id="total">...</span>
+    </span>
+</div>
+
+<div class="homey-text-align-left">
+    <div class="counters">
+        <div class="wired">
+            <img src="wired.svg" alt="wired">
+            <p><span id="wired">...</span> <span class="homey-text-small-light" id="wired-label"></span></p>
+        </div>
+        <div class="wireless">
+            <img src="wireless.svg" alt="wireless">
+            <p><span id="wireless">...</span> <span class="homey-text-small-light" id="wireless-label"></span></p>
+        </div>
+    </div>
+</div>
+
+<div class="homey-text-align-left homey-text-small-light bands" id="bands"></div>
+
+<script type="text/javascript">
+  const elements = {
+    title: document.getElementById('title'),
+    total: document.getElementById('total'),
+    wired: document.getElementById('wired'),
+    wireless: document.getElementById('wireless'),
+    wiredLabel: document.getElementById('wired-label'),
+    wirelessLabel: document.getElementById('wireless-label'),
+    bands: document.getElementById('bands'),
+  };
+
+  function onHomeyReady(Homey) {
+    elements.title.textContent = Homey.__('widget.network');
+    elements.wiredLabel.textContent = Homey.__('widget.wired');
+    elements.wirelessLabel.textContent = Homey.__('widget.wireless');
+    Homey.ready();
+
+    refresh();
+    // The app refreshes the client list on its polling interval (60 s by default).
+    setInterval(refresh, 30000);
+
+    function refresh() {
+      Homey.api('GET', '/', {})
+        .then((summary) => {
+          if (!summary) {
+            elements.total.textContent = Homey.__('widget.unavailable');
+            return;
+          }
+          elements.total.textContent = `${summary.total} ${Homey.__('widget.devices')}`;
+          elements.wired.textContent = summary.wired;
+          elements.wireless.textContent = summary.wireless;
+
+          const bands = [['2.4 GHz', summary.wireless24g], ['5 GHz', summary.wireless5g], ['6 GHz', summary.wireless6g]]
+            .filter(([band, count]) => count > 0 || band !== '6 GHz');
+          elements.bands.replaceChildren(...bands.map(([band, count]) => {
+            const span = document.createElement('span');
+            span.textContent = `${band} ${count}`;
+            return span;
+          }));
+        })
+        .catch(console.error);
+    }
+  }
+</script>
+</body>
+</html>

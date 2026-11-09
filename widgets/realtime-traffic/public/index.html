@@ -1,0 +1,214 @@
+<html>
+<head>
+    <style>
+        .current {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: center;
+            font-size: var(--homey-font-size-xlarge);
+            font-weight: var(--homey-font-weight-bold);
+        }
+
+        .direction {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .direction img {
+            margin-right: 8px;
+        }
+
+        .direction p {
+            margin: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .chart {
+            position: relative;
+            margin-top: 8px;
+            height: 96px;
+        }
+
+        .chart svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .grid {
+            stroke: var(--homey-line-color, rgba(128, 128, 128, 0.25));
+            stroke-width: 1;
+            stroke-dasharray: 2 4;
+        }
+
+        .line {
+            fill: none;
+            stroke-width: 2;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .area {
+            stroke: none;
+        }
+
+        .download .line { stroke: #94FF27; }
+        .download.area { fill: rgba(148, 255, 39, 0.16); }
+        .upload .line { stroke: #439AFF; }
+        .upload.area { fill: rgba(67, 154, 255, 0.16); }
+
+        .axis-max {
+            position: absolute;
+            top: 0;
+            left: 0;
+            line-height: 1;
+            font-size: 12px;
+        }
+
+        .axis-time {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2px;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        .status {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="homey-widget">
+
+<div class="homey-text-align-left">
+    <div class="current">
+        <div class="direction" id="download-current">
+            <img src="download.svg" alt="download">
+            <p><span id="download">...</span> <span class="homey-text-small-light">Mbps</span></p>
+        </div>
+        <div class="direction" id="upload-current">
+            <img src="upload.svg" alt="upload">
+            <p><span id="upload">...</span> <span class="homey-text-small-light">Mbps</span></p>
+        </div>
+    </div>
+</div>
+
+<div class="chart">
+    <svg id="chart" viewBox="0 0 300 96" preserveAspectRatio="none" aria-hidden="true">
+        <line class="grid" x1="0" y1="16.5" x2="300" y2="16.5"></line>
+        <line class="grid" x1="0" y1="56" x2="300" y2="56"></line>
+        <line class="grid" x1="0" y1="95.5" x2="300" y2="95.5"></line>
+        <path class="download area" id="download-area"></path>
+        <path class="upload area" id="upload-area"></path>
+        <g class="upload"><path class="line" id="upload-line"></path></g>
+        <g class="download"><path class="line" id="download-line"></path></g>
+    </svg>
+    <span class="axis-max homey-text-small-light" id="axis-max"></span>
+    <span class="status homey-text-small-light" id="status"></span>
+</div>
+<div class="axis-time homey-text-small-light"><span id="axis-start"></span><span id="axis-now"></span></div>
+
+<script type="text/javascript">
+  const WIDTH = 300;
+  const HEIGHT = 96;
+  // Space above the plot for the scale label.
+  const TOP = 16;
+  const el = (id) => document.getElementById(id);
+
+  function niceMax(value) {
+    if (value <= 1) return 1;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+    for (const step of [1, 2, 2.5, 5, 10]) {
+      if (step * magnitude >= value) return step * magnitude;
+    }
+    return 10 * magnitude;
+  }
+
+  function formatSpeed(mbps) {
+    return mbps >= 100 ? mbps.toFixed(0) : mbps >= 10 ? mbps.toFixed(1) : mbps.toFixed(2);
+  }
+
+  function paths(samples, key, windowMs, max) {
+    const end = samples[samples.length - 1].time;
+    const points = samples.map((sample) => {
+      const x = Math.max(0, WIDTH - ((end - sample.time) / windowMs) * WIDTH);
+      const y = HEIGHT - (Math.min(sample[key], max) / max) * (HEIGHT - TOP);
+      return [x.toFixed(1), y.toFixed(1)];
+    });
+    const line = points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x},${y}`).join(' ');
+    const area = `${line} L${points[points.length - 1][0]},${HEIGHT} L${points[0][0]},${HEIGHT} Z`;
+    return { line, area };
+  }
+
+  function onHomeyReady(Homey) {
+    const settings = Homey.getSettings() || {};
+    const show = settings.show || 'both';
+    const keys = show === 'both' ? ['download', 'upload'] : [show];
+
+    for (const key of ['download', 'upload']) {
+      const visible = keys.includes(key);
+      el(`${key}-current`).classList.toggle('hidden', !visible);
+      el(`${key}-line`).classList.toggle('hidden', !visible);
+      el(`${key}-area`).classList.toggle('hidden', !visible);
+    }
+    el('status').textContent = Homey.__('widget.measuring');
+    el('axis-start').textContent = Homey.__('widget.seconds_ago');
+    el('axis-now').textContent = Homey.__('widget.now');
+    Homey.ready();
+
+    let busy = false;
+    refresh();
+    setInterval(refresh, 2000);
+
+    function refresh() {
+      if (busy) return;
+      busy = true;
+      Homey.api('GET', '/', {})
+        .then(render)
+        .catch((err) => {
+          console.error(err);
+          el('status').textContent = Homey.__('widget.unavailable');
+        })
+        .finally(() => { busy = false; });
+    }
+
+    function render(result) {
+      const samples = (result && result.samples) || [];
+      if (samples.length === 0) {
+        el('status').textContent = result && result.error ? Homey.__('widget.unavailable') : Homey.__('widget.measuring');
+        return;
+      }
+      el('status').textContent = '';
+
+      const latest = samples[samples.length - 1];
+      el('download').textContent = formatSpeed(latest.download);
+      el('upload').textContent = formatSpeed(latest.upload);
+
+      const peak = Math.max(...samples.flatMap((sample) => keys.map((key) => sample[key])));
+      const max = niceMax(peak * 1.1);
+      el('axis-max').textContent = `${max} Mbps`;
+
+      for (const key of keys) {
+        // A single sample cannot form a line yet; repeat it so the current value is visible.
+        const series = samples.length === 1 ? [{ ...samples[0], time: samples[0].time - 1 }, samples[0]] : samples;
+        const { line, area } = paths(series, key, result.windowMs || 30000, max);
+        el(`${key}-line`).setAttribute('d', line);
+        el(`${key}-area`).setAttribute('d', area);
+      }
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+    "type": "number",
+    "title": {
+      "en": "Wi-Fi channel",
+      "nl": "Wifi kanaal"
+    },
+    "getable": true,
+    "setable": false,
+    "decimals": 0,
+    "insights": true,
+    "uiComponent": "sensor",
+    "icon": "./assets/cap_wifi_channel.svg"
+}

@@ -148,5 +148,9 @@
   },
   "3.2.4": {
     "en": "Added Flow actions to enable and disable classic guest Wi-Fi networks."
+  },
+  "3.3.0": {
+    "en": "New network-wide connected clients widget and realtime download/upload graph widget. Routers and access points now show their temperatures (only when the device has sensors) and firmware version; routers also show Wi-Fi channels, public IP and DHCP leases. New Flow cards for Ethernet ports. Fixed the speedtest Flow card sometimes crashing the app, and a locked router is now reported clearly.",
+    "nl": "Nieuwe widget voor verbonden apparaten in het hele netwerk en een realtime download/upload grafiek. Routers en access points tonen nu hun temperatuur (alleen als het apparaat sensoren heeft) en firmware versie; routers tonen ook wifi kanalen, publiek IP en DHCP leases. Nieuwe Flow kaarten voor ethernetpoorten. Probleem opgelost waarbij de snelheidstest Flow kaart soms de app liet crashen, en een vergrendelde router wordt nu duidelijk gemeld."
   }
 }

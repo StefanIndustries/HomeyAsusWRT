@@ -5,6 +5,14 @@
     },
     "widget": {
         "today": "Vandaag",
-        "yesterday": "Gisteren"
+        "yesterday": "Gisteren",
+        "network": "Netwerk",
+        "devices": "apparaten",
+        "wired": "bekabeld",
+        "wireless": "draadloos",
+        "measuring": "Meten…",
+        "unavailable": "Router niet beschikbaar",
+        "seconds_ago": "30 s geleden",
+        "now": "nu"
     }
 }

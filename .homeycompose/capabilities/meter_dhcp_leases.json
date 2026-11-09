@@ -1,0 +1,13 @@
+{
+    "type": "number",
+    "title": {
+      "en": "DHCP leases",
+      "nl": "DHCP leases"
+    },
+    "getable": true,
+    "setable": false,
+    "decimals": 0,
+    "insights": true,
+    "uiComponent": "sensor",
+    "icon": "./assets/cap_online_devices.svg"
+}

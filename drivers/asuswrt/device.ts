@@ -7,6 +7,10 @@ import { AsusWanLinkStatus } from "node-asuswrt/lib/models/asus-wan-link-status"
 import { AsusTrafficData } from "node-asuswrt/lib/models/asus-traffic-data";
 import { AsusClient } from "node-asuswrt/lib/classes/asus-client";
 import { AsusRouter } from "node-asuswrt/lib/classes/asus-router";
+import { AsusEthernetPort } from "node-asuswrt/lib/models/asus-router-info";
+import {
+  DynamicCapabilityValue, ethernetPortChanges, isDynamicCapability, temperatureCapabilityValues, wifiChannelCapabilityValues
+} from './router-info';
 
 export class AsusWRTDevice extends Homey.Device {
   public asusClient: AsusClient | undefined;
@@ -16,6 +20,8 @@ export class AsusWRTDevice extends Homey.Device {
   private triggerExternalIPChanged!: (device: any, tokens: any, state: any) => void;
   private triggerWanTypeChanged!: (device: any, tokens: any, state: any) => void;
   private triggerWANConnectionStatusChanged!: (device: any, tokens: any, state: any) => void;
+  private triggerEthernetPortConnected!: (tokens: any) => void;
+  private triggerEthernetPortDisconnected!: (tokens: any) => void;
 
   private triggerDeviceConnected!: (tokens: any) => void;
   private trigger24GDeviceConnected!: (tokens: any) => void;
@@ -31,6 +37,8 @@ export class AsusWRTDevice extends Homey.Device {
 
   private firmwareVersion: string = '';
   private newVersion: string = '';
+
+  private ethernetPorts: AsusEthernetPort[] | undefined;
 
   private wiredClients: AsusConnectedDevice[] = [];
   private wireless24GClients: AsusConnectedDevice[] = [];
@@ -85,9 +93,23 @@ export class AsusWRTDevice extends Homey.Device {
       this.log(err);
     }
 
+    // Optional data: older firmware or models without sensors may not provide it, so failures
+    // are logged instead of shown as a device warning.
+    try {
+      const temperatures = await this.asusClient.getTemperatures();
+      await this.setDynamicCapabilities(temperatureCapabilityValues(temperatures));
+    } catch (err) {
+      this.log(`failed to update temperatures for access point ${routerMac}`, err);
+    }
+
+    if (this.getStoreValue('operationMode') !== 0 && this.asusClient.deviceInfo.fwver) {
+      await this.setCapabilityIfPresent('firmware_version', this.asusClient.deviceInfo.fwver);
+    }
+
     if (this.getStoreValue('operationMode') === 0) {
       const router = this.asusClient as AsusRouter;
       this.log(`device is of type router, executing additional updates`);
+      await this.updateRouterInfo(router, executeTriggers);
       try {
         this.log(`updating wan status for access point ${routerMac}`);
         const WANStatus = await router.getWANStatus();
@@ -117,6 +139,63 @@ export class AsusWRTDevice extends Homey.Device {
     } else {
       this.log(`successfully updated all information for access point ${routerMac}`);
       await this.setWarning(null);
+    }
+  }
+
+  private async updateRouterInfo(router: AsusRouter, executeTriggers: boolean) {
+    const routerMac = this.getData().mac;
+    const steps: [string, () => Promise<void>][] = [
+      ['firmware info', async () => {
+        await this.setCapabilityIfPresent('firmware_version', (await router.getFirmwareInfo()).version);
+      }],
+      ['public IP', async () => {
+        await this.setCapabilityIfPresent('public_ip', (await router.getPublicIp()).publicIp ?? null);
+      }],
+      ['DHCP leases', async () => {
+        await this.setCapabilityIfPresent('meter_dhcp_leases', (await router.getDhcpLeases()).length);
+      }],
+      ['wireless channels', async () => {
+        await this.setDynamicCapabilities(wifiChannelCapabilityValues(await router.getWirelessChannels()));
+      }],
+      ['ethernet ports', async () => {
+        const ports = await router.getEthernetPorts();
+        const changes = ethernetPortChanges(this.ethernetPorts, ports);
+        this.ethernetPorts = ports;
+        if (executeTriggers) {
+          changes.connected.forEach(port => this.triggerEthernetPortConnected({ port: port.name, speed_mbps: port.speedMbps ?? 0 }));
+          changes.disconnected.forEach(port => this.triggerEthernetPortDisconnected({ port: port.name, speed_mbps: 0 }));
+        }
+      }],
+    ];
+    for (const [name, step] of steps) {
+      try {
+        await step();
+      } catch (err) {
+        this.log(`failed to update ${name} for access point ${routerMac}`, err);
+      }
+    }
+  }
+
+  /** Last known Ethernet ports, or undefined before the first successful read. */
+  public getEthernetPorts(): AsusEthernetPort[] | undefined {
+    return this.ethernetPorts;
+  }
+
+  private async setCapabilityIfPresent(capability: string, value: string | number | boolean | null) {
+    if (this.hasCapability(capability)) {
+      await this.setCapabilityValue(capability, value);
+    }
+  }
+
+  /** Adds capabilities the device reports (e.g. a temperature sensor) on first sight, then sets their values. */
+  private async setDynamicCapabilities(values: DynamicCapabilityValue[]) {
+    for (const { id, title, value } of values) {
+      if (!this.hasCapability(id)) {
+        this.log(`adding capability ${id}`);
+        await this.addCapability(id);
+        await this.setCapabilityOptions(id, { title });
+      }
+      await this.setCapabilityValue(id, value);
     }
   }
 
@@ -176,11 +255,22 @@ export class AsusWRTDevice extends Homey.Device {
   }
 
   public async setFirmwareVersion(currentVersion: string, newVersion: string) {
-    if (this.firmwareVersion !== '' && newVersion !== '' && this.newVersion !== newVersion) {
-      this.triggerNewFirmwareAvailable({"version": newVersion});
-    }
     this.firmwareVersion = currentVersion;
-    this.newVersion = newVersion;
+    this.newVersion = newVersion || '';
+
+    // the router reports an empty value (or the current version) when no update is available
+    const updateAvailable = !!newVersion && newVersion !== '0' && newVersion !== currentVersion;
+    if (!updateAvailable) {
+      return;
+    }
+
+    // persist the last notified version so the trigger fires once per new version, also across app restarts
+    if (this.getStoreValue('lastNotifiedFirmwareVersion') === newVersion) {
+      return;
+    }
+    this.log(`new firmware available: ${currentVersion} -> ${newVersion}`);
+    this.triggerNewFirmwareAvailable({"version": newVersion});
+    await this.setStoreValue('lastNotifiedFirmwareVersion', newVersion);
   }
 
   public async setLoad(load: AsusCpuMemLoad) {
@@ -252,7 +342,7 @@ export class AsusWRTDevice extends Homey.Device {
     }
     const currentCapabilities = this.getCapabilities();
     for (const currentCap of currentCapabilities) {
-      if (!capabilityList.includes(currentCap)) {
+      if (!capabilityList.includes(currentCap) && !isDynamicCapability(currentCap)) {
         await this.removeCapability(currentCap);
         await wait(5000);
       }
@@ -286,6 +376,19 @@ export class AsusWRTDevice extends Homey.Device {
     this.triggerWANConnectionStatusChanged = (device, tokens, state) => {
       wanConnectionStatusChanged
         .trigger(device, tokens, state)
+        .catch(this.error);
+    };
+
+    const ethernetPortConnected = this.homey.flow.getDeviceTriggerCard('ethernet-port-connected');
+    this.triggerEthernetPortConnected = (tokens) => {
+      ethernetPortConnected
+        .trigger(this, tokens)
+        .catch(this.error);
+    };
+    const ethernetPortDisconnected = this.homey.flow.getDeviceTriggerCard('ethernet-port-disconnected');
+    this.triggerEthernetPortDisconnected = (tokens) => {
+      ethernetPortDisconnected
+        .trigger(this, tokens)
         .catch(this.error);
     };
 

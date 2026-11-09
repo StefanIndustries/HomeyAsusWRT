@@ -9,6 +9,7 @@ import { AsusVpnClient } from "node-asuswrt/lib/models/asus-vpn-client";
 import { getConnectedDisconnectedToken, getMissingConnectedDevices, getNewConnectedDevices } from "./utils";
 import { AsusTester } from "node-asuswrt/lib/asus-tester";
 import { registerGuestNetworkFlows } from "./guest-network-flows";
+import { speedtestTokens } from "./router-info";
 
 export class AsusWRTDriver extends Homey.Driver {
     private pollingInterval = 60000;
@@ -19,6 +20,7 @@ export class AsusWRTDriver extends Homey.Driver {
     private password: string = '';
     private routerUrl: string = '';
     private connectedClients: AsusConnectedDevice[] = [];
+    private speedtestRunning = false;
 
     private triggerConnectedToNetwork!: (args: any, tokens: any) => void;
     private triggerDisconnectedFromNetwork!: (args: any, tokens: any) => void;
@@ -31,6 +33,11 @@ export class AsusWRTDriver extends Homey.Driver {
             return;
         }
         await this.asusWrt.updateConnectedDevices();
+        try {
+            await this.asusWrt.updateDeviceInfo();
+        } catch (err) {
+            this.log('failed to refresh device info (firmware versions)', err);
+        }
 
         for (const device of this.getDevices()) {
             const asusDevice = <AsusWRTDevice>device;
@@ -149,28 +156,59 @@ export class AsusWRTDriver extends Homey.Driver {
         // actions
         const speedTest = this.homey.flow.getActionCard('speedtest');
         speedTest.registerRunListener(async (args: { server: AsusOoklaServer }) => {
-            if (this.asusWrt && this.asusWrt.asusRouter) {
-                const result = await this.asusWrt.asusRouter.runSpeedtest(args.server);
-                return {
-                    download_speed: ((result.download.bytes * 8) / (result.download.elapsed * 0.001)) / 1000000,
-                    upload_speed: ((result.upload.bytes * 8) / (result.upload.elapsed * 0.001)) / 1000000,
-                    ping: result.ping.latency,
-                    packet_loss: result.packetLoss
-                };
+            const router = this.asusWrt?.asusRouter;
+            if (!router) {
+                throw new Error('Router is unavailable; pair an ASUS router and check its connection');
+            }
+            if (!args.server || typeof args.server.id === 'undefined') {
+                throw new Error('Select a speedtest server');
+            }
+            // The router runs one Ookla test at a time; overlapping runs corrupt each other's result and history.
+            if (this.speedtestRunning) {
+                throw new Error('A speedtest is already running, try again when it has finished');
+            }
+            this.speedtestRunning = true;
+            try {
+                const result = await router.runSpeedtest(args.server);
+                return speedtestTokens(result);
+            } catch (err) {
+                this.log('speedtest failed', err);
+                throw new Error(`Speedtest failed: ${err instanceof Error ? err.message : err}`);
+            } finally {
+                this.speedtestRunning = false;
             }
         }).registerArgumentAutocompleteListener('server', async (query: string): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
             const searchFor = query.toUpperCase();
-            if (this.asusWrt && this.asusWrt.asusRouter) {
-                const ooklaServers = await this.asusWrt.asusRouter.getOoklaServers();
-                const serversInQuery = ooklaServers!.filter(server => {
-                    return server.name.toUpperCase().includes(searchFor);
-                });
-                return [
-                    ...serversInQuery
-                ];
+            const router = this.asusWrt?.asusRouter;
+            if (!router) {
+                return [];
             }
-            return [];
+            const ooklaServers = await router.getOoklaServers();
+            return ooklaServers
+                .filter(server => `${server.name ?? ''} ${server.location ?? ''}`.toUpperCase().includes(searchFor))
+                .map(server => ({ ...server, name: server.name ?? `${server.id}`, description: [server.location, server.country].filter(Boolean).join(', ') }));
         });
+
+        const ethernetPortIsConnected = this.homey.flow.getConditionCard('ethernet-port-is-connected');
+        ethernetPortIsConnected
+            .registerRunListener(async (args: { device: AsusWRTDevice, port: { name: string } }) => {
+                const ports = args.device.getEthernetPorts();
+                if (!ports) {
+                    throw new Error('Ethernet port status is not available yet');
+                }
+                const port = ports.find(p => p.name === args.port?.name);
+                if (!port) {
+                    throw new Error(`Port ${args.port?.name} was not found on this router`);
+                }
+                return port.connected;
+            })
+            .registerArgumentAutocompleteListener('port', async (query: string, args: { device: AsusWRTDevice }): Promise<Homey.FlowCard.ArgumentAutocompleteResults> => {
+                const ports = args.device?.getEthernetPorts() ?? [];
+                const searchFor = query.toUpperCase();
+                return ports
+                    .filter(port => port.name.toUpperCase().includes(searchFor))
+                    .map(port => ({ name: port.name, description: port.connected ? `${port.speedMbps ?? '?'} Mbit/s` : 'Disconnected' }));
+            });
 
         const enableVPNClient = this.homey.flow.getActionCard('enable-vpn-client');
         enableVPNClient.registerRunListener(async (args: { client: AsusVpnClient }) => {
@@ -249,6 +287,11 @@ export class AsusWRTDriver extends Homey.Driver {
             });
     }
 
+    /** Connected clients of the whole network (router and access points), as of the last poll. */
+    public getConnectedClients(): AsusConnectedDevice[] {
+        return this.connectedClients;
+    }
+
     private deviceArgumentAutoCompleteListenerResults(query: string): Homey.FlowCard.ArgumentAutocompleteResults {
         const searchFor = query.toUpperCase();
         const devicesInQuery = this.connectedClients.filter(device => {
@@ -309,7 +352,7 @@ export class AsusWRTDriver extends Homey.Driver {
             this.log(error);
             this.homey.clearInterval(this.updateDevicesPollingIntervalId);
             this.updateDevicesPollingIntervalId = this.homey.setInterval(this.updateDevicePollingInterval, this.pollingInterval * 5);
-            this.getDevices().forEach(device => device.setWarning('Something went wrong, trying again in 5 minutes'));
+            this.getDevices().forEach(device => device.setWarning('Something went wrong, trying again in 5 minutes').catch(this.error));
             return;
         }
         this.homey.clearInterval(this.updateDevicesPollingIntervalId);

@@ -1,0 +1,31 @@
+{
+  "title": {
+    "en": "An Ethernet port got connected",
+    "nl": "Een ethernetpoort is verbonden"
+  },
+  "hint": {
+    "en": "Checks on an interval if a cable was plugged into an Ethernet port",
+    "nl": "Checkt op basis van een interval of er een kabel in een ethernetpoort is gestoken"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=asuswrt&capabilities=wan_type"
+    }
+  ],
+  "tokens": [
+    {
+      "type": "string",
+      "name": "port",
+      "title": { "en": "port", "nl": "poort" },
+      "example": { "en": "LAN 1" }
+    },
+    {
+      "type": "number",
+      "name": "speed_mbps",
+      "title": { "en": "speed (Mbit/s)", "nl": "snelheid (Mbit/s)" },
+      "example": { "en": "1000" }
+    }
+  ]
+}
