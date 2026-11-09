@@ -145,5 +145,8 @@
   },
   "3.2.3": {
     "en": "Updated package dependency to fix vulnerabilities."
+  },
+  "3.2.4": {
+    "en": "Added Flow actions to enable and disable classic guest Wi-Fi networks."
   }
 }
